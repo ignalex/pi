@@ -7,7 +7,10 @@ place info on the LCD panel, controlled by arduino
 current info: 
   - weather forecast 
   - next ferry 
+  - temperature outside: 
+    current / maximum expecned 
   - temperature inside 
+  - time 
 
 Created on Thu Oct 29 07:12:47 2015
 @author: ignalex
@@ -16,7 +19,7 @@ from __future__ import print_function
 
 import daemon 
 import serial, os, sys 
-sys.path.append('/home/pi/git/pi/')
+sys.path.append('/home/pi/git/pi/') #needed if started from crontab 
 from datetime import datetime , timedelta
 from time import sleep
 from modules.weather import WEATHER
@@ -28,7 +31,6 @@ class LCD(object):
     def __init__(self,DEBUG = False): 
         self.DEBUG = DEBUG 
         self.ser = self.FindSerialPort()
-        #self.lock = Lock('serial')
 
     def FindSerialPort(self,wait=1): # less than 1 not enough to prepare serial port 
         if os.name == 'posix': # Linux 

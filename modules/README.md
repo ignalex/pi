@@ -1,2 +1,20 @@
 # pi
-raspberry pi helping modules
+raspberry pi modules
+
+## blink 
+- simple blink diode 
+
+## ferry 
+- ferry timetable > next ferry is in ... min 
+
+## relay 
+- control GPIO relays 
+
+##talk 
+- talking using Google gTTs API 
+
+## temperature 
+- scan tempearture sensor (GPIO)
+
+## weather 
+- scan BOM site (weatherzone) for current / forecasted weather 

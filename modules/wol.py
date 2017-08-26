@@ -1,6 +1,8 @@
 "simple Wake On Line > sendign magic packet to PC to wake up"
+from __future__ import print_function
 import struct, socket 
 
+#TODO: something is broken...
 def wol(PC = ['ZHIRAFFA']):
     PCs = {'ZHIRAFFA': '00:24:81:84:1C:F4', 
            'KROT' : '00:b3:f6:03:09:85', 
@@ -24,6 +26,7 @@ def wol(PC = ['ZHIRAFFA']):
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     s.sendto(msg, ('<broadcast>', 9))
     s.close()
+    print('sent to + ' + PC[0] + ' : ' + ethernet_address)
 
 if __name__ == '__main__': 
     wol()

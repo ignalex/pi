@@ -2,7 +2,7 @@
 raspberry pi modules for home automation 
 
 ##  projects 
-- **MS** > 'manage services' - big one > to turn things ON/OFF based on the conditions >> __to be migrated__
+- **MS** > 'manage services' > to turn things ON/OFF based on the conditions >> __to be migrated__
 - **PA** > 'personal assistant' > using iCalendar and other mods to trigger functions  >> __to be migrated__ 
 
 ## functionality

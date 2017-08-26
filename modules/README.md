@@ -21,3 +21,6 @@ raspberry pi modules
 
 ### sunrise 
 - sunrise / sunset times 
+
+### speak over ssh 
+- send speaking command to another PI with speaker 

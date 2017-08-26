@@ -1,23 +1,41 @@
 # -*- coding: utf-8 -*-
 """
+WEATHER module 
+- scans feeds from BOM 
+- scans temperature sensor from GPIO 
+
+returned results shape: 
+
+humidity 44.0
+pressure 1020.4
+rain 0.0
+temp_in 21.5
+temp_out 17.3
+temp_today 18.0
+wind 17.0
+wind_gust 22.0
+
+have to provide the link to BOM > for Sydney / Kurraba Point : 
+http://rss.weatherzone.com.au/?u=12994-1285&lt=aploc&lc=624&obs=1&fc=1&warn=1
+
+
 Created on Tue Jan 27 10:58:24 2015
 
 @author: aignatov
 """
 from __future__ import print_function
-import urllib2
+import urllib2 #TODO: replace for PY3 compatibility 
 import os, datetime #, sys
 
-
+# if not PI - don't take GPIO reading 
 if os.name == 'posix': 
     from temperature import Temp
     
 
-
 class WEATHER(object): 
     def __init__(self,TempIn = True): 
         self.link = "http://rss.weatherzone.com.au/?u=12994-1285&lt=aploc&lc=624&obs=1&fc=1&warn=1"
-        self.Log = os.path.join([i for i in ['/home/pi/temp/','/storage/sensors/',os.getcwd()] if os.path.exists(i)][0],'sensors.log') # 
+        self.Log = os.path.join([i for i in ['/home/pi/LOG/', '/home/pi/temp/','/storage/sensors/',os.getcwd()] if os.path.exists(i)][0],'sensors.log') #FIXME: LOG location  
         self.call = {'rain' : ["<b>Rain:</b> ","mm since"],
                      'temp_out' : ["<b>Temperature:</b> ","&#"], 
                      'humidity' : ["<b>Relative humidity:</b> ","%<br"],
@@ -83,11 +101,4 @@ class WEATHER(object):
 
 if __name__ == '__main__': 
     w = WEATHER()    
-#    try: 
-#        from LCD import LCD
-#        l = LCD()
-#        w.call['light'] = '' 
-#        w.light = l.LightSensor()
-#    except: 
-#        pass 
     if not w.timeout: w.Report()

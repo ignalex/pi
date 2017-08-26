@@ -10,7 +10,7 @@ import urllib2
 #TODO: address hardcoding
 #TODO: PY3 
 
-def KODI_JSON(com='play_current', kodi = 'http://192.168.1.153:8080'):
+def KODI_JSON(com='play_current', kodi = 'http://192.168.1.153:8080/'):
     commands = {'play_current'    : "jsonrpc?request={%22jsonrpc%22:%222.0%22,%22id%22:1,%22method%22:%22Player.Open%22,%22params%22:{%22item%22:{%22playlistid%22:0},%22options%22:{%22repeat%22:%22all%22}}}",
                 'pause'           : "jsonrpc?request=%7B%22jsonrpc%22:%20%222.0%22%2C%20%22method%22:%20%22Player.PlayPause%22%2C%20%22params%22:%20%7B%20%22playerid%22:%200%20%7D%2C%20%22id%22:%201%7D",
                 'resume'          : "jsonrpc?request=%7B%22jsonrpc%22:%20%222.0%22%2C%20%22method%22:%20%22Player.PlayPause%22%2C%20%22params%22:%20%7B%20%22playerid%22:%200%20%7D%2C%20%22id%22:%201%7D",                

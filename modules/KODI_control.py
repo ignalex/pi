@@ -24,10 +24,10 @@ def KODI_JSON(com='play_current', kodi = 'http://192.168.1.153:8080'):
                 'getPlaylists'    : "{}/jsonrpc?request=%7B%22jsonrpc%22:%222.0%22%2C%22id%22:1%2C%22method%22:%22Playlist.GetPlaylists%22%2C%22params%22:%5B%5D%7D", 
                 'getItems'        : "{}/jsonrpc?request=%7B%22jsonrpc%22:%222.0%22%2C%22id%22:1%2C%22method%22:%22Playlist.GetItems%22%2C%22params%22:%7B%22playlistid%22:0%7D%7D"
                 }
-    command = commands[com].formant(kodi) #with HTTP address
+    command = commands[com].format(kodi) #with HTTP address
     if com.startswith('vol') and com != 'volume': 
         new = com.replace('vol','').replace('_','')
-        commands['vol'] = "{}/jsonrpc?request=%7B%22jsonrpc%22:%20%222.0%22%2C%20%22method%22:%20%22Application.SetVolume%22%2C%20%22params%22:%20%7B%22volume%22:%20"+new+"%7D%2C%20%22id%22:%201%7D".formant(kodi)
+        commands['vol'] = "{}/jsonrpc?request=%7B%22jsonrpc%22:%20%222.0%22%2C%20%22method%22:%20%22Application.SetVolume%22%2C%20%22params%22:%20%7B%22volume%22:%20"+new+"%7D%2C%20%22id%22:%201%7D".format(kodi)
         com = 'vol'
         
     replies = {'{"id":1,"jsonrpc":"2.0","result":[{"playerid":0,"type":"audio"}]}' : 'audio', 

@@ -18,3 +18,6 @@ raspberry pi modules
 
 ## weather 
 - scan BOM site (weatherzone) for current / forecasted weather 
+
+## sunrise 
+- sunrise / sunset times 

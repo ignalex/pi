@@ -6,7 +6,7 @@ Created on Fri Apr 25 12:42:08 2014
 @author: ignalex
 """
 import urllib2
-from modules.common import CONFIGURATION
+from common import CONFIGURATION
 #DONE: address hardcoding
 #TODO: PY3 
 

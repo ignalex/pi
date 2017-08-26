@@ -13,6 +13,7 @@ from time import sleep
 from datetime import datetime, timedelta
 from subprocess import Popen, PIPE
 
+from common import CONFIGURATION
 #TODO: config MAC to outside func
 
 def PingIPhoneOnce(source = 'BT', log = True): 
@@ -39,7 +40,7 @@ def PingWF(IP = '155'):
     except: 
         return [False,None]
 
-def PingBT(MAC="70:F0:87:D0:D7:73"): 
+def PingBT(MAC=CONFIGURATION.BT): 
     # optionally : "sudo bluez-simple-agent hci0 E4:25:E7:E4:E6:E5" # CC:29:F5:93:7F:8D - new iPhone 6
     # 70:F0:87:D0:D7:73       SOMEONE’s iPhone 7 
     # "sudo", - FOR RASPBIAN 

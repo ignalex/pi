@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 test bliking simple 
-
+call: 
+  python blink.py x y z n 
+    where x - pin (18)
+    y - N cycles (3)
+    z - N cycles inside  (3)
+    n - delay (0.3)
 Created on Tue Apr 08 12:06:44 2014
-
 @author: aignatov
-v1. - triggers basic 
-v2. - no start 
 """
 import sys
 from time import sleep 

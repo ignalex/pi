@@ -1,3 +1,7 @@
+"""
+temperature sensor set up - read https://core-electronics.com.au/tutorials/temperature-sensing-with-raspberry_pi.html
+"""
+
 from __future__ import print_function
 
 import os#, subprocess
@@ -5,13 +9,8 @@ import __main__ as m
 import datetime 
 from time import sleep 
 
-def Temp(test = False): 
-    # ---------------
-    #    TESTING 
-    #----------------    
-    if test == True: 
-        return str(round(datetime.datetime.now().second * float(20)/60,2))
-    
+def Temp():    
+    "get temp from w1" 
     IDs = ['28-000005e77734','28-000005e73eb5']
     
     try:     
@@ -26,6 +25,7 @@ def Temp(test = False):
     except: 
         return False
 
+#%% DEPRICATED  
 def TempHumidAda(PiPin):
     output = os.popen('sudo ~/PYTHON/Adafruit-Raspberry-Pi-Python-Code/Adafruit_DHT_Driver/Adafruit_DHT 11 '+str(PiPin)).read()
     return output 

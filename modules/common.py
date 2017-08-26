@@ -7,9 +7,9 @@ Created on Sun Aug 27 07:02:30 2017
 @author: Alexander Ignatov
 """
 from __future__ import print_function
-import os
+import os, sys 
 
-class GROUPED_PARAMS(object): 
+class CONFIGURATION(object): 
     def __init__(self,ini_files=[]):
         ini_files = ['config'] + ini_files #adding config default 
         self.data_path = [i for i in ['/home/pi/git/pi/data',os.getcwd()] if os.path.exists(i) == True][0] 
@@ -30,10 +30,10 @@ class GROUPED_PARAMS(object):
         INI_file = [i for i in INI_file if i[0] != '#'] 
         param = {}
         try: 
-            for ini in INI_file.replace(' := ',' = '): 
-              param[ini.split()[0]] = ini.split(' = ')[1].split('#')[0]
+            for ini in INI_file: 
+              param[ini.replace(' := ',' = ').split()[0]] = ini.replace(' := ',' = ').split(' = ')[1].split('#')[0]
         except: 
-            print ('error parsing')
+            print ('error parsing\n' + str(sys.exc_info()))
         return param
     def DictParams(self,p): 
         if p.find('|') == -1: 

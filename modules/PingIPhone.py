@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-theoretically for pinging bluetooth and wifi devices, but wifi not stable
+after pairing PI with phone's BT, PI will ping it every ... for getting answer 'am I home?' used to turn on / off things
+* pinging logic: several cycles allowed with False before return False (lost connection for short time etc.)
+
+
+**theoretically for pinging bluetooth and wifi devices, but wifi not stable
+
 """
 from __future__ import print_function
-
 import sys, os, socket
 from time import sleep 
 from datetime import datetime, timedelta
 from subprocess import Popen, PIPE
 
-#TODO: get log filder func into shell 
-def Log(result): 
-    log = os.path.join([i for i in ['/home/pi/LOG','/home/pi/PYTHON/GPIO/LOG'] if os.path.exists(i)][0],'log_ping_iPhone.txt')
-    print (str(datetime.now()).split('.')[0] + '\t' + str(result), file = open(log,'a'))  
+#TODO: config MAC to outside func
 
 def PingIPhoneOnce(source = 'BT', log = True): 
     if source == 'BT': 
@@ -39,7 +40,6 @@ def PingWF(IP = '155'):
         return [False,None]
 
 def PingBT(MAC="70:F0:87:D0:D7:73"): 
-    # CANT BE USED DIRECTLY >>> BT MODULE IS AT HORNET  
     # optionally : "sudo bluez-simple-agent hci0 E4:25:E7:E4:E6:E5" # CC:29:F5:93:7F:8D - new iPhone 6
     # 70:F0:87:D0:D7:73       SOMEONE’s iPhone 7 
     # "sudo", - FOR RASPBIAN 
@@ -65,6 +65,10 @@ def PingBT(MAC="70:F0:87:D0:D7:73"):
     else: 
         return [False,None]
 
+#TODO: get log filder func into shell 
+def Log(result): 
+    log = os.path.join([i for i in ['/home/pi/LOG','/home/pi/PYTHON/GPIO/LOG'] if os.path.exists(i)][0],'log_ping_iPhone.txt')
+    print (str(datetime.now()).split('.')[0] + '\t' + str(result), file = open(log,'a'))  
 
 def PingIPhone(N=4,S=5): # was 1, 0 
     " N times to ping, S - sleep" 

@@ -24,3 +24,6 @@ raspberry pi modules
 
 ### speak over ssh 
 - send speaking command to another PI with speaker 
+
+### pingIphone 
+- ping phone by bluetooth > "am I home?" logic. 

@@ -1,5 +1,11 @@
 #!/usr/bin/python
 """
+for sydney for today returns 
+
+[sunrise,sunset,window_light,total_dark,sun_has_gone]
+* window_light is my specific parameter, just disregard it ... 
+* using table in 'data' folder 
+
 Created on Wed Apr 30 15:43:41 2014
 
 @author: aignatov

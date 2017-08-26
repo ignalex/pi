@@ -28,9 +28,10 @@ raspberry pi modules for home automation
 - **location tracking** > track iPhone location and measure distance to home to ON/OFF things  >> __to be migrated__ 
 - **ISS** > track ISS (International Space Station) location and distance to home and speak when close  >> __to be migrated__ 
 - **ant** > communicate to another PI using SSH >> __to be migrated__ 
-- **camera** > using camera vid / pic (used in ALARM for email pic if there is moovement and I am not at home)
-- **wol** > Wake On LAN > send magic packet to another PC to wake up 
-- **sunrise/sunset** > times ** to be changed to pvlib integration?? 
+- **camera** > using camera vid / pic (used in ALARM for email pic if there is moovement and I am not at home)  >> __to be migrated__ 
+- **wol** > Wake On LAN > send magic packet to another PC to wake up  >> __to be migrated__ 
+- **sunrise/sunset** > times ** to be changed to pvlib integration??  >> __to be migrated__ 
+- **play** music control (via KODI http API) >> __to be migrated__ 
 
 
 *** __more to come ;)__

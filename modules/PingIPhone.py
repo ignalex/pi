@@ -154,7 +154,7 @@ def AcquireResult(allowed_delay_min = 5):
     if ((datetime.now() + timedelta(seconds = 120)) - datetime.strptime(stdout.split('\t')[0],'%Y-%m-%d %H:%M:%S')).seconds < allowed_delay_min * 60 + 120 : 
         return stdout.replace('\n','').split('\t')[-1] == 'True'
     else: 
-        print (datetime.now() - datetime.strptime(stdout.split('\t')[0],'%Y-%m-%d %H:%M:%S')).seconds
+        print ((datetime.now() - datetime.strptime(stdout.split('\t')[0],'%Y-%m-%d %H:%M:%S')).seconds)
         return None
 #%%
 def MonitorForNMin(minutes): 

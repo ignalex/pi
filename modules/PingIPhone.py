@@ -140,7 +140,7 @@ def PingHornet():
         return [False,None]
 
 
-def AcquireResultBySSh(allowed_delay_min = 5): 
+def AcquireResult(allowed_delay_min = 5): 
     """using SSH, returns 1 / 0 / None if iphone is around (not directly pinging > only reading last logs) 
     if more time passed than allowed_delay_min since last ping > returns None *too old log
     ** to be run from another device with SSH / RSA keys on it"""

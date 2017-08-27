@@ -7,7 +7,8 @@ Created on Sun Aug 27 07:02:30 2017
 @author: Alexander Ignatov
 """
 from __future__ import print_function
-import os, sys, logging, argparse
+import os, sys, logging, argparse, traceback, datetime
+import __main__ as m 
 
 class CONFIGURATION(object): 
     def __init__(self,ini_files=[]):
@@ -124,3 +125,28 @@ def LOGGER(filename = r'log_filename.txt', level = 'INFO', verbose = False) :
     logger.setLevel(loglevel) #getattr(logging, level))
     logger.propagate = False
     return logger          
+  
+def MainException(): 
+    "logger must be created in the main module with the name 'log'" 
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    m.log('\n------------------')
+    try: 
+        m.log(sys.argv[0].split('\\')[-1] + ' ['+ m.__doc__.split('\n')[-2].split(' ')[0] + ']')
+    except: 
+        pass 
+    m.log('ERROR REPORTED:'  )   
+    m.log('TYPE: '+str(exc_type)+ ' : ' )
+    m.log("MESSAGE: "+ str(exc_value) )   
+    m.log("TRACEBACK:")  
+
+    for frame in traceback.extract_tb(sys.exc_info()[2]):
+        fname,lineno,fn,text = frame
+        m.log( "in line " + str(lineno) + " :  " + text)
+
+def PID(onoff = '+' ,message = ''):
+    """logging the system PID into HOME directory"""
+    # need to handle different HOME dir for root and pi user... 
+    path = [i for i in ['/home/pi',os.getcwd()] if os.path.exists(i)][0]
+    print ( '\t'.join( [str(datetime.datetime.now()).split('.')[0], str(os.getpid()), onoff,'\t'.join(sys.argv), message]), 
+           file = open(os.path.join(path, 'pid.log'),'a'))
+  

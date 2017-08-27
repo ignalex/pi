@@ -10,6 +10,7 @@ from __future__ import print_function
 import os, sys, logging, argparse, traceback, datetime
 import __main__ as m 
 
+#TODO: hvae 2 configs > 1 in data, 1 in git (for specific params)
 class CONFIGURATION(object): 
     "read config file located in DATA dir, parsing and returning object with attribs" 
     def __init__(self,ini_files=[]):

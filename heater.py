@@ -110,7 +110,7 @@ if __name__ == '__main__':
     else: 
         speak = False # default     
     logger.info('\n\n' + str(temp) + ' time: ' + str(armed_time) + '\tping: ' + str(check_ping) + '\tspeak:' + str(speak))
-    if speak and datetime.datetime.now().hour >= 6 : Speak('starting monitoring tempearture inside') #Phrase({'TYPE' : 'HEATER_START', 'T1' : str(int(temp['min'])), 'T2' : str(int(temp['max'])), 'HH' : str(int(armed_time))}) 
+    if speak and datetime.datetime.now().hour >= 6 : Speak('starting monitoring temperature inside') #Phrase({'TYPE' : 'HEATER_START', 'T1' : str(int(temp['min'])), 'T2' : str(int(temp['max'])), 'HH' : str(int(armed_time))}) 
     with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
         try: 
             Start(temp,armed_time,check_ping)

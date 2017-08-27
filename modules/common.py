@@ -11,6 +11,7 @@ import os, sys, logging, argparse, traceback, datetime
 import __main__ as m 
 
 class CONFIGURATION(object): 
+    "read config file located in DATA dir, parsing and returning object with attribs" 
     def __init__(self,ini_files=[]):
         ini_files = ['config'] + ini_files #adding config default 
         self.data_path = [i for i in ['/home/pi/git/pi/data',os.getcwd()] if os.path.exists(i) == True][0] 
@@ -61,6 +62,7 @@ class CONFIGURATION(object):
             return left_of_pair
           
 class OBJECT (object): 
+    "basic empty object" 
     def __init__(self): 
         pass 
 
@@ -129,7 +131,7 @@ def LOGGER(filename = r'log_filename.txt', level = 'INFO', verbose = False) :
 def MainException(): 
     "logger must be created in the main module with the name 'log'" 
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    m.log('\n------------------')
+    m.log('\n------------------') #FIXME: use lg, log or logger
     try: 
         m.log(sys.argv[0].split('\\')[-1] + ' ['+ m.__doc__.split('\n')[-2].split(' ')[0] + ']')
     except: 

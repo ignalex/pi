@@ -5,8 +5,11 @@ keeping temperature inside within range x ... y deg.
 * temp scanned from GPIO 
 * on/pff command sent to remote power outlet using 433MHz - using esp module 
 
-Created on Mon Jun 01 21:18:58 2015
+syntax: 
+  python heater.py 19 20 1 1 1 
+  params :[min max time_armed {ping_iphone = 1 / 0}, {speak 0 / 1}]
 
+Created on Mon Jun 01 21:18:58 2015
 @author: ignalex
 """
 
@@ -16,7 +19,7 @@ from time import sleep
 from modules.common import   MainException, LOGGER
 from modules.PingIPhone import AcquireResult
 import daemon
-from modules.speak_over_ssh import  Speak 
+from modules.speak_over_ssh import  Speak # alternatively can import speak from talk and use the same PI
 from modules.control_esp import ESP 
         
 
@@ -45,16 +48,12 @@ class ONOFF(object):
         self.status = 'off'
     def OnOff(self,com): 
         if com != self.status: # changed 
-#            os.system('sudo ssh -i /home/pi/.ssh/id_rsa root@192.168.1.151 nohup python /storage/PYTHON/GPIO/modules/ard.py 2'+com+' &') 
-#            os.system('sudo python /home/pi/PYTHON/GPIO/modules/ard.py 2'+com) 
-            ESP(['6','rf433','heater',str(com)])
-          
+            ESP(['6','rf433','heater',str(com)])          
             logger.info ( ' > ' + com)
             self.status = com 
             if speak and datetime.datetime.now().hour >= 6: 
                 Speak("heater " + ['ON' if self.status == 'on' else 'OFF'] )
 #                Phrase({'TYPE' : 'HEATER_' + ['ON' if self.status == 'on' else 'OFF'][0]})
-                #os.system('sudo python /home/pi/PYTHON/GPIO/modules/talk.py "heater '+['on' if self.status == '+' else 'off'][0]+'"')
 
 def TranslateForHornet(agr): 
     Start(temp = {'min' : 20, 'max' : 21} ,armed_time = 1,check_ping = 0, speak = True )
@@ -67,17 +66,12 @@ def Start(temp, armed_time, check_ping):
     logger.debug('starting cycle')
     while t.CheckTimeToStop(): 
         ping = [AcquireResult() if check_ping else True][0]
-#        if check_ping :
-#            ping = AcquireResultBySSh()
-#        else: 
-#            ping = True # if don't specified to check, then check is not to be made 
         w.TempIn()
         if speak and s.Check(w.temp_in): Speak('temperature reached {} degrees'.format(str(int(w.temp_in)))) #Phrase({'TYPE' : 'HEATER_TEMP', 'TMP' : str(int(w.temp_in))})
         logger.info(str(w.temp_in) + str(['\t ping phone: ' + str(ping) if check_ping else ''][0])) 
         if w.temp_in <= temp['min'] and ping: # temp less lower lever and PING 
             o.OnOff('on')
         elif  ping == False: # lost contact 
-#        elif  w.temp_in <= temp['min'] and ping == False: # lost contact 
             o.OnOff('off')            
         elif w.temp_in >= temp['max']: # turning off no matter if phone pinged 
             o.OnOff('off')
@@ -95,7 +89,6 @@ if __name__ == '__main__':
     
     logger = LOGGER('HEATER','INFO', True)
     log = logger.info
-    #self_path = loging.self_path
     
     if len(args)> 2: 
         armed_time = args[2]

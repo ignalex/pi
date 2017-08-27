@@ -8,7 +8,7 @@ Created on Sat Aug 26 17:32:42 2017
 @author: Alexander Ignatov
 """
 import os, random, datetime
-from modules.common import CONFIGURATION
+from common import CONFIGURATION
 
 def Speak(text, device = 'octopus' ): 
     'simple speaking function integration to use gTTS on another PI' 

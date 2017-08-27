@@ -18,14 +18,14 @@ raspberry pi modules for home automation
 - **wol** > Wake On LAN > send magic packet to another PC to wake up 
 - **sunrise/sunset** > times ** to be changed to pvlib integration?? 
 - **play** music control (via KODI http API)
+- **heater** control  
+- **ESP integration** > for using wifi remoted [ESP](https://github.com/ignalex/esp)  
 
 - **light** control  (via http API talking to ESP)   >> __to be migrated__ 
-- **heater** control    >> __to be migrated__ 
 - **IR receiver**       >> __to be migrated__ 
   * integration to play music 
   * light ON/OFF from using IR remote
   * blinds ON/OF (using http API to ESP)
-- **ESP integration** > for using wifi remoted [ESP](https://github.com/ignalex/esp)    >> __to be migrated__ 
 - **movement sensor**   >> __to be migrated__ 
 - **internet speed** > ping and speed test every ... min and having results on web     >> __to be migrated__ 
 - **location tracking** > track iPhone location and measure distance to home to ON/OFF things  >> __to be migrated__ 

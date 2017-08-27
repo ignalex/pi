@@ -10,8 +10,9 @@ raspberry pi modules
 ### relay 
 - control GPIO relays 
 
-### talk 
+### talk / speak_over_ssh
 - talking using Google gTTs API 
+- using another PI to speak > sending ssh command to speak
 
 ### temperature 
 - scan tempearture sensor (GPIO)
@@ -27,3 +28,12 @@ raspberry pi modules
 
 ### pingIphone 
 - ping phone by bluetooth > "am I home?" logic. 
+
+### wol 
+- wake on lan - send magic packet to PC
+
+### control_esp
+- control range of esp devices (operated by Arduino or micropython)
+
+### common 
+- commonly used functions > logging, exception handling etc. 

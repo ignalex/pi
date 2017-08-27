@@ -7,7 +7,7 @@ Created on Sun Aug 27 07:02:30 2017
 @author: Alexander Ignatov
 """
 from __future__ import print_function
-import os, sys 
+import os, sys, logging, argparse
 
 class CONFIGURATION(object): 
     def __init__(self,ini_files=[]):
@@ -78,3 +78,49 @@ def TryToInt(a):
             return float(a)
         except: 
             return a   
+
+def arg_parser(): 
+    "parsing command line args" 
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-d', '--debug',
+        help="Print lots of debugging statements",
+        action="store_const", dest="loglevel", const=logging.DEBUG,)
+       # default=logging.WARNING,)
+    parser.add_argument(
+        '-v', '--verbose',
+        help="Be verbose",
+        action="store_const", dest="loglevel", const=logging.INFO,)
+    args, unknown = parser.parse_known_args()    
+    return args 
+          
+def LOGGER(filename = r'log_filename.txt', level = 'INFO', verbose = False) :
+    """generic logger class. Can handle different (changed) levels of verbosity (DEBUG, ERROR, INFO etc)
+    IN: filename, level (from logging levels), verbose {True / False} - to catch info of where log printed from 
+    OUT logger object"""
+    # for iPython 
+    logging.addLevelName(25,'LOG') # more than INFO, less than WARNING 
+    logger = logging.getLogger()
+    while len(logger.handlers): logger.removeHandler(logger.handlers[0])
+    logger = logging.getLogger()
+
+    if verbose: 
+        formatter = logging.Formatter('%(asctime)s - %(module)s - %(funcName)s -  %(levelname)s - %(message)s',datefmt='%m-%d-%Y %I:%M:%S %p' )
+    else: 
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s',datefmt='%m-%d-%Y %I:%M:%S %p' )
+    
+    #TODO: log folder 
+    #TODO: DB logging 
+    log_file =  ([os.path.join(i,filename) for i in ['/home/pi/LOG','C:\_LOG'] if os.path.exists(i)] + [filename] )[0]
+    fh = logging.FileHandler(log_file)
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)    
+    logger.addHandler(ch)
+
+    loglevel = [i for i in  [arg_parser().loglevel, level] if not i is None][0] # command line arg overrides what is in the script
+    logger.setLevel(loglevel) #getattr(logging, level))
+    logger.propagate = False
+    return logger          

@@ -14,6 +14,7 @@ v6 - one event can be programmed + re-erite code
 v7 - bluetooth scanning 
 v9 - migrated to git 
 """    
+import __main__ as m 
 
 class ARGUMENTS(object): 
     def __init__(self): 
@@ -80,7 +81,7 @@ class TIMING (object):
             return True 
         else: 
             return False
-        
+      
 try: 
     ################################# IMPORT ######################################
     # IMPORTING INITIAL MODULES 
@@ -88,13 +89,12 @@ try:
     from time import sleep 
 #    from os.path import join 
     from threading import Thread 
-    from modules.SHELL import  LOGGER, PID, iniFile, MainException
+    from modules.common import  LOGGER, PID, CONFIGURATION, MainException
     logger = LOGGER('MS', level = 'INFO') 
     log = logger.info
 #    loging = logger # compatibility 
     PID()
     
-    sys.path.append('/home/pi/PYTHON/GPIO/modules/') # for OpenElec
     sys.path.append(os.path.dirname(sys.argv[0])) # path to 'modules' subfolder 
     self_path = os.path.dirname(sys.argv[0])       
     if len(sys.argv) < 2 : 
@@ -110,13 +110,12 @@ try:
     
     # IMPORTING SUBMODULES 
     from modules.sunrise import Sun
-    from modules.mod_blink import Blink
 #    from modules.mod_movement_email import mail
-    from modules.mod_play import play
+    from modules.KODI_control import kodi
     from modules.wol import wol
 #    from modules.ard import ard
-    from modules.lamp import lamp    
-    from modules.talk import Phrase
+    from modules.ms_lamp import lamp    #FIXME: move 
+    from modules.speak_over_ssh import Phrase #FIXME: from modules.talk import Phrase
     from modules.pa import pa
     from modules.PingIPhone import PING
     from modules.control_esp import ESP
@@ -139,24 +138,58 @@ try:
     logger.info ('on standby '.upper() + str(control.stb))
     logger.info ('once '.upper() + str(control.once))    
     logger.info ('Fire time: '+ str((timing.fire_time/3600)) + ' hours' )
-#    logger.info ('Standby time: ' + str(int(timing.delay_time/60)) + ' minutes') 
     Phrase({'TYPE' : 'START_MS'})
-    pins = {}
-    for k,v in iniFile(join(self_path,'PINS_ALLOCATION.INI'))['MOVEMENT'].items(): pins[k] = int(v)
+#    for k,v in iniFile(os.path.join(self_path,'PINS_ALLOCATION.INI'))['MOVEMENT'].items(): pins[k] = int(v)
 
     # initial GPIO state
-    RELAY_INIT_STATE = iniFile(os.path.join(self_path,'PINS_ALLOCATION.INI'))['PARAMETERS']['RELAY_INIT_STATE'] #'HIGH' # HIGH or LOW 
+    RELAY_INIT_STATE = 'HIGH' # iniFile(os.path.join(self_path,'PINS_ALLOCATION.INI'))['PARAMETERS']['RELAY_INIT_STATE'] #'HIGH' # HIGH or LOW 
     GPIO_ON = True # compatibility 
-    from modules.GPIO_mod import GPIO_relay_state
-    GPIO_relay_state(RELAY_INIT_STATE)
-    
-    # initiating PINS 
-    for k,v in pins.items(): 
+    GPIO.INIT = GPIO.HIGH
+    GPIO.ON = GPIO.LOW
+    GPIO.OFF = GPIO.HIGH
+
+    pins = {'MOVEMENT_SENSOR' : 22, 'BLINK' : 18}
+    #%% extra modules 
+    def Blink(args = [1,1,0.1]):
+        global pins 
+        channel = pins['BLINK']
+        for b in range(int(args[0])):      
+            for a in range(int(args[1])):
+                GPIO.output(channel, GPIO.HIGH)	
+                sleep(float(args[2]))
+                GPIO.output(channel, GPIO.LOW)
+                sleep(float(args[2]))
+            if int(args[0]) != 1: sleep(0.3)  
+
+    def play(TASK = ['play_current']): 
+        wip = kodi('what_is_playing')
+        m.log('TASK recieved: ' + TASK[0] + ', wip answer: '+ wip)
+        if TASK == ['pause']:
+            if wip == 'audio': 
+                kodi('pause')
+                m.log ('pausing music')
+                m.items.play.status = False
+            elif wip == 'video':
+                m.log ('video is playing. Won\'t stop')
+            elif wip == 'nothing': 
+                m.log ('nothing is playing')
+        else:
+            if wip == 'nothing': 
+                kodi(TASK[0])
+                m.log('starting playing current')
+                m.items.play.status = True
+            elif wip == 'audio':
+                kodi('resume')
+                m.log ('resuming audio')
+                m.items.play.status = True
+            elif wip == 'video':
+                m.log('video is current. won\'t do anything')
+#%%    
+    for k,v in pins.items(): # initiating PINS 
         if k.find('SENSOR') == -1: 
             GPIO.setup(v, GPIO.OUT, initial = GPIO.INIT) 
         else: 
             GPIO.setup(v, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
-
     # ---------------------------------------------------------------- 
     def Event(channel):
         if timing.Proceed(): Movement()

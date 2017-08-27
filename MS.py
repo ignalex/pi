@@ -13,7 +13,9 @@ v5.1. - with relay init status
 v6 - one event can be programmed + re-erite code 
 v7 - bluetooth scanning 
 v9 - migrated to git 
-"""    
+"""   
+from __future__ import print_function
+ 
 import __main__ as m 
 
 class ARGUMENTS(object): 

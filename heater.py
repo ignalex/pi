@@ -13,7 +13,7 @@ Created on Mon Jun 01 21:18:58 2015
 import sys, datetime 
 from modules.weather import WEATHER as WEATHER_class
 from time import sleep 
-from modules.SHELL import   MainException, LOGGER
+from modules.common import   MainException, LOGGER
 from modules.PingIPhone import AcquireResult
 import daemon
 from modules.speak_over_ssh import  Speak 

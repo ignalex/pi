@@ -4,6 +4,10 @@ raspberry pi modules for home automation
 ##  projects 
 - **MS** > 'manage services' > to turn things ON/OFF based on the conditions >> __to be migrated__
 - **PA** > 'personal assistant' > using iCalendar and other mods to trigger functions  >> __to be migrated__ 
+- **WATERING** > using 2 (or more / or less) independent systems, open / close valves and trigger motor to start watetring plants
+    * using BOM forecast for temperature / rain to tailor the amount of water
+- **HEATER** control > keeping temperature inside within defined range
+    * used temperature sensor (GPIO), esp/rf433 api to wireless power outlet to remote control ON/OFF
 
 ## functionality
 - **relay** > control relay via GPIO 
@@ -11,22 +15,27 @@ raspberry pi modules for home automation
 - **weather** > 
   * current temperature inside 
   * current and forecast for specified point 
-- **LCD** > deliver info on Ardiuino's LCD screen 
-- **talk** > speaking using gTTs API (incl sending speaking command to another PI)
+- **LCD** > deliver info on Ardiuino's LCD screen
+    * weather now and forecast, temperature inside, next ferry, time. 
+- **talk** > speaking using gTTs API 
+    * incl sending speaking command to another PI
 - **ferry** timetable > next ferry is in ... min 
 - **ping iPhone bluetooth** > to know if you are home or not and turn ON/OFF things 
 - **wol** > Wake On LAN > send magic packet to another PC to wake up 
 - **sunrise/sunset** > times ** to be changed to pvlib integration?? 
 - **play** music control (via KODI http API)
-- **heater** control  
 - **ESP integration** > for using wifi remoted [ESP](https://github.com/ignalex/esp)  
+- **send email** > smtp email integration 
+    * send IP > send your IP (to be scheduled in crontab)
+- **movement sensor** > integration to MS.
+    * depends on time of the day, __on movement__ > turn on/off lights, blinds up/down, **start boiling cooffee :)** 
+
 
 - **light** control  (via http API talking to ESP)   >> __to be migrated__ 
 - **IR receiver**       >> __to be migrated__ 
   * integration to play music 
   * light ON/OFF from using IR remote
   * blinds ON/OF (using http API to ESP)
-- **movement sensor**   >> __to be migrated__ 
 - **internet speed** > ping and speed test every ... min and having results on web     >> __to be migrated__ 
 - **location tracking** > track iPhone location and measure distance to home to ON/OFF things  >> __to be migrated__ 
 - **ISS** > track ISS (International Space Station) location and distance to home and speak when close  >> __to be migrated__ 

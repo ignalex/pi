@@ -43,7 +43,7 @@ def MyIP():
 
 if __name__ == '__main__': 
     import sys 
-    sys.path.append('/home/pi/git/pi/')
+    sys.path.append('/home/pi/git/pi/') #for crontab 
     from modules.common import CONFIGURATION, LOGGER
     p = CONFIGURATION()
     if len(sys.argv)> 1: 

@@ -68,7 +68,7 @@ def PingBT(MAC=CONFIGURATION().BT):
 
 #TODO: get log filder func into shell 
 def Log(result): 
-    log = os.path.join(Dirs['LOG'],'log_ping_iPhone.txt')
+    log = os.path.join(Dirs()['LOG'],'log_ping_iPhone.txt')
     print (str(datetime.now()).split('.')[0] + '\t' + str(result), file = open(log,'a'))  
 
 def PingIPhone(N=4,S=5): # was 1, 0 

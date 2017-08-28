@@ -121,7 +121,7 @@ def LOGGER(filename = r'log_filename.txt', level = 'INFO', verbose = False) :
     
     #TODO: log folder 
     #TODO: DB logging 
-    log_file =  os.path.join(Dirs['LOG'], filename)
+    log_file =  os.path.join(Dirs()['LOG'], filename)
     fh = logging.FileHandler(log_file)
     fh.setFormatter(formatter)
     logger.addHandler(fh)
@@ -154,5 +154,5 @@ def PID(onoff = '+' ,message = ''):
     """logging the system PID into HOME directory"""
     # need to handle different HOME dir for root and pi user... 
     print ( '\t'.join( [str(datetime.datetime.now()).split('.')[0], str(os.getpid()), onoff,'\t'.join(sys.argv), message]), 
-           file = open(os.path.join(Dirs['LOG'], 'pid.log'),'a'))
+           file = open(os.path.join(Dirs()['LOG'], 'pid.log'),'a'))
 

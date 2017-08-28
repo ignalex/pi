@@ -10,7 +10,7 @@ from common import Dirs
 
 def NextFerry(): 
     "reyturns the time of the next ferry. timetable lives in 'data' directory"
-    data = Dirs['DATA']
+    data = Dirs()['DATA']
     DAY = ['' if datetime.datetime.today().weekday()<5 else ['_SAT' if datetime.datetime.today().weekday() else '_SUN' ][0]][0]
     timetable = open(os.path.join(data,'ferry'+DAY+'.txt'),'r').read().split('\n')
     lst = []

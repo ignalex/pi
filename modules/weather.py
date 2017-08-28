@@ -34,7 +34,7 @@ if os.name == 'posix':  from temperature import Temp
 class WEATHER(object): 
     def __init__(self,TempIn = True): 
         self.link = p.WEATHER_LINK
-        self.Log = os.path.join(Dirs['LOG'],'sensors.log')
+        self.Log = os.path.join(Dirs()['LOG'],'sensors.log')
         self.call = {'rain' : ["<b>Rain:</b> ","mm since"],
                      'temp_out' : ["<b>Temperature:</b> ","&#"], 
                      'humidity' : ["<b>Relative humidity:</b> ","%<br"],

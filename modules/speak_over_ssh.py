@@ -32,7 +32,7 @@ def Phrase(about):
 
     def PhraseDict():
         try: 
-            INI_file = open(os.path.join(Dirs['DATA'],'phrases.ini'),'r').read().splitlines() #TODO: fix path
+            INI_file = open(os.path.join(Dirs()['DATA'],'phrases.ini'),'r').read().splitlines() #TODO: fix path
         except: 
             print ("can't open phrases ini file")
             return False

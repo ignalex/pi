@@ -14,7 +14,7 @@ from common import Dirs
 
 class LockArd(object):
     def __init__(self, ID = 'py'):
-        self.locking_file = os.path.join(Dirs['LOG'], ID +'.lck')
+        self.locking_file = os.path.join(Dirs()['LOG'], ID +'.lck')
         self.force_sec = 15
         self.ID = ID
         self.locked_by = ''

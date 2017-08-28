@@ -223,7 +223,6 @@ def Movement_by_category(category = 'move', mod_stat = False):
     
     
 def iPhone_connection_lost():
-    logger.debug( 'no movement for ' + str(int(timing.delay_time)) + ' sec: ,') 
     Movement_by_category(category = 'stb', mod_stat = True)
     items.GLOBAL.status = False
     timing.no_movement_trigger = False

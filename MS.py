@@ -15,9 +15,9 @@ v7 - bluetooth scanning
 v9 - migrated to git 
 """   
 from __future__ import print_function
- 
 import __main__ as m 
 
+#%% initial 
 class ARGUMENTS(object): 
     def __init__(self): 
         self.raw = ' '.join(sys.argv[2:])
@@ -61,15 +61,11 @@ class TIMING (object):
         self.count_move = 0 
     def Move(self): 
         self.last_reading = datetime.datetime.now()
-#        ThreadedEvent('Blink 1 1 0.3')
         Blink()
-#        stat()
         self.count_move +=1
         self.no_movement_trigger = True 
     def GlobalStop(self): # returns True if to proceed 
         return self.start_time + datetime.timedelta(seconds = self.fire_time) > datetime.datetime.now()
-#    def NoMovement(self): # return True when NO MOVEMENT and needed action 
-#        return self.last_reading + datetime.timedelta(seconds = self.delay_time) <=  datetime.datetime.now()
     def TwilightSwitcher(self,twilight): # return moment to turn OFF / OM the lights (1 min only)
         n = {'morning':0,'evening':1 , 'windows_light' : 2,'total_dark' : 3}[twilight]
         return datetime.datetime.now().hour == self.twilight[n].hour and datetime.datetime.now().minute == self.twilight[n].minute
@@ -83,9 +79,7 @@ class TIMING (object):
             return True 
         else: 
             return False
-      
 try: 
-    ################################# IMPORT ######################################
     # IMPORTING INITIAL MODULES 
     import sys, os, datetime
     from time import sleep 
@@ -96,6 +90,7 @@ try:
     log = logger.info
 #    loging = logger # compatibility 
     PID()
+    p = CONFIGURATION()
     
     sys.path.append(os.path.dirname(sys.argv[0])) # path to 'modules' subfolder 
     self_path = os.path.dirname(sys.argv[0])       
@@ -116,7 +111,7 @@ try:
     from modules.KODI_control import kodi
     from modules.wol import wol
 #    from modules.ard import ard
-    from modules.ms_lamp import lamp    #FIXME: move 
+#    from modules.ms_lamp import lamp    
     from modules.speak_over_ssh import Phrase #FIXME: from modules.talk import Phrase
     from modules.pa import pa
     from modules.PingIPhone import PING
@@ -131,9 +126,7 @@ try:
     for mods in ['GLOBAL','lamp','play','ant']: 
         items.Child(mods,False)
     items.Available()
-    
-    blinds = True # different logic 
-    blinds_on = True  # let them both be true :) 
+
     logger.info ('started ' + ' '.join(sys.argv) )
     logger.info ('on alarm '.upper() + str(control.alarm))
     logger.info ('on move '.upper() + str(control.move))
@@ -141,17 +134,17 @@ try:
     logger.info ('once '.upper() + str(control.once))    
     logger.info ('Fire time: '+ str((timing.fire_time/3600)) + ' hours' )
     Phrase({'TYPE' : 'START_MS'})
-#    for k,v in iniFile(os.path.join(self_path,'PINS_ALLOCATION.INI'))['MOVEMENT'].items(): pins[k] = int(v)
 
     # initial GPIO state
-    RELAY_INIT_STATE = 'HIGH' # iniFile(os.path.join(self_path,'PINS_ALLOCATION.INI'))['PARAMETERS']['RELAY_INIT_STATE'] #'HIGH' # HIGH or LOW 
     GPIO_ON = True # compatibility 
     GPIO.INIT = GPIO.HIGH
     GPIO.ON = GPIO.LOW
     GPIO.OFF = GPIO.HIGH
 
-    pins = {'MOVEMENT_SENSOR' : 22, 'BLINK' : 18}
+    pins = {'MOVEMENT_SENSOR' : 22, 'BLINK' : 18} #TODO: to config 
+    
     #%% extra modules 
+    #TODO: generalise and get them out from MS to modules 
     def Blink(args = [1,1,0.1]):
         global pins 
         channel = pins['BLINK']
@@ -186,6 +179,36 @@ try:
                 m.items.play.status = True
             elif wip == 'video':
                 m.log('video is current. won\'t do anything')
+
+    def lamp(TASK): 
+        "to be used only from inside MS"
+        "dependencies: esp, log, sunrise"
+        if TASK == []: 
+            m.log('Lamp module: Not enough argument')
+    
+        twilight = m.Sun(datetime.date.today())
+        now = datetime.datetime.now()    
+    
+        if TASK == ['ON'] and (now <= twilight[0] or now >= twilight[1]): # turm ON only if dark  
+            # lamp ON 
+            m.items.lamp.status = True
+            m.log( 'lamp ON')
+            try: 
+                m.ESP(['6','rf433','light','on'])
+                m.log('lamps are ON')
+            except: 
+                pass 
+        elif TASK == ['ON'] and (now > twilight[0] and now < twilight[1]):
+            m.log('day time. Lamp is not turned ON') 
+        elif TASK == ['OFF']: # turn OFF at any time 
+            # lamp off 
+            m.items.lamp.status = False
+            m.log( 'lamp OFF') 
+            try: 
+                m.ESP(['6','rf433','light','off'])
+                m.log('lamps are OFF')
+            except: 
+                pass                     
 #%%    
     for k,v in pins.items(): # initiating PINS 
         if k.find('SENSOR') == -1: 
@@ -211,7 +234,6 @@ try:
         except: 
             globals()[module]()
     
-    ##
     def Movement():     
         # for keys within 'm:' section (when iPohne is around)
         if iPhone.Status(): # movement module 
@@ -254,7 +276,7 @@ try:
 
     GPIO.add_event_detect(pins['MOVEMENT_SENSOR'], GPIO.RISING, callback=Event, bouncetime=1500) # GPIO.RISING, GPIO.FALLING or GPIO.BOTH.
 
-    # --------------------------------- MAIN LOOP ------------------------------------------------
+    #%% --------------------------------- MAIN LOOP ------------------------------------------------
     while timing.GlobalStop(): 
         iPhone.Ping()
         if iPhone.changed != None: 
@@ -279,19 +301,6 @@ try:
                 lamp(['ON'])
                 timing.Move()
                 items.lamp.status = True
-
-				# 		MOVED TO PA-service            
-#        # open when morning > opened on move 
-#        if timing.TwilightSwitcher('windows_ligth') and blinds_on:
-#            log('TwilightSwitcher windows_ligth > blinds close')
-#            ESP(['1','123'])
-#            blinds_on = False 
-        # close on dark 
-#        if timing.TwilightSwitcher('total_dark') and blinds:
-#            log('TwilightSwitcher total dark > blinds close')
-#            ESP(['0','123'])
-#            blinds = False 
-
         sleep(iPhone.Pause([5,45]))  #was 5 - 30 
     
     if ('play' in control.move.keys() or 'play' in control.stb.keys()) and items.play.status: play(['pause'])

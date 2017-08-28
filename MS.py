@@ -17,7 +17,26 @@ v9 - migrated to git
 from __future__ import print_function
 import __main__ as m 
 
-#%% initial 
+import sys, datetime
+from time import sleep 
+from threading import Thread 
+from modules.common import  LOGGER, PID, CONFIGURATION, MainException
+#sys.path.append(os.path.dirname(sys.argv[0])) # path to 'modules' subfolder 
+
+from modules.sunrise import Sun
+#    from modules.mod_movement_email import mail #TODO: email mod and phrase  
+from modules.KODI_control import kodi
+from modules.wol import wol
+from modules.speak_over_ssh import Phrase #FIXME: from modules.talk import Phrase
+from modules.pa import pa
+from modules.PingIPhone import PING
+from modules.control_esp import ESP
+
+logger = LOGGER('MS', level = 'INFO') 
+p = CONFIGURATION() #pins
+        
+
+#%% def 
 class ARGUMENTS(object): 
     def __init__(self): 
         self.raw = ' '.join(sys.argv[2:])
@@ -54,7 +73,6 @@ class TIMING (object):
         self.start_time = datetime.datetime.now()
         self.last_reading = self.start_time
         self.fire_time = float(sys.argv[1].replace('h','')) * 3600 - 120 # 1 min less - to avoid overlapping the cycles 
-#        self.delay_time = float(sys.argv[2].replace('m','')) * 60
         self.twilight = Sun(datetime.date.today())
         self.no_movement_trigger = False 
         self.exclusion_times =['7.05','23.00','19.05']
@@ -79,215 +97,156 @@ class TIMING (object):
             return True 
         else: 
             return False
-try: 
-    # IMPORTING INITIAL MODULES 
-    import sys, os, datetime
-    from time import sleep 
-#    from os.path import join 
-    from threading import Thread 
-    from modules.common import  LOGGER, PID, CONFIGURATION, MainException
-    logger = LOGGER('MS', level = 'INFO') 
-    log = logger.info
-#    loging = logger # compatibility 
-    PID()
-    p = CONFIGURATION()
-    
-    sys.path.append(os.path.dirname(sys.argv[0])) # path to 'modules' subfolder 
-    self_path = os.path.dirname(sys.argv[0])       
-    if len(sys.argv) < 2 : 
-        logger.info( 'not enough arguments')
-        sys.exit()
-    
-    # IMPORTING GPIO MODULES 
-    import RPi.GPIO as GPIO # if there is error on import not found RPI - need to enable device tree from raspi-config
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setwarnings(False)
-    
-    #TODO: email mod and phrase 
-    
-    # IMPORTING SUBMODULES 
-    from modules.sunrise import Sun
-#    from modules.mod_movement_email import mail
-    from modules.KODI_control import kodi
-    from modules.wol import wol
-#    from modules.ard import ard
-#    from modules.ms_lamp import lamp    
-    from modules.speak_over_ssh import Phrase #FIXME: from modules.talk import Phrase
-    from modules.pa import pa
-    from modules.PingIPhone import PING
-    from modules.control_esp import ESP
-    ###############################################################################
+#%% GPIO 
+import RPi.GPIO as GPIO # if there is error on import not found RPI - need to enable device tree from raspi-config
+GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
+GPIO.INIT = GPIO.HIGH
+GPIO.ON = GPIO.LOW
+GPIO.OFF = GPIO.HIGH    
 
-    control = ARGUMENTS()
-    timing = TIMING() 
-    items = OBJECT()
-    iPhone = PING()
+for k,v in p.pins.__dict__.items(): # initiating PINS 
+    if k.find('SENSOR') == -1: 
+        GPIO.setup(v, GPIO.OUT, initial = GPIO.INIT) 
+    else: 
+        GPIO.setup(v, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 
-    for mods in ['GLOBAL','lamp','play','ant']: 
-        items.Child(mods,False)
-    items.Available()
+#%% extra modules 
+#TODO: generalise and get them out from MS to modules 
+def Blink(args = [1,1,0.1]):
+    for b in range(int(args[0])):      
+        for a in range(int(args[1])):
+            GPIO.output(p.pins.BLINK, GPIO.HIGH)	
+            sleep(float(args[2]))
+            GPIO.output(p.pins.BLINK, GPIO.LOW)
+            sleep(float(args[2]))
+        if int(args[0]) != 1: sleep(0.3)  
 
-    logger.info ('started ' + ' '.join(sys.argv) )
-    logger.info ('on alarm '.upper() + str(control.alarm))
-    logger.info ('on move '.upper() + str(control.move))
-    logger.info ('on standby '.upper() + str(control.stb))
-    logger.info ('once '.upper() + str(control.once))    
-    logger.info ('Fire time: '+ str((timing.fire_time/3600)) + ' hours' )
-    Phrase({'TYPE' : 'START_MS'})
+def play(TASK = ['play_current']): 
+    wip = kodi('what_is_playing')
+    m.logger('TASK recieved: ' + TASK[0] + ', wip answer: '+ wip)
+    if TASK == ['pause']:
+        if wip == 'audio': 
+            kodi('pause')
+            m.logger('pausing music')
+            m.items.play.status = False
+        elif wip == 'video':
+            m.logger('video is playing. Won\'t stop')
+        elif wip == 'nothing': 
+            m.logger('nothing is playing')
+    else:
+        if wip == 'nothing': 
+            kodi(TASK[0])
+            m.logger('starting playing current')
+            m.items.play.status = True
+        elif wip == 'audio':
+            kodi('resume')
+            m.logger('resuming audio')
+            m.items.play.status = True
+        elif wip == 'video':
+            m.logger('video is current. won\'t do anything')
 
-    # initial GPIO state
-    GPIO_ON = True # compatibility 
-    GPIO.INIT = GPIO.HIGH
-    GPIO.ON = GPIO.LOW
-    GPIO.OFF = GPIO.HIGH
+def lamp(TASK): 
+    "to be used only from inside MS"
+    "dependencies: esp, log, sunrise"
+    if TASK == []: 
+        m.logger('Lamp module: Not enough argument')
 
-    pins = {'MOVEMENT_SENSOR' : 22, 'BLINK' : 18} #TODO: to config 
-    
-    #%% extra modules 
-    #TODO: generalise and get them out from MS to modules 
-    def Blink(args = [1,1,0.1]):
-        global pins 
-        channel = pins['BLINK']
-        for b in range(int(args[0])):      
-            for a in range(int(args[1])):
-                GPIO.output(channel, GPIO.HIGH)	
-                sleep(float(args[2]))
-                GPIO.output(channel, GPIO.LOW)
-                sleep(float(args[2]))
-            if int(args[0]) != 1: sleep(0.3)  
+    twilight = m.Sun(datetime.date.today())
+    now = datetime.datetime.now()    
 
-    def play(TASK = ['play_current']): 
-        wip = kodi('what_is_playing')
-        m.log('TASK recieved: ' + TASK[0] + ', wip answer: '+ wip)
-        if TASK == ['pause']:
-            if wip == 'audio': 
-                kodi('pause')
-                m.log ('pausing music')
-                m.items.play.status = False
-            elif wip == 'video':
-                m.log ('video is playing. Won\'t stop')
-            elif wip == 'nothing': 
-                m.log ('nothing is playing')
-        else:
-            if wip == 'nothing': 
-                kodi(TASK[0])
-                m.log('starting playing current')
-                m.items.play.status = True
-            elif wip == 'audio':
-                kodi('resume')
-                m.log ('resuming audio')
-                m.items.play.status = True
-            elif wip == 'video':
-                m.log('video is current. won\'t do anything')
-
-    def lamp(TASK): 
-        "to be used only from inside MS"
-        "dependencies: esp, log, sunrise"
-        if TASK == []: 
-            m.log('Lamp module: Not enough argument')
-    
-        twilight = m.Sun(datetime.date.today())
-        now = datetime.datetime.now()    
-    
-        if TASK == ['ON'] and (now <= twilight[0] or now >= twilight[1]): # turm ON only if dark  
-            # lamp ON 
-            m.items.lamp.status = True
-            m.log( 'lamp ON')
-            try: 
-                m.ESP(['6','rf433','light','on'])
-                m.log('lamps are ON')
-            except: 
-                pass 
-        elif TASK == ['ON'] and (now > twilight[0] and now < twilight[1]):
-            m.log('day time. Lamp is not turned ON') 
-        elif TASK == ['OFF']: # turn OFF at any time 
-            # lamp off 
-            m.items.lamp.status = False
-            m.log( 'lamp OFF') 
-            try: 
-                m.ESP(['6','rf433','light','off'])
-                m.log('lamps are OFF')
-            except: 
-                pass                     
-#%%    
-    for k,v in pins.items(): # initiating PINS 
-        if k.find('SENSOR') == -1: 
-            GPIO.setup(v, GPIO.OUT, initial = GPIO.INIT) 
-        else: 
-            GPIO.setup(v, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
-    # ---------------------------------------------------------------- 
-    def Event(channel):
-        if timing.Proceed(): Movement()
-    
-    def ThreadedEvent (args): # args is module +' ' + param OR module
-        module = args.split(' ')[0]       
-        if args in control.once.keys(): 
-            if control.once[args] == 0: 
-                logger.info(args + ' already had ONE go. skipping.' )
-                return 
-            else: 
-                logger.info('ONLY one time for ' + args)
-                control.once[args] -=1 
+    if TASK == ['ON'] and (now <= twilight[0] or now >= twilight[1]): # turm ON only if dark  
+        # lamp ON 
+        m.items.lamp.status = True
+        m.logger( 'lamp ON')
         try: 
-            arguments = args.split(' ')[1:]
-            globals()[module](arguments)
+            m.ESP(['6','rf433','light','on'])
+            m.logger('lamps are ON')
         except: 
-            globals()[module]()
-    
-    def Movement():     
-        # for keys within 'm:' section (when iPohne is around)
-        if iPhone.Status(): # movement module 
-            Movement_by_category(category = 'move')
-            items.GLOBAL.status = True
-            timing.Move()
-        else: # alarm module 
-            Movement_by_category(category = 'alarm')
-            timing.Move()
+            pass 
+    elif TASK == ['ON'] and (now > twilight[0] and now < twilight[1]):
+        m.logger('day time. Lamp is not turned ON') 
+    elif TASK == ['OFF']: # turn OFF at any time 
+        # lamp off 
+        m.items.lamp.status = False
+        m.logger( 'lamp OFF') 
+        try: 
+            m.ESP(['6','rf433','light','off'])
+            m.logger('lamps are OFF')
+        except: 
+            pass                     
+#%%    
+def Event(channel):
+    if timing.Proceed(): Movement()
 
-    def Movement_by_category(category = 'move', mod_stat = False): 
-        "trigger for 'move' OR 'alarm' or 'stb' "
-        th, to_log = [], []        
-        if 'pass' not in getattr(control, category).keys(): 
-            if category == 'move' and items.GLOBAL.status != False: return # only for move early exit 
-
-            for mod,arg in getattr(control, category).items(): 
-                if mod in items.available: 
-                    if getattr(getattr(items,mod),'status') == mod_stat: 
-                        th.append( Thread(target = ThreadedEvent, args = [' '.join([mod,arg]).rstrip()]))
-                        to_log.append(' '.join([mod,arg])) 
-                    else: 
-                        pass   
-                else: # not in the list of items where status is controlled 
-                    th.append( Thread(target = ThreadedEvent, args = [' '.join([mod,arg]).rstrip()]))
-                    to_log.append(' '.join([mod,arg]))   
-            logger.info(category.upper()+ ':\t' +', '.join(to_log))
+def ThreadedEvent (args): # args is module +' ' + param OR module
+    module = args.split(' ')[0]       
+    if args in control.once.keys(): 
+        if control.once[args] == 0: 
+            logger.info(args + ' already had ONE go. skipping.' )
+            return 
         else: 
-            logger.info('passing')            
-        for t in th: t.start() #starting all 
-        for t in th: t.join()  #finishing all 
-        
-        
-    def iPhone_connection_lost():
-#        logger.info( 'no movement for ' + str(int(timing.delay_time)) + ' sec: ,') 
-        Movement_by_category(category = 'stb', mod_stat = True)
-        items.GLOBAL.status = False
-        timing.no_movement_trigger = False
-        
+            logger.info('ONLY one time for ' + args)
+            control.once[args] -=1 
+    try: 
+        arguments = args.split(' ')[1:]
+        globals()[module](arguments)
+    except: 
+        globals()[module]()
 
-    GPIO.add_event_detect(pins['MOVEMENT_SENSOR'], GPIO.RISING, callback=Event, bouncetime=1500) # GPIO.RISING, GPIO.FALLING or GPIO.BOTH.
+def Movement():     
+    if iPhone.Status(): # movement module 
+        Movement_by_category(category = 'move')
+        items.GLOBAL.status = True
+        timing.Move()
+    else: # alarm module 
+        Movement_by_category(category = 'alarm')
+        timing.Move()
 
-    #%% --------------------------------- MAIN LOOP ------------------------------------------------
+def Movement_by_category(category = 'move', mod_stat = False): 
+    "trigger for 'move' OR 'alarm' or 'stb' "
+    th, to_log = [], []        
+    if 'pass' not in getattr(control, category).keys(): 
+        if category == 'move' and items.GLOBAL.status != False: return # only for move early exit 
+
+        for mod,arg in getattr(control, category).items(): 
+            if mod in items.available: 
+                if getattr(getattr(items,mod),'status') == mod_stat: 
+                    th.append( Thread(target = ThreadedEvent, args = [' '.join([mod,arg]).rstrip()]))
+                    to_log.append(' '.join([mod,arg])) 
+                else: 
+                    pass   
+            else: # not in the list of items where status is controlled 
+                th.append( Thread(target = ThreadedEvent, args = [' '.join([mod,arg]).rstrip()]))
+                to_log.append(' '.join([mod,arg]))   
+        logger.info(category.upper()+ ':\t' +', '.join(to_log))
+    else: 
+        logger.info('passing')            
+    for t in th: t.start() #starting all 
+    for t in th: t.join()  #finishing all 
+    
+    
+def iPhone_connection_lost():
+    logger.debug( 'no movement for ' + str(int(timing.delay_time)) + ' sec: ,') 
+    Movement_by_category(category = 'stb', mod_stat = True)
+    items.GLOBAL.status = False
+    timing.no_movement_trigger = False
+    
+GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=Event, bouncetime=1500) # GPIO.RISING, GPIO.FALLING or GPIO.BOTH.
+
+#%% main 
+def main(): 
+    # loop 
     while timing.GlobalStop(): 
         iPhone.Ping()
         if iPhone.changed != None: 
-            esp = ESP([['1' if i else '0' for i in [iPhone.changed]][0] , '5']) # ESP indicator on 5 esp
+            ESP([['1' if i else '0' for i in [iPhone.changed]][0] , '5']) # ESP indicator on 5 esp
             logger.info('iPhone status changed to ' + str(iPhone.changed))
         if iPhone.status == False: 
             ThreadedEvent('Blink 1 1 0.3')
         if timing.count_move == 0: 
             ThreadedEvent('Blink 1 3 0.3')
         if timing.no_movement_trigger:
-            #if timing.NoMovement(): # cascade needed to turn trigger once event registered 
             if  iPhone.Status() == False: #  checking considering delay
                 logger.info('iPhone - contact lost')
                 iPhone_connection_lost()  
@@ -296,21 +255,49 @@ try:
                 logger.info('TwilightSwitcher morning')
                 lamp(['OFF'])
                 items.lamp.status = False
-            # 1 min moment + lamp was OFF + I was around last ... min
             if  timing.TwilightSwitcher('evening') and items.lamp.status == False and iPhone.Status():# timing.IamAround(30): 
                 lamp(['ON'])
                 timing.Move()
                 items.lamp.status = True
         sleep(iPhone.Pause([5,45]))  #was 5 - 30 
     
+    # finishing 
     if ('play' in control.move.keys() or 'play' in control.stb.keys()) and items.play.status: play(['pause'])
     if 'lamp' in control.move.keys(): lamp(['OFF'])
     if datetime.datetime.now().hour >= 20: Phrase({'TYPE' :'GOOD_NIGHT'})
     
     logger.info ('finishing '+ sys.argv[0])
     
-    GPIO.cleanup(pins['MOVEMENT_SENSOR'])
-    esp = ESP(['0','5'])    
-except: 
+    GPIO.cleanup(p.pins.MOVEMENT_SENSOR)
+    ESP(['0','5'])    
     Phrase({'TYPE' : 'EXIT_MS'})
-    MainException()
+
+#%% start 
+if __name__ == '__main__': 
+    try: 
+        # setting up 
+        PID()
+        control = ARGUMENTS()
+        timing  = TIMING() 
+        items   = OBJECT()
+        iPhone  = PING()
+        
+        for mods in ['GLOBAL','lamp','play','ant']: items.Child(mods,False)
+        items.Available()
+        
+        logger.info ('started ' + ' '.join(sys.argv) )
+        logger.info ('on alarm '.upper() + str(control.alarm))
+        logger.info ('on move '.upper() + str(control.move))
+        logger.info ('on standby '.upper() + str(control.stb))
+        logger.info ('once '.upper() + str(control.once))    
+        logger.info ('Fire time: '+ str((timing.fire_time/3600)) + ' hours' )
+        Phrase({'TYPE' : 'START_MS'})
+        #self_path = os.path.dirname(sys.argv[0])       
+        if len(sys.argv) < 2 : 
+            logger.error( 'not enough arguments')
+            sys.exit()        
+        
+        
+        main()    
+    except: 
+        MainException()        

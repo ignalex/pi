@@ -52,7 +52,7 @@ class ONOFF(object):
             logger.info ( ' > ' + com)
             self.status = com 
             if speak and datetime.datetime.now().hour >= 6: 
-                Speak("heater " + ['ON' if self.status == 'on' else 'OFF'] )
+                Speak("heater " + ['ON' if self.status == 'on' else 'OFF'][0] )
 #                Phrase({'TYPE' : 'HEATER_' + ['ON' if self.status == 'on' else 'OFF'][0]})
 
 def TranslateForHornet(agr): 

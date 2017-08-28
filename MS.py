@@ -120,33 +120,33 @@ def Blink(args = [1,1,0.1]):
 
 def play(TASK = ['play_current']): 
     wip = kodi('what_is_playing')
-    m.logger('TASK recieved: ' + TASK[0] + ', wip answer: '+ wip)
+    m.logger.info('TASK recieved: ' + TASK[0] + ', wip answer: '+ wip)
     if TASK == ['pause']:
         if wip == 'audio': 
             kodi('pause')
-            m.logger('pausing music')
+            m.logger.info('pausing music')
             m.items.play.status = False
         elif wip == 'video':
-            m.logger('video is playing. Won\'t stop')
+            m.logger.info('video is playing. Won\'t stop')
         elif wip == 'nothing': 
-            m.logger('nothing is playing')
+            m.logger.info('nothing is playing')
     else:
         if wip == 'nothing': 
             kodi(TASK[0])
-            m.logger('starting playing current')
+            m.logger.info('starting playing current')
             m.items.play.status = True
         elif wip == 'audio':
             kodi('resume')
-            m.logger('resuming audio')
+            m.logger.info('resuming audio')
             m.items.play.status = True
         elif wip == 'video':
-            m.logger('video is current. won\'t do anything')
+            m.logger.info('video is current. won\'t do anything')
 
 def lamp(TASK): 
     "to be used only from inside MS"
     "dependencies: esp, log, sunrise"
     if TASK == []: 
-        m.logger('Lamp module: Not enough argument')
+        m.logger.info('Lamp module: Not enough argument')
 
     twilight = m.Sun(datetime.date.today())
     now = datetime.datetime.now()    
@@ -154,21 +154,21 @@ def lamp(TASK):
     if TASK == ['ON'] and (now <= twilight[0] or now >= twilight[1]): # turm ON only if dark  
         # lamp ON 
         m.items.lamp.status = True
-        m.logger( 'lamp ON')
+        m.logger.info( 'lamp ON')
         try: 
             m.ESP(['6','rf433','light','on'])
-            m.logger('lamps are ON')
+            m.logger.info('lamps are ON')
         except: 
             pass 
     elif TASK == ['ON'] and (now > twilight[0] and now < twilight[1]):
-        m.logger('day time. Lamp is not turned ON') 
+        m.logger.info('day time. Lamp is not turned ON') 
     elif TASK == ['OFF']: # turn OFF at any time 
         # lamp off 
         m.items.lamp.status = False
-        m.logger( 'lamp OFF') 
+        m.logger.info( 'lamp OFF') 
         try: 
             m.ESP(['6','rf433','light','off'])
-            m.logger('lamps are OFF')
+            m.logger.info('lamps are OFF')
         except: 
             pass                     
 #%%    

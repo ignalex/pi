@@ -105,11 +105,8 @@ GPIO.INIT = GPIO.HIGH
 GPIO.ON = GPIO.LOW
 GPIO.OFF = GPIO.HIGH    
 
-for k,v in p.pins.__dict__.items(): # initiating PINS 
-    if k.find('SENSOR') == -1: 
-        GPIO.setup(v, GPIO.OUT, initial = GPIO.INIT) 
-    else: 
-        GPIO.setup(v, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
+GPIO.setup(p.pins.BLINK, GPIO.OUT, initial = GPIO.INIT) 
+GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 
 #%% extra modules 
 def Blink(args = [1,1,0.1]):

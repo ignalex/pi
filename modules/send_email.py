@@ -53,7 +53,7 @@ if __name__ == '__main__':
             if sys.argv[1] == 'ip' :
                 _ip, _to, _from_addr, _from_login, _from_pass = sys.argv[1:]
                 IP = MyIP()
-                sendMail([_to], [_from_addr, _from_login, _from_pass], 'IP', IP ,[])
-            logger.info('OK, IP =' + IP)
+                reply = sendMail([_to], [_from_addr, _from_login, _from_pass], 'IP', IP ,[])
+            logger.info('OK, IP =' + IP + ' ' + reply)
         except: 
-            logger.error('NOT GOOD. IP =' + IP)
+            logger.error('NOT GOOD. IP =' + IP + ' ' + reply)

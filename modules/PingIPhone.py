@@ -13,7 +13,7 @@ from time import sleep
 from datetime import datetime, timedelta
 from subprocess import Popen, PIPE
 
-from common import CONFIGURATION
+from common import CONFIGURATION, Dirs
 #TODO: config MAC to outside func
 
 def PingIPhoneOnce(source = 'BT', log = True): 
@@ -68,7 +68,7 @@ def PingBT(MAC=CONFIGURATION().BT):
 
 #TODO: get log filder func into shell 
 def Log(result): 
-    log = os.path.join([i for i in ['/home/pi/LOG','/home/pi/PYTHON/GPIO/LOG'] if os.path.exists(i)][0],'log_ping_iPhone.txt')
+    log = os.path.join(Dirs['LOG'],'log_ping_iPhone.txt')
     print (str(datetime.now()).split('.')[0] + '\t' + str(result), file = open(log,'a'))  
 
 def PingIPhone(N=4,S=5): # was 1, 0 

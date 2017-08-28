@@ -8,7 +8,7 @@ Created on Sat Aug 26 17:32:42 2017
 @author: Alexander Ignatov
 """
 import os, random, datetime
-from common import CONFIGURATION
+from common import CONFIGURATION, Dirs
 
 def Speak(text, device = 'octopus' ): 
     'simple speaking function integration to use gTTS on another PI' 
@@ -32,7 +32,7 @@ def Phrase(about):
 
     def PhraseDict():
         try: 
-            INI_file = open('/home/pi/git/pi/data/phrases.ini','r').read().splitlines() #TODO: fix path
+            INI_file = open(os.path.join(Dirs['DATA'],'phrases.ini'),'r').read().splitlines() #TODO: fix path
         except: 
             print ("can't open phrases ini file")
             return False

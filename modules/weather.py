@@ -26,16 +26,15 @@ Created on Tue Jan 27 10:58:24 2015
 from __future__ import print_function
 import urllib2 #TODO: replace for PY3 compatibility 
 import os, datetime #, sys
+from common import Dirs, CONFIGURATION
+p = CONFIGURATION()
 
-# if not PI - don't take GPIO reading 
-if os.name == 'posix': 
-    from temperature import Temp
+if os.name == 'posix':  from temperature import Temp
     
-
 class WEATHER(object): 
     def __init__(self,TempIn = True): 
-        self.link = "http://rss.weatherzone.com.au/?u=12994-1285&lt=aploc&lc=624&obs=1&fc=1&warn=1"
-        self.Log = os.path.join([i for i in ['/home/pi/LOG/', '/home/pi/temp/','/storage/sensors/',os.getcwd()] if os.path.exists(i)][0],'sensors.log') #FIXME: LOG location  
+        self.link = p.WEATHER_LINK
+        self.Log = os.path.join(Dirs['LOG'],'sensors.log')
         self.call = {'rain' : ["<b>Rain:</b> ","mm since"],
                      'temp_out' : ["<b>Temperature:</b> ","&#"], 
                      'humidity' : ["<b>Relative humidity:</b> ","%<br"],

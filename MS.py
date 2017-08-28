@@ -112,7 +112,6 @@ for k,v in p.pins.__dict__.items(): # initiating PINS
         GPIO.setup(v, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
 
 #%% extra modules 
-#TODO: generalise and get them out from MS to modules 
 def Blink(args = [1,1,0.1]):
     for b in range(int(args[0])):      
         for a in range(int(args[1])):
@@ -276,13 +275,17 @@ def main():
 if __name__ == '__main__': 
     try: 
         # setting up 
+        if len(sys.argv) < 2 : 
+            logger.error( 'not enough arguments')
+            sys.exit()   
+            
         PID()
         control = ARGUMENTS()
         timing  = TIMING() 
         items   = OBJECT()
         iPhone  = PING()
         
-        for mods in ['GLOBAL','lamp','play','ant']: items.Child(mods,False)
+        for mods in ['GLOBAL','lamp','play']: items.Child(mods,False)
         items.Available()
         
         logger.info ('started ' + ' '.join(sys.argv) )
@@ -293,11 +296,7 @@ if __name__ == '__main__':
         logger.info ('Fire time: '+ str((timing.fire_time/3600)) + ' hours' )
         Phrase({'TYPE' : 'START_MS'})
         #self_path = os.path.dirname(sys.argv[0])       
-        if len(sys.argv) < 2 : 
-            logger.error( 'not enough arguments')
-            sys.exit()        
-        
-        
+
         main()    
     except: 
         MainException()        

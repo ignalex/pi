@@ -4,19 +4,22 @@
 
 import sys 
 from modules.relay import cascade 
-#TODO: fix #from modules.talk import Speak
+from modules.speak_over_ssh import Speak
 from modules.weather import WEATHER
+from modules.common import LOGGER, CONFIGURATION
 
 def extra_for_weather(threshhold = 20, extra =  2): 
     w = WEATHER(False)
     w.ToInt()
 
     if w.WasRaining(): 
-#        Speak('it was raining for '+ str(w.rain) + ' mm yesterday. I will not water the plants' )
+        Speak('it was raining for '+ str(w.rain) + ' mm yesterday. I will not water the plants' )
+        logger.info('it was raining for '+ str(w.rain) + ' mm yesterday. I will not water the plants')
         sys.exit()
     
     result = [(w.temp_today - threshhold) * extra if (w.temp_today - threshhold) > 0 else 0][0] 
-#    Speak('temperature forecasted ' + str(w.temp_today) + ' degrees. adding ' + str(result) + ' seconds for watering')       
+    Speak('temperature forecasted ' + str(w.temp_today) + ' degrees. adding ' + str(result) + ' seconds for watering')       
+    logger.info('temperature forecasted ' + str(w.temp_today) + ' degrees. adding ' + str(result) + ' seconds for watering')
     return result 
   
    
@@ -28,8 +31,13 @@ def water(params):
 
 #%%
 if __name__ == '__main__': 
-   
-    extra_time = extra_for_weather()
-    params = {1 : {'relay': 2, 'motor' : 1, 'time' : 20  + extra_time}, 
-              2 : {'relay': 3, 'motor' : 1, 'time' : 30  + extra_time}} 
+    logger = LOGGER('watering','INFO', True)
+    p = CONFIGURATION()
+    
+    extra_time = extra_for_weather(p.water.extra_threshold, p.water.extra)
+#    params = {1 : {'relay': 2, 'motor' : 1, 'time' : 20  + extra_time}, 
+#              2 : {'relay': 3, 'motor' : 1, 'time' : 30  + extra_time}} 
+
+    params = {1 : {'relay': p.pins.water1, 'motor' : p.pins.motor, 'time' : p.water.time1  + extra_time}, 
+              2 : {'relay': p.pins.water2, 'motor' : p.pins.motor, 'time' : p.water.time2  + extra_time}} 
     water(params)

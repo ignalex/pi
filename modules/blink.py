@@ -12,12 +12,15 @@ Created on Tue Apr 08 12:06:44 2014
 """
 import sys
 from time import sleep 
-
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 
-def blink(pin=18, B=3, N=3, mult=0.1):
-    GPIO.setup(pin , GPIO.OUT, initial = GPIO.HIGH)
+from common import CONFIGURATION
+p = CONFIGURATION()
+
+def blink( B=3, N=3, mult=0.1):
+
+    GPIO.setup(p.pins.BLINK , GPIO.OUT, initial = GPIO.HIGH)
 
     for b in range(B):      
         for a in range(N):
@@ -32,11 +35,11 @@ def blink(pin=18, B=3, N=3, mult=0.1):
 if __name__ == '__main__': 
   
   if len(sys.argv)>1: 
-      pin, B, N, mult = int(sys.argv[1]), int(sys.argv[2]),int(sys.argv[3]), float(sys.argv[4])
+      pin, B, N, mult = int(sys.argv[1]),int(sys.argv[2]), float(sys.argv[3])
   else: 
-      pin, B, N, mult = 18, 3, 3, 0.1 
+      pin, B, N, mult = 3, 3, 0.1 
 
-  blink(pin, B, N, mult)
+  blink( B, N, mult)
 
 
 

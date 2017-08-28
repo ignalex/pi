@@ -11,14 +11,14 @@ Created on Wed Apr 30 15:43:41 2014
 @author: aignatov
 """
 from __future__ import print_function
-
+from common import Dirs
 import datetime, os 
 
 
 def Sun(date, filename = 'sunrise2014.txt'):
     "gets the date, returns tuple with [sunrise,sunset,window_light,total_dark]"
     shift_hours = [6,9] # for window light and sun has gone 
-    file_path = [os.path.join(i, filename) for i in ['/home/pi/git/pi/data', '/home/pi/PYTHON/GPIO/modules', os.getcwd(), os.path.join(os.getcwd(),'modules')] if os.path.exists(os.path.join(i,filename))][0]
+    file_path = os.path.join(Dirs['DATA'], filename) 
     dates = open(file_path,'r').read().split('\n')[1:]
     string = [i for i in dates if int(i.split(' ')[0]) == date.month and int(i.split(' ')[1]) == date.day ][0]
     twilight = [string.split(' ')[5],string.split(' ')[6], string.split(' ')[7]]

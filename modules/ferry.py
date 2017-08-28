@@ -6,10 +6,11 @@ Created on Wed Nov 04 06:44:44 2015
 """
 from __future__ import print_function
 import  datetime , os 
+from common import Dirs
 
 def NextFerry(): 
     "reyturns the time of the next ferry. timetable lives in 'data' directory"
-    data = [i for i in [r'/home/pi/git/pi/data', os.getcwd()] if os.path.exists(i)][0]
+    data = Dirs['DATA']
     DAY = ['' if datetime.datetime.today().weekday()<5 else ['_SAT' if datetime.datetime.today().weekday() else '_SUN' ][0]][0]
     timetable = open(os.path.join(data,'ferry'+DAY+'.txt'),'r').read().split('\n')
     lst = []

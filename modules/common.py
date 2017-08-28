@@ -10,8 +10,13 @@ from __future__ import print_function
 import os, sys, logging, argparse, traceback, datetime
 import __main__ as m 
 
+def Dirs(): 
+    return {'LOG' : [i for i in ['/home/pi/LOG/', '/home/pi/temp/',         os.getcwd()] if os.path.exists(i)][0], 
+            'DATA': [i for i in ['/home/pi/git/pi/data', '/home/pi/temp/',  os.getcwd()] if os.path.exists(i)][0]
+            }
+
 #TODO: hvae 2 configs > 1 in data, 1 in git (for specific params)
-#TODO: chooese right config from DEV or PI 
+
 class CONFIGURATION(object): 
     "read config file located in DATA dir, parsing and returning object with attribs" 
     def __init__(self,ini_files=[]):
@@ -116,7 +121,7 @@ def LOGGER(filename = r'log_filename.txt', level = 'INFO', verbose = False) :
     
     #TODO: log folder 
     #TODO: DB logging 
-    log_file =  ([os.path.join(i,filename) for i in ['/home/pi/LOG','C:\_LOG'] if os.path.exists(i)] + [filename] )[0]
+    log_file =  os.path.join(Dirs['LOG'], filename)
     fh = logging.FileHandler(log_file)
     fh.setFormatter(formatter)
     logger.addHandler(fh)
@@ -133,24 +138,21 @@ def LOGGER(filename = r'log_filename.txt', level = 'INFO', verbose = False) :
 def MainException(): 
     "logger must be created in the main module with the name 'log'" 
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    m.log('\n------------------') #FIXME: use lg, log or logger
     try: 
-        m.log(sys.argv[0].split('\\')[-1] + ' ['+ m.__doc__.split('\n')[-2].split(' ')[0] + ']')
+        m.logger.error(sys.argv[0].split('\\')[-1] + ' ['+ m.__doc__.split('\n')[-2].split(' ')[0] + ']')
     except: 
         pass 
-    m.log('ERROR REPORTED:'  )   
-    m.log('TYPE: '+str(exc_type)+ ' : ' )
-    m.log("MESSAGE: "+ str(exc_value) )   
-    m.log("TRACEBACK:")  
-
+    m.logger.error('ERROR REPORTED:'  )   
+    m.logger.error('TYPE: '+str(exc_type)+ ' : ' )
+    m.logger.error("MESSAGE: "+ str(exc_value) )   
+    m.logger.error("TRACEBACK:")  
     for frame in traceback.extract_tb(sys.exc_info()[2]):
         fname,lineno,fn,text = frame
-        m.log( "in line " + str(lineno) + " :  " + text)
+        m.logger.error( "in line " + str(lineno) + " :  " + text)
 
 def PID(onoff = '+' ,message = ''):
     """logging the system PID into HOME directory"""
     # need to handle different HOME dir for root and pi user... 
-    path = [i for i in ['/home/pi',os.getcwd()] if os.path.exists(i)][0]
     print ( '\t'.join( [str(datetime.datetime.now()).split('.')[0], str(os.getpid()), onoff,'\t'.join(sys.argv), message]), 
-           file = open(os.path.join(path, 'pid.log'),'a'))
-  
+           file = open(os.path.join(Dirs['LOG'], 'pid.log'),'a'))
+

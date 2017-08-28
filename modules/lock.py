@@ -10,11 +10,11 @@ from __future__ import print_function
 
 import datetime, os 
 from time import sleep 
-#TODO: LOG autocreate (Shell)
+from common import Dirs
 
 class LockArd(object):
     def __init__(self, ID = 'py'):
-        self.locking_file = os.path.join([i for i in ['/home/pi/LOG/','/home/pi/PYTHON/GPIO/LOG/','/storage/PYTHON/GPIO/LOG/',os.getcwd()] if os.path.exists(i)][0], ID +'.lck')
+        self.locking_file = os.path.join(Dirs['LOG'], ID +'.lck')
         self.force_sec = 15
         self.ID = ID
         self.locked_by = ''

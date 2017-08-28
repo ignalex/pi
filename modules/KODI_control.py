@@ -7,11 +7,12 @@ Created on Fri Apr 25 12:42:08 2014
 """
 import urllib2
 from common import CONFIGURATION
+p = CONFIGURATION()
 #DONE: address hardcoding
 #TODO: PY3 
 
 def kodi(com='play_current'):
-    address = CONFIGURATION().kodi 
+    address = p.kodi 
     commands = {'play_current'    : "jsonrpc?request={%22jsonrpc%22:%222.0%22,%22id%22:1,%22method%22:%22Player.Open%22,%22params%22:{%22item%22:{%22playlistid%22:0},%22options%22:{%22repeat%22:%22all%22}}}",
                 'pause'           : "jsonrpc?request=%7B%22jsonrpc%22:%20%222.0%22%2C%20%22method%22:%20%22Player.PlayPause%22%2C%20%22params%22:%20%7B%20%22playerid%22:%200%20%7D%2C%20%22id%22:%201%7D",
                 'resume'          : "jsonrpc?request=%7B%22jsonrpc%22:%20%222.0%22%2C%20%22method%22:%20%22Player.PlayPause%22%2C%20%22params%22:%20%7B%20%22playerid%22:%200%20%7D%2C%20%22id%22:%201%7D",                

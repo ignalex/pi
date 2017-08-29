@@ -157,5 +157,5 @@ def PID(onoff = '+' ,message = ''):
     print ( '\t'.join( [str(datetime.datetime.now()).split('.')[0], str(os.getpid()), onoff,'\t'.join(sys.argv), message]), 
            file = open(os.path.join(Dirs()['LOG'], 'pid.log'),'a'))
 
-def LastLine(file_to_read): 
-    return Popen(("tail -1 " +  file_to_read).split(' '), stdout=PIPE, stderr=PIPE).communicate()[0]
+def LastLine(file_to_read, lines = 1): 
+    return Popen(("tail -{} ".format(lines) +  file_to_read).split(' '), stdout=PIPE, stderr=PIPE).communicate()[0]

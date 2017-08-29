@@ -53,8 +53,8 @@ if __name__ == '__main__':
             if sys.argv[1] == 'ip' :
                 _ip, _to, _from_addr, _from_login, _from_pass = sys.argv[1:]
                 IP = MyIP()
-                if LastLine('/home/pi/LOG/send_ip').find(IP) == -1: # updated 
-                    reply = sendMail([_to], [_from_addr, _from_login, _from_pass], 'IP', IP ,[]) +  'IP changed' 
+                if LastLine('/home/pi/LOG/send_ip', 2).find(IP) == -1: # updated 
+                    reply = sendMail([_to], [_from_addr, _from_login, _from_pass], 'IP', IP ,[]) +  ' IP changed' 
                 else: 
                     reply = 'IP same '
             logger.info('OK, IP =' + IP + ' ' + reply)

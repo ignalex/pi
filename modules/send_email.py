@@ -35,7 +35,7 @@ def sendMail(to, from_credentials, subject, text, files):
         connection.close()
         return 'sent'
     except Exception, exc:
-        return ("ERROR SENDING E-MAIL: "+ str(exc))
+        return "ERROR SENDING E-MAIL: "+ str(exc)
 
 def MyIP():
     from requests import get
@@ -44,7 +44,7 @@ def MyIP():
 if __name__ == '__main__': 
     import sys 
     sys.path.append('/home/pi/git/pi/') #for crontab 
-    from modules.common import CONFIGURATION, LOGGER
+    from modules.common import CONFIGURATION, LOGGER, LastLine
     p = CONFIGURATION()
     if len(sys.argv)> 1: 
         "syntax : python send_email.py ip {to} {from} {login} {pass} "
@@ -53,7 +53,10 @@ if __name__ == '__main__':
             if sys.argv[1] == 'ip' :
                 _ip, _to, _from_addr, _from_login, _from_pass = sys.argv[1:]
                 IP = MyIP()
-                reply = sendMail([_to], [_from_addr, _from_login, _from_pass], 'IP', IP ,[])
+                if LastLine('/home/pi/LOG/send_ip').find(IP) == -1: # updated 
+                    reply = sendMail([_to], [_from_addr, _from_login, _from_pass], 'IP', IP ,[]) +  'IP changed' 
+                else: 
+                    reply = 'IP same '
             logger.info('OK, IP =' + IP + ' ' + reply)
         except: 
             logger.error('NOT GOOD. IP =' + IP + ' ' + reply)

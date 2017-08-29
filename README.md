@@ -2,7 +2,7 @@
 raspberry pi modules for home automation 
 
 ##  projects 
-- **MS** > 'manage services' > to turn things ON/OFF based on the conditions >> __to be migrated__
+- **MS** > 'manage services' > to turn things ON/OFF based on the conditions 
 - **PA** > 'personal assistant' > using iCalendar and other mods to trigger functions  >> __to be migrated__ 
 - **WATERING** > using 2 (or more / or less) independent systems, open / close valves and trigger motor to start watetring plants
     * using BOM forecast for temperature / rain to tailor the amount of water

@@ -8,6 +8,7 @@ Created on Sun Aug 27 07:02:30 2017
 """
 from __future__ import print_function
 import os, sys, logging, argparse, traceback, datetime
+from subprocess import Popen, PIPE
 import __main__ as m 
 
 def Dirs(): 
@@ -156,3 +157,5 @@ def PID(onoff = '+' ,message = ''):
     print ( '\t'.join( [str(datetime.datetime.now()).split('.')[0], str(os.getpid()), onoff,'\t'.join(sys.argv), message]), 
            file = open(os.path.join(Dirs()['LOG'], 'pid.log'),'a'))
 
+def LastLine(file_to_read): 
+    return Popen(("tail -1 " +  file_to_read).split(' '), stdout=PIPE, stderr=PIPE).communicate()[0]

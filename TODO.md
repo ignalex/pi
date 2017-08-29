@@ -1,2 +1,3 @@
 - [ ] **finish migrating existing modules**
 - [ ] config - part 2 from higher level
+- [ ] clean existing code 

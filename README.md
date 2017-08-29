@@ -31,8 +31,6 @@ raspberry pi modules for home automation
     * send IP > send your IP (to be scheduled in crontab)
 - **movement sensor** > integration to MS.
     * depends on time of the day, __on movement__ > turn on/off lights, blinds up/down, **start boiling cooffee :)** 
-
-
 - **light** control  (via http API talking to ESP)   >> __to be migrated__ 
 - **IR receiver**       >> __to be migrated__ 
   * integration to play music 
@@ -43,8 +41,6 @@ raspberry pi modules for home automation
 - **ISS** > track ISS (International Space Station) location and distance to home and speak when close  >> __to be migrated__ 
 - **ant** > communicate to another PI using SSH >> __to be migrated__ 
 - **camera** > using camera vid / pic (used in ALARM for email pic if there is moovement and I am not at home)  >> __to be migrated__ 
-
-
 *** __more to come ;)__
 
 ## installation and deployment 

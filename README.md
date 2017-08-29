@@ -1,6 +1,8 @@
 # pi
 raspberry pi modules for home automation 
 
+[to do in progress... ](https://github.com/ignalex/pi/blob/master/TODO.md) 
+
 ##  projects 
 - **MS** > 'manage services' > to turn things ON/OFF based on the conditions 
 - **PA** > 'personal assistant' > using iCalendar and other mods to trigger functions  >> __to be migrated__ 

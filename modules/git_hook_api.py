@@ -16,6 +16,7 @@ app = Flask(__name__)
 def test():
     global logger 
     logger.info('test')
+    return 'test'
     
 
 if __name__ == '__main__' : 

@@ -9,6 +9,7 @@ from __future__ import print_function
 from flask import Flask
 from common import LOGGER # Dirs, CONFIGURATION, MainException,
 from subprocess import Popen, PIPE
+import daemon
 
 
 logger = LOGGER('git_hook')
@@ -32,4 +33,5 @@ def git_pull():
     return 'git pull'
 
 if __name__ == '__main__' : 
-    app.run(debug=False, use_debugger = False, use_reloader = False, port = 8081, host = '0.0.0.0')
+    with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):    
+        app.run(debug=False, use_debugger = False, use_reloader = False, port = 8081, host = '0.0.0.0')

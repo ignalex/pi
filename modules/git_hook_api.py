@@ -23,7 +23,7 @@ def test():
 @app.route("/git_pull")
 def git_pull():
     global logger 
-    process = Popen('git pull'.split(' '), stdout=PIPE, stderr=PIPE, cwd=r'/home/pi/git/')
+    process = Popen('git pull'.split(' '), stdout=PIPE, stderr=PIPE, cwd=r'/home/pi/git/pi/')
     stdout, stderr = process.communicate() 
     reply  = str(stdout) + ' : ' + str(stderr)
     logger.info(reply)

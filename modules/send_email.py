@@ -47,16 +47,17 @@ if __name__ == '__main__':
     from modules.common import CONFIGURATION, LOGGER, LastLine
     p = CONFIGURATION()
     if len(sys.argv)> 1: 
-        "syntax : python send_email.py ip {to} {from} {login} {pass} "
-        logger = LOGGER('send_ip')
-        try: 
-            if sys.argv[1] == 'ip' :
-                _ip, _to, _from_addr, _from_login, _from_pass = sys.argv[1:]
-                IP = MyIP()
-                if LastLine('/home/pi/LOG/send_ip', 2).find(IP) == -1: # updated 
-                    reply = sendMail([_to], [_from_addr, _from_login, _from_pass], 'IP', IP ,[]) +  ' IP changed' 
-                else: 
-                    reply = 'IP same '
-            logger.info('OK, IP =' + IP + ' ' + reply)
-        except: 
-            logger.error('NOT GOOD. IP =' + IP + ' ' + reply)
+        if sys.argv[1] == 'ip' :
+            "syntax : python send_email.py ip {to} {from} {login} {pass} "
+            logger = LOGGER('send_ip', 'WARNING')
+            try: 
+                if sys.argv[1] == 'ip' :
+                    _ip, _to, _from_addr, _from_login, _from_pass = sys.argv[1:]
+                    IP = MyIP()
+                    if LastLine('/home/pi/LOG/send_ip', 2).find(IP) == -1: # updated 
+                        reply = sendMail([_to], [_from_addr, _from_login, _from_pass], 'IP', IP ,[]) +  ' IP changed' 
+                    else: 
+                        reply = 'IP same '
+                logger.warn('OK, IP =' + IP + ' ' + reply)
+            except: 
+                logger.error('NOT GOOD. IP =' + IP + ' ' + reply)

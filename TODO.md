@@ -1,3 +1,4 @@
 - [ ] **finish migrating existing modules**
 - [ ] config - part 2 from higher level
 - [ ] clean existing code 
+- [ ] CI GIT hooks integration > flask API to trigger GIT PULL

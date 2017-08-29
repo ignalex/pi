@@ -8,6 +8,8 @@ Created on Wed Aug 30 08:35:00 2017
 from __future__ import print_function
 from flask import Flask
 from common import LOGGER # Dirs, CONFIGURATION, MainException,
+from subprocess import Popen, PIPE
+
 
 logger = LOGGER('git_hook')
 app = Flask(__name__)
@@ -18,6 +20,16 @@ def test():
     logger.info('test')
     return 'test'
     
+@app.route("/git_pull")
+def git_pull():
+    global logger 
+    process = Popen('git pull'.split(' '), stdout=PIPE, stderr=PIPE, cwd=r'/home/pi/git/')
+    stdout, stderr = process.communicate() 
+    reply  = str(stdout) + ' : ' + str(stderr)
+    logger.info(reply)
+    return reply 
+    
+    return 'git pull'
 
 if __name__ == '__main__' : 
     app.run(debug=False, use_debugger = False, use_reloader = False, port = 8081, host = '0.0.0.0')

@@ -21,7 +21,7 @@ def test():
     logger.info('test')
     return 'test'
     
-@app.route("/git_pull")
+@app.route("/git_pull", methods=['POST'])
 def git_pull():
     global logger 
     process = Popen('git pull'.split(' '), stdout=PIPE, stderr=PIPE, cwd=r'/home/pi/git/pi/')

@@ -19,7 +19,7 @@ def Speak(text, device = 'octopus' ):
     os.system("ssh -p {} -i /home/pi/.ssh/{} pi@{} nohup sudo python /home/pi/PYTHON/GPIO/modules/talk.py '\"".\
         format(keys[device].split(':')[1], 
                device, 
-               keys[device].split(':')[0]) +text+"\"'")
+               keys[device].split(':')[0]) +text+"\"' &")
     return 
 
 #TODO: replace this with GROUPED params 

@@ -32,7 +32,7 @@ def test():
 @app.route("/git_pull", methods=['POST'])
 def git_pull():
     global logger, p
-    logger.info('JSON payload' + str(request.json))
+    #logger.info('JSON payload' + str(request.json))
     process = Popen('git pull'.split(' '), stdout=PIPE, stderr=PIPE, cwd=Dirs()['REPO'])
     reply  = ' : '.join([str(i) for i in process.communicate() ]) 
     logger.info(reply)

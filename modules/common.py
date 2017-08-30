@@ -13,7 +13,8 @@ import __main__ as m
 
 def Dirs(): 
     return {'LOG' : [i for i in ['/home/pi/LOG/', '/home/pi/temp/',         os.getcwd()] if os.path.exists(i)][0], 
-            'DATA': [i for i in ['/home/pi/git/pi/data', '/home/pi/temp/',  os.getcwd()] if os.path.exists(i)][0]
+            'DATA': [i for i in ['/home/pi/git/pi/data', '/home/pi/temp/',  os.getcwd()] if os.path.exists(i)][0], 
+            'REPO': '/home/pi/git/pi'
             }
 
 #TODO: hvae 2 configs > 1 in data, 1 in git (for specific params)

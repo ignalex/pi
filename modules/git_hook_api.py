@@ -6,11 +6,10 @@ Created on Wed Aug 30 08:35:00 2017
 @author: ignalex
 """
 from __future__ import print_function
-from flask import Flask
-from common import LOGGER # Dirs, CONFIGURATION, MainException,
+from flask import Flask, request
+from common import LOGGER, Dirs #, CONFIGURATION, MainException,
 from subprocess import Popen, PIPE
 import daemon
-
 
 logger = LOGGER('git_hook')
 app = Flask(__name__)
@@ -21,16 +20,17 @@ def test():
     logger.info('test')
     return 'test'
     
+#TODO: secure / paiload 
+#TODO: speak on update 
+#TODO: email feedback > after secured config     
 @app.route("/git_pull", methods=['POST'])
 def git_pull():
     global logger 
-    process = Popen('git pull'.split(' '), stdout=PIPE, stderr=PIPE, cwd=r'/home/pi/git/pi/')
-    stdout, stderr = process.communicate() 
-    reply  = str(stdout) + ' : ' + str(stderr)
+    logger.info('JSON payload' + str(request.json))
+    process = Popen('git pull'.split(' '), stdout=PIPE, stderr=PIPE, cwd=Dirs()['REPO'])
+    reply  = ' : '.join([str(i) for i in process.communicate() ]) 
     logger.info(reply)
     return reply 
-    
-    return 'git pull'
 
 if __name__ == '__main__' : 
     with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):    

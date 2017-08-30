@@ -31,6 +31,7 @@ raspberry pi modules for home automation
     * send IP > send your IP (to be scheduled in crontab)
 - **movement sensor** > integration to MS.
     * depends on time of the day, __on movement__ > turn on/off lights, blinds up/down, **start boiling cooffee :)** 
+- **git_hooks** > GIT CI > on git hook make 'git pull' and confirm (email + speaking)
 - **light** control  (via http API talking to ESP)   >> __to be migrated__ 
 - **IR receiver**       >> __to be migrated__ 
   * integration to play music 

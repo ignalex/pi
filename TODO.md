@@ -3,3 +3,4 @@
 - [ ] clean existing code 
 - [x] CI GIT hooks integration > flask API to trigger GIT PULL
 - [x] fix wol
+- [x] DDNS

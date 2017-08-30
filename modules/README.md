@@ -13,6 +13,9 @@ raspberry pi modules
 ### ferry 
 - ferry timetable > next ferry is in ... min 
 
+### git_hook_api 
+- send hook from git up pull git on pi 
+
 ### KODI_control 
 - use KODI api to control music (start, pause, volume etc)
 

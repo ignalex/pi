@@ -22,11 +22,14 @@ def Dirs():
 class CONFIGURATION(object): 
     "read config file located in DATA dir, parsing and returning object with attribs" 
     def __init__(self,ini_files=[]):
-        ini_files = ['config'] + ini_files #adding config default 
-        self.data_path = [i for i in ['/home/pi/git/pi/data',os.getcwd()] if os.path.exists(i) == True][0] 
+#        ini_files = ['config'] + ini_files # extra to the specific case 
+#        self.data_path = [i for i in ['/home/pi/git/pi/data',os.getcwd()] if os.path.exists(i) == True][0] 
+        self.INI_FILES = [os.path.join(Dirs()['DATA'], 'config.ini')] + \
+                         [os.path.join(os.getcwd(), i + '.ini') for i in ini_files] + \
+                         [i for i in [os.path.join(os.path.split(Dirs()['REPO'])[0], 'config.ini')] if os.path.exists(i)]
         self.INI = {}
-        for ini_file in [i+'.ini' for i in ini_files]: 
-            if os.path.exists(os.path.join(self.data_path,ini_file)): 
+        for ini_file in self.INI_FILES: 
+            if os.path.exists(ini_file): 
                 self.INI.update(self.ReadIniByGroup(ini_file))
         for k,p in  self.INI.items(): setattr(self, k, self.DictParams(p))
         self.debug_file_list = []
@@ -34,7 +37,7 @@ class CONFIGURATION(object):
         self.ReplaceKeys()
     def ReadIniByGroup(self,filename):
         try: 
-            INI_file = open(os.path.join(self.data_path,filename),'r').read().splitlines()
+            INI_file = open(filename,'r').read().splitlines()
         except: 
             print ('cant open ' + filename)
         INI_file = [i for i in INI_file if len(i) != 0] # empty strings 

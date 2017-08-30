@@ -6,6 +6,8 @@ common used functions
 Created on Sun Aug 27 07:02:30 2017
 @author: Alexander Ignatov
 """
+#DONE: hvae 2 configs > 1 in data, 1 in git (for specific params)
+
 from __future__ import print_function
 import os, sys, logging, argparse, traceback, datetime
 from subprocess import Popen, PIPE
@@ -17,13 +19,13 @@ def Dirs():
             'REPO': '/home/pi/git/pi'
             }
 
-#TODO: hvae 2 configs > 1 in data, 1 in git (for specific params)
-
 class CONFIGURATION(object): 
-    "read config file located in DATA dir, parsing and returning object with attribs" 
+    """read config: 
+        1. files passed as arguments to the function 
+        2. config.ini file located in DATA dir
+        3. config.ini file located 1 level above any repo (secure - to be outside GIT) 
+        parsing and returning object with attribs"""
     def __init__(self,ini_files=[]):
-#        ini_files = ['config'] + ini_files # extra to the specific case 
-#        self.data_path = [i for i in ['/home/pi/git/pi/data',os.getcwd()] if os.path.exists(i) == True][0] 
         self.INI_FILES = [os.path.join(Dirs()['DATA'], 'config.ini')] + \
                          [os.path.join(os.getcwd(), i + '.ini') for i in ini_files] + \
                          [i for i in [os.path.join(os.path.split(Dirs()['REPO'])[0], 'config.ini')] if os.path.exists(i)]

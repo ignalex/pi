@@ -19,3 +19,5 @@ def Temp():
     except: 
         return False
 
+if __name__ == '__main__': 
+    print (Temp())

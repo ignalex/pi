@@ -25,9 +25,9 @@ def test():
     logger.info('test')
     return 'test'
     
-#TODO: secure / paiload 
-#TODO: speak on update 
-#TODO: email feedback > after secured config     
+#TODO: secure / payload 
+#DONE: speak on update 
+#DONE: email feedback > after secured config     
 #TODO: restart particular apps 
 @app.route("/git_pull", methods=['POST'])
 def git_pull():

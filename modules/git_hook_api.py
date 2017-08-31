@@ -29,8 +29,9 @@ app = Flask(__name__)
 def git_pull():
     global logger, p
     j = request.json # payload
-    with open(os.path.join(Dirs()['LOG'],'git_payload_{}.pcl'.format(str(datetime.datetime.now()))), 'wb') as f: 
-        pickle.dump(j, f)
+    if p.GIT_CI.save_payload == 'YES' or p.GIT_CI.save_payload: 
+        with open(os.path.join(Dirs()['LOG'],'git_payload_{}.pcl'.format(str(datetime.datetime.now()))), 'wb') as f: 
+            pickle.dump(j, f)
     
     #checking payload 
     if j['head_commit']['committer']['email'] != p.GIT_CI.check_committer: 

@@ -4,11 +4,11 @@ server listenning to GIT hook command to pull the master
 Created on Wed Aug 30 08:35:00 2017
 @author: ignalex
 """
-#TODO: secure / payload 
+#DONE: secure / payload 
 #DONE: speak on update 
 #DONE: email feedback > after secured config     
 #TODO: restart particular apps 
-#TODO: speak commit message
+#DONE: speak commit message
 #TODO: secure path 
 
 from __future__ import print_function

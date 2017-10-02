@@ -7,4 +7,4 @@
 - [x] DDNS
 - [ ] ESP repo 
 - [ ] change timings on rf433 > + increase timeout from MS 
-- [ ] 
+- [ ] MS > email + camera

@@ -1,10 +1,10 @@
 - [ ] **finish migrating existing modules**
 - [x] config - part 2 from higher level
-- [ ] clean existing code 
+- [ ] clean existing code
 - [x] CI GIT hooks integration > flask API to trigger GIT PULL
-- [ ] payload check before pull + get the location more cryptic 
+- [ ] payload check before pull + get the location more cryptic
 - [x] fix wol
 - [x] DDNS
-- [ ] ESP repo 
-- [ ] change timings on rf433 > + increase timeout from MS 
+- [ ] ESP repo
+- [ ] change timings on rf433 > + increase timeout from MS
 - [ ] MS > email + camera

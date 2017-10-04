@@ -13,6 +13,14 @@ v5.1. - with relay init status
 v6 - one event can be programmed + re-erite code
 v7 - bluetooth scanning
 v9 - migrated to git
+
+crontab config:
+
+#MS
+00 05 * * 1-5 sudo python /home/pi/git/pi/MS.py 11.9h a: pass once m: play + lamp ON + pa morning:time:weather:alleventstoday once + esp 1_123 once + esp 6_rf433_coffee_on once s: play pause + lamp OFF + esp 6_rf433_coffee_off once
+00 17 * * 1-5 sudo python /home/pi/git/pi/MS.py 6h a: pass m: play + lamp ON + pa welcome:temp_in once s: play pause + lamp OFF
+30 05 * * 6,7 sudo python /home/pi/git/pi/MS.py 17h a: pass m: play + lamp ON + pa morning:temp_in:weather:alleventstoday:esp_1_123 once + esp 6_rf433_coffee_on once s: play pause + lamp OFF + esp 6_rf433_coffee_off once
+
 """
 from __future__ import print_function
 import __main__ as m

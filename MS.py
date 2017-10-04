@@ -181,7 +181,7 @@ def lamp(TASK):
             pass
 
 def esp(TASK):
-    TASK = TASK.split('_')
+    TASK = TASK[0].split('_')
     m.logger.info('esp task : ' + str(TASK))
     ESP(TASK)
 

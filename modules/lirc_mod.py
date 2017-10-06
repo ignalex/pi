@@ -52,7 +52,7 @@ def Start():
             if not (IR == last[0] and (datetime.datetime.now() - last[1]).seconds < 1) :  # bouncing
                 log.info( 'code : ' + str(IR))
                 if IR in XBMC_dic.keys():
-                    XBMC_JSON(XBMC_dic[IR])
+                    kodi(XBMC_dic[IR])
 #                elif codeIR[0] in extra_kodi_keys.keys():
 #                    for com in extra_kodi_keys[codeIR[0]].split(';'):
 #                        os.system('ssh -i ~/.ssh/id_rsa root@192.168.1.151 nohup ' + com + ' &')
@@ -66,14 +66,14 @@ def Start():
 
 
 if __name__ == '__main__':
-    with daemon.DaemonContext():
+#    with daemon.DaemonContext():
         try:
-            from time import sleep
-            import os
-            from JSON import XBMC_JSON
             from common import LOGGER, PID
             log = LOGGER('lirc')
             logger = log # compatibility
+            from time import sleep
+            import os
+            from KODI_control import kodi
             PID()
             import lirc
             sockid = lirc.init("test", blocking = False)

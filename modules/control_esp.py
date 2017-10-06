@@ -66,10 +66,10 @@ class ESP(object):
         else: # parallel
             self.result = [ str(i) for i in Parallel(n_jobs=3)(delayed(Request)(dev) for dev in self.devices)]
         m.logger.warn('\t'.join([i for i in self.result if i is not None])) 
-        self.stats()
-    def stats(self, file_name = [os.path.join(i, 'esp_alive.txt') for i in ['/home/pi/LOG/',os.getcwd()]  if os.path.exists(i)][0]): 
-        print >> open(file_name,'a'), '\n'.join([str(datetime.datetime.now()).split('.')[0] + '\t' + i.split('-')[0] + '\t'+ \
-                      ['1' if j == 'OK' else '0' for j in [i.split('-')[1]]][0]   for i in self.result if i is not None])
+#        self.stats()
+#    def stats(self, file_name = [os.path.join(i, 'esp_alive.txt') for i in ['/home/pi/LOG/',os.getcwd()]  if os.path.exists(i)][0]): 
+#        print >> open(file_name,'a'), '\n'.join([str(datetime.datetime.now()).split('.')[0] + '\t' + i.split('-')[0] + '\t'+ \
+#                      ['1' if j == 'OK' else '0' for j in [i.split('-')[1]]][0]   for i in self.result if i is not None])
     def Go_parallel(self,command = ['alive','12356']):
         self.parallel = True
         self.Go(command)

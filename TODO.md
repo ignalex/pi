@@ -8,3 +8,6 @@
 - [x] ESP repo
 - [x] change timings on rf433 > + increase timeout from MS
 - [ ] MS > email + camera
+- [ ] IR receiver
+- [ ] fix blinds > 1 and 3 (2 is ok) / new ESP mod?
+- [ ] fix temperature report from octo

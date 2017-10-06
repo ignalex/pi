@@ -49,6 +49,7 @@ def Start():
         codeIR = lirc.nextcode()
         if codeIR != []:
             IR = str(codeIR[0])
+            log.info( 'code : ' + str(IR))
             if not (IR == last[0] and (datetime.datetime.now() - last[1]).seconds < 1) :  # bouncing
                 log.info( 'code : ' + str(IR))
                 if IR in XBMC_dic.keys():

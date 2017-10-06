@@ -51,7 +51,6 @@ def Start():
             IR = str(codeIR[0])
             log.info( 'code : ' + str(IR))
             if not (IR == last[0] and (datetime.datetime.now() - last[1]).seconds < 1) :  # bouncing
-                log.info( 'code : ' + str(IR))
                 if IR in XBMC_dic.keys():
                     kodi(XBMC_dic[IR])
 #                elif codeIR[0] in extra_kodi_keys.keys():
@@ -61,23 +60,24 @@ def Start():
                     e = ESP()
                     e.Go_parallel(extra_esp_keys[IR])
                 else:
-                    os.system("python /home/pi/git/pi/modules/talk.py " + IR)
+                    #TODO: fix talk 
+                    log.info('talk is broken for now')
+#                    os.system("python /home/pi/git/pi/modules/talk.py " + IR)
             last = [IR, datetime.datetime.now()]
         sleep(0.3)
 
-
+#TODO: error handling > if error skip 
 if __name__ == '__main__':
-#    with daemon.DaemonContext():
-#        try:
+    with daemon.DaemonContext():
+        try:
             from common import LOGGER, PID
             log = LOGGER('lirc')
             logger = log # compatibility
             from time import sleep
-            import os
             from KODI_control import kodi
             PID()
             import lirc
             sockid = lirc.init("test", blocking = False)
             Start()
-#        except:
-#            log.error('error : ' + str(sys.exc_info()))
+        except:
+            log.error('error : ' + str(sys.exc_info()))

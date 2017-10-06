@@ -68,7 +68,7 @@ def Start():
 
 if __name__ == '__main__':
 #    with daemon.DaemonContext():
-        try:
+#        try:
             from common import LOGGER, PID
             log = LOGGER('lirc')
             logger = log # compatibility
@@ -79,5 +79,5 @@ if __name__ == '__main__':
             import lirc
             sockid = lirc.init("test", blocking = False)
             Start()
-        except:
-            log.error('error : ' + str(sys.exc_info()))
+#        except:
+#            log.error('error : ' + str(sys.exc_info()))

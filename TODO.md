@@ -11,3 +11,4 @@
 - [ ] IR receiver
 - [ ] fix blinds > 1 and 3 (2 is ok) / new ESP mod?
 - [ ] fix temperature report from octo
+- [ ] migrate PA 

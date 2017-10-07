@@ -42,7 +42,10 @@ def Start():
                       'BOSE_BTN_3' : ['1','123'],
                       'BOSE_BTN_4' : ['0', '1'],
                       'BOSE_BTN_5' : ['0','23'],
-                      'BOSE_BTN_6' : ['0','123']}
+                      'BOSE_BTN_6' : ['0','123'], 
+                      'BOSE_BTN_9' : ['6','rf433', 'light', 'on'], 
+                      'BOSE_BTN_0' : ['6','rf433', 'light', 'off']
+                      }
 
     last = [None, datetime.datetime.now()]
     while True:

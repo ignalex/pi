@@ -5,12 +5,15 @@ Created on Sat Feb 14 20:19:13 2015
 """
 
 #TODO: fix mapping buttons what do they do
-#TODO: integration to new ESP mod via control/rf433/...
+#DONE: integration to new ESP mod via control/rf433/...
+#DONE: light on / off 
+#TODO:  dim ON / off
 
 from __future__ import print_function
 
 import daemon, sys
 from control_esp import ESP #control_esp as ESP
+from speak_over_ssh import Speak
 import datetime
 
 def Start():
@@ -63,9 +66,8 @@ def Start():
                     e = ESP()
                     e.Go_parallel(extra_esp_keys[IR])
                 else:
-                    #TODO: fix talk 
-                    log.info('talk is broken for now')
-#                    os.system("python /home/pi/git/pi/modules/talk.py " + IR)
+                    log.info('speaking only ' + IR)
+                    Speak(IR)
             last = [IR, datetime.datetime.now()]
         sleep(0.3)
 

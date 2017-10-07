@@ -15,7 +15,7 @@ def Speak(text, device = 'octopus' ):
     global p
     if 'p' not in globals(): p = CONFIGURATION()  
     for k,v in Substitutons(): text = text.replace('%'+k,v)
-    keys ={'octopus' : '192.168.1.154:2227', 'hornet' : '192.168.1.153:2226'}
+    keys ={'octopus' : '192.168.1.154:2227', 'hornet' : '192.168.1.153:2226'} #TODO: hardcoding out
     os.system("ssh -p {} -i /home/pi/.ssh/{} pi@{} nohup sudo python /home/pi/PYTHON/GPIO/modules/talk.py '\"".\
         format(keys[device].split(':')[1], 
                device, 

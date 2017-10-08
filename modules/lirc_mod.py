@@ -17,7 +17,7 @@ from speak_over_ssh import Speak
 import datetime
 
 def Start():
-
+    #TODO: add all coded keys > with nothing mapped. 
     XBMC_dic = {'KEY_VOLUMEUP' : 'up',
                 'KEY_VOLUMEDOWN' : 'down',
                 'KEY_NEXT' : 'next',
@@ -30,8 +30,7 @@ def Start():
                 }#,
 #           '0' : 'current',
 #           '1' : 'current'}
-#    extra_kodi_keys = {'9' : 'python /storage/PYTHON/GPIO/modules/ard.py 134-',
-#                       '8' : 'python /storage/PYTHON/GPIO/modules/ard.py 134+'}
+
     extra_esp_keys = {'minus' : ['0','123'],
                       'plus' : ['1', '123'],
                       '1' : ['1', '1'],
@@ -46,6 +45,8 @@ def Start():
                       'BOSE_BTN_4' : ['0', '1'],
                       'BOSE_BTN_5' : ['0','23'],
                       'BOSE_BTN_6' : ['0','123'], 
+                      'BOSE_BTN_7' : ['6','rf433', 'dimlight', 'on'], 
+                      'BOSE_BTN_8' : ['6','rf433', 'dimlight', 'off'], 
                       'BOSE_BTN_9' : ['6','rf433', 'light', 'on'], 
                       'BOSE_BTN_0' : ['6','rf433', 'light', 'off']
                       }
@@ -59,9 +60,6 @@ def Start():
             if not (IR == last[0] and (datetime.datetime.now() - last[1]).seconds < 1) :  # bouncing
                 if IR in XBMC_dic.keys():
                     kodi(XBMC_dic[IR])
-#                elif codeIR[0] in extra_kodi_keys.keys():
-#                    for com in extra_kodi_keys[codeIR[0]].split(';'):
-#                        os.system('ssh -i ~/.ssh/id_rsa root@192.168.1.151 nohup ' + com + ' &')
                 elif codeIR[0] in extra_esp_keys:
                     e = ESP()
                     e.Go_parallel(extra_esp_keys[IR])

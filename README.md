@@ -28,16 +28,17 @@ raspberry pi modules for home automation
 - **play** music control (via KODI http API)
 - **ESP integration** > for using wifi remoted [ESP](https://github.com/ignalex/esp)
 - **send email** > smtp email integration
-    * send IP > send your IP (to be scheduled in crontab)
 - **movement sensor** > integration to MS.
     * depends on time of the day, __on movement__ > turn on/off lights, blinds up/down, **start boiling cooffee :)**
 - **git_hooks** > GIT CI > on git hook make 'git pull' and confirm (email + speaking)
 - **light** control  (via http API talking to ESP)
-- **IR receiver**       >> __to be migrated__
+- **lirc_mod** (IR reciever)
   * integration to play music
   * light ON/OFF from using IR remote
   * blinds ON/OF (using http API to ESP)
+  * more
 - **dynamic IP** > if changes - send email.
+
 - **internet speed** > ping and speed test every ... min and having results on web     >> __to be migrated__
 - **location tracking** > track iPhone location and measure distance to home to ON/OFF things  >> __to be migrated__
 - **ISS** > track ISS (International Space Station) location and distance to home and speak when close  >> __to be migrated__

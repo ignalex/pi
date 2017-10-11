@@ -4,10 +4,12 @@ Created on Sat Feb 14 20:19:13 2015
 @author: ignalex
 """
 
-#TODO: fix mapping buttons what do they do
+#DONE: fix mapping buttons what do they do
 #DONE: integration to new ESP mod via control/rf433/...
 #DONE: light on / off 
-#TODO:  dim ON / off
+#DONE:  dim ON / off
+#DONE: error handling > if error skip 
+#TODO: add all coded keys > with nothing mapped. 
 
 from __future__ import print_function
 
@@ -17,7 +19,6 @@ from speak_over_ssh import Speak
 import datetime
 
 def Start():
-    #TODO: add all coded keys > with nothing mapped. 
     XBMC_dic = {'KEY_VOLUMEUP' : 'up',
                 'KEY_VOLUMEDOWN' : 'down',
                 'KEY_NEXT' : 'next',
@@ -27,10 +28,7 @@ def Start():
                 'BOSE_KEY_FORWARD' : 'next',
                 'BOSE_KEY_PLAY' : 'resume' ,
                 'BOSE_KEY_PAUSE' : 'pause'
-                }#,
-#           '0' : 'current',
-#           '1' : 'current'}
-
+                }
     extra_esp_keys = {'minus' : ['0','123'],
                       'plus' : ['1', '123'],
                       '1' : ['1', '1'],
@@ -50,26 +48,29 @@ def Start():
                       'BOSE_BTN_9' : ['6','rf433', 'light', 'on'], 
                       'BOSE_BTN_0' : ['6','rf433', 'light', 'off']
                       }
-
     last = [None, datetime.datetime.now()]
     while True:
-        codeIR = lirc.nextcode()
-        if codeIR != []:
-            IR = str(codeIR[0])
-            log.info( 'code : ' + str(IR))
-            if not (IR == last[0] and (datetime.datetime.now() - last[1]).seconds < 1) :  # bouncing
-                if IR in XBMC_dic.keys():
-                    kodi(XBMC_dic[IR])
-                elif codeIR[0] in extra_esp_keys:
-                    e = ESP()
-                    e.Go_parallel(extra_esp_keys[IR])
-                else:
-                    log.info('speaking only ' + IR)
-                    Speak(IR)
-            last = [IR, datetime.datetime.now()]
+        try: 
+            codeIR = lirc.nextcode()
+            if codeIR != []:
+                IR = str(codeIR[0])
+                log.info( 'code : ' + str(IR))
+                if not (IR == last[0] and (datetime.datetime.now() - last[1]).seconds < 1) :  # bouncing
+                    if IR in XBMC_dic.keys():
+                        kodi(XBMC_dic[IR])
+                    elif codeIR[0] in extra_esp_keys:
+                        e = ESP()
+                        e.Go_parallel(extra_esp_keys[IR])
+                    else:
+                        log.info('speaking only ' + IR)
+                        Speak(IR)
+                last = [IR, datetime.datetime.now()]
+        except: 
+            log.error('error : ' + str(sys.exc_info()))
+            Speak('error in lirc module')
+            sleep (2)
         sleep(0.3)
 
-#TODO: error handling > if error skip 
 if __name__ == '__main__':
     with daemon.DaemonContext():
         try:
@@ -83,4 +84,4 @@ if __name__ == '__main__':
             sockid = lirc.init("test", blocking = False)
             Start()
         except:
-            log.error('error : ' + str(sys.exc_info()))
+            log.error('error on initiation: ' + str(sys.exc_info()))

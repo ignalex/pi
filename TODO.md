@@ -1,3 +1,4 @@
+##hornet
 - [ ] **finish migrating existing modules**
 - [x] config - part 2 from higher level
 - [x] clean existing code
@@ -10,7 +11,11 @@
 - [ ] MS > email + camera
 - [x] IR receiver (lirc)
 - [ ] fix blinds > 1 and 3 (2 is ok) / new ESP mod?
+
+##octopus
 - [ ] fix temperature report from octo
 - [ ] migrate PA
-
-- [ ] migrate **OCTOPUS** (rebuild?)
+- [ ] PA serice
+- [ ] iCloud mod
+- [ ] migrate **OCTOPUS** (rebuild?) > git repo + git hook 
+- [ ] internet speed > to hornet 

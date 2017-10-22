@@ -8,11 +8,11 @@ from modules.speak_over_ssh import Speak
 from modules.weather import WEATHER
 from modules.common import LOGGER, CONFIGURATION
 
-def extra_for_weather(threshhold = 20, extra =  2): 
+def extra_for_weather(threshhold=20, extra=2, was_raining=5): 
     w = WEATHER(False)
     w.ToInt()
 
-    if w.WasRaining(): 
+    if w.WasRaining(was_raining): 
         Speak('it was raining for '+ str(w.rain) + ' mm yesterday. I will not water the plants' )
         logger.info('it was raining for '+ str(w.rain) + ' mm yesterday. I will not water the plants')
         sys.exit()
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     logger = LOGGER('watering','INFO', True)
     p = CONFIGURATION()
     
-    extra_time = extra_for_weather(p.water.extra_threshold, p.water.extra)
+    extra_time = extra_for_weather(p.water.extra_threshold, p.water.extra,p.was_raining)
 #    params = {1 : {'relay': 2, 'motor' : 1, 'time' : 20  + extra_time}, 
 #              2 : {'relay': 3, 'motor' : 1, 'time' : 30  + extra_time}} 
 

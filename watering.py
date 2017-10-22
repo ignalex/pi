@@ -34,7 +34,7 @@ if __name__ == '__main__':
     logger = LOGGER('watering','INFO', True)
     p = CONFIGURATION()
     
-    extra_time = extra_for_weather(p.water.extra_threshold, p.water.extra,p.was_raining)
+    extra_time = extra_for_weather(p.water.extra_threshold, p.water.extra,p.water.was_raining)
 #    params = {1 : {'relay': 2, 'motor' : 1, 'time' : 20  + extra_time}, 
 #              2 : {'relay': 3, 'motor' : 1, 'time' : 30  + extra_time}} 
 

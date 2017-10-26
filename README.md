@@ -8,12 +8,13 @@ raspberry pi modules for home automation
 - **PA** > 'personal assistant' > using iCalendar and other mods to trigger functions
 - **WATERING** > using 2 (or more / or less) independent systems, open / close valves and trigger motor to start watetring plants
     * using BOM forecast for temperature / rain to tailor the amount of water
+    * options for parameters > checking min temperature and min rain amount for triggering
 - **HEATER** control > keeping temperature inside within defined range
     * used temperature sensor (GPIO), esp/rf433 api to wireless power outlet to remote control ON/OFF
 
 ## functionality
 - **relay** > control relay via GPIO
-- **watering** > water flowers [set for 2 systems] based on forecasted temperature (BOM) and previous day rain (BOM)
+- **watering** > water flowers [set for 2 systems] based on forecasted temperature (BOM) and previous day rain (BOM) and current temperature
 - **weather** >
   * current temperature inside
   * current and forecast for specified point

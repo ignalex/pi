@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""watering module / updated
-* to be run under sudo """
+"""watering module / updated """
 
 import sys 
 from modules.relay import cascade 

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 server listenning to GIT hook command to pull the master
+GIT hook must be set up 
+port redirection should be done on router 
+
 Created on Wed Aug 30 08:35:00 2017
 @author: ignalex
 """
@@ -29,7 +32,7 @@ app = Flask(__name__)
 def git_pull():
     global logger, p
     j = request.json # payload
-    if p.GIT_CI.save_payload == 'YES' or p.GIT_CI.save_payload: 
+    if p.GIT_CI.save_payload: 
         with open(os.path.join(Dirs()['LOG'],'git_payload_{}.pcl'.format(str(datetime.datetime.now()))), 'wb') as f: 
             pickle.dump(j, f)
     
@@ -42,9 +45,9 @@ def git_pull():
     process = Popen('git pull'.split(' '), stdout=PIPE, stderr=PIPE, cwd=Dirs()['REPO'])
     reply  = ' : '.join([str(i) for i in process.communicate() ]) 
     logger.info(reply)
-    if p.GIT_CI.report_pull_email == 'YES' or p.GIT_CI.report_pull_email == True: 
+    if p.GIT_CI.report_pull_email:
         logger.info(sendMail([p.email.address], [p.email.address, p.email.login, p.email.password], 'CI - git pull from ' + socket.gethostname(), reply ,[]))
-    if p.GIT_CI.report_speak == 'YES' or p.GIT_CI.report_speak == True: 
+    if p.GIT_CI.report_speak: 
         Speak('git pull with the message {} done on the machine {}'.format(', '.join([i['message'] for i in j['commits']]), socket.gethostname()))
     return reply 
 

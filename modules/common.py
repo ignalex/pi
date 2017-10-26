@@ -7,26 +7,30 @@ Created on Sun Aug 27 07:02:30 2017
 @author: Alexander Ignatov
 """
 #DONE: hvae 2 configs > 1 in data, 1 in git (for specific params)
+#TODO: think how to read from right config while having them controlled by GIT  (socket.gethostname() ? )
 
 from __future__ import print_function
 import os, sys, logging, argparse, traceback, datetime
 from subprocess import Popen, PIPE
+import socket 
 import __main__ as m 
 
 def Dirs(): 
     return {'LOG' : [i for i in ['/home/pi/LOG/', '/home/pi/temp/',         os.getcwd()] if os.path.exists(i)][0], 
-            'DATA': [i for i in ['/home/pi/git/pi/data', '/home/pi/temp/',  os.getcwd()] if os.path.exists(i)][0], 
-            'REPO': '/home/pi/git/pi'
+            'DATA': [i for i in ['/home/pi/git/pi/data', '../data/',  '/home/pi/temp/',  os.getcwd()] if os.path.exists(i)][0], 
+            'REPO': [i for i in ['/home/pi/git/pi', '../../'] if os.path.exists(i)][0]
             }
 
 class CONFIGURATION(object): 
     """read config: 
-        1. files passed as arguments to the function 
+        1. [hostname].ini file located in DATA dir
         2. config.ini file located in DATA dir
-        3. config.ini file located 1 level above any repo (secure - to be outside GIT) 
+        3. files passed as arguments to the function 
+        4. config.ini file located 1 level above any repo (secure - to be outside GIT) 
         parsing and returning object with attribs"""
     def __init__(self,ini_files=[]):
-        self.INI_FILES = [os.path.join(Dirs()['DATA'], 'config.ini')] + \
+        self.hostname = socket.gethostname()
+        self.INI_FILES = [os.path.join(Dirs()['DATA'], i + '.ini') for i in [self.hostname, 'config'] if os.path.exists(os.path.join(Dirs()['DATA'], i + '.ini'))] + \
                          [os.path.join(os.getcwd(), i + '.ini') for i in ini_files] + \
                          [i for i in [os.path.join(os.path.split(Dirs()['REPO'])[0], 'config.ini')] if os.path.exists(i)]
         self.INI = {}
@@ -34,9 +38,13 @@ class CONFIGURATION(object):
             if os.path.exists(ini_file): 
                 self.INI.update(self.ReadIniByGroup(ini_file))
         for k,p in  self.INI.items(): setattr(self, k, self.DictParams(p))
-        self.debug_file_list = []
-        for p in [k for k,v in self.INI.items() if v in ['YES','NO']]: setattr(self, p, [True if i == 'YES' else False for i in [self.INI[p]]][0])
-        self.ReplaceKeys()
+#        self.debug_file_list = [] - not used
+
+        #parsing 1st level of attribs
+        for p in [k for k,v in self.INI.items() if v in ['YES','NO']]: 
+            setattr(self, p, [True if i == 'YES' else False for i in [self.INI[p]]][0])
+
+#        self.ReplaceKeys()
     def ReadIniByGroup(self,filename):
         try: 
             INI_file = open(filename,'r').read().splitlines()
@@ -51,40 +59,47 @@ class CONFIGURATION(object):
         except: 
             print ('error parsing\n' + str(sys.exc_info()))
         return param
+
     def DictParams(self,p): 
-        if p.find('|') == -1: 
-            return FixValues(p)
+        if p.find('|') == -1: # direct value, not a a parameter
+            return self.FixValues(p)
         else: 
             d = OBJECT()
-            for pair in p.split(','): setattr(d, self.CheckIfDate(pair.split('|')[0]) , FixValues(pair.split('|')[1]))
+            for pair in p.split(','): 
+                setattr(d, self.CheckIfDate(pair.split('|')[0]) , self.ParseYesNo(self.FixValues(pair.split('|')[1])))
             return d
-    def ReplaceKeys(self): 
-        for key in self.__dict__.keys(): 
-            if type(getattr(self,key)) == dict: 
-                parsed = {}
-                for k,v in getattr(self,key).items(): 
-                    if v in self.__dict__.keys(): 
-                        parsed[k] = getattr(self,v)
-                    else: 
-                        parsed[k] = v
-                setattr(self,key,parsed)
+    def ParseYesNo(self,val): 
+        if val in ['YES', 'NO']:    return [True if val == 'YES' else False][0]
+        else:                       return val 
 
     def CheckIfDate(self,left_of_pair): 
         if left_of_pair.replace('.','').isdigit(): 
             return 'DATE_'+left_of_pair.replace('.','_')
         else: 
             return left_of_pair
-          
+
+    def FixValues(self,v): # in calibrating - fixing strings into lists of int/floats 
+        if v.find(';') != -1: 
+            return [TryToInt(i) for i in v.split(';')]
+        else: 
+            return  TryToInt(v)
+#    def ReplaceKeys(self): # LOOKS UPUSED > for keys as DICTS, but now use attributes
+#        for key in self.__dict__.keys(): 
+#            if type(getattr(self,key)) == dict: 
+#                parsed = {}
+#                for k,v in getattr(self,key).items(): 
+#                    if v in self.__dict__.keys(): 
+#                        parsed[k] = getattr(self,v)
+#                    else: 
+#                        parsed[k] = v
+#                setattr(self,key,parsed)
+
+       
 class OBJECT (object): 
     "basic empty object" 
     def __init__(self): 
         pass 
 
-def FixValues(v): # in calibrating - fixing strings into lists of int/floats 
-    if v.find(';') != -1: 
-        return [TryToInt(i) for i in v.split(';')]
-    else: 
-        return  TryToInt(v)
 
 def TryToInt(a): 
     try: 
@@ -126,7 +141,6 @@ def LOGGER(filename = r'log_filename.txt', level = 'INFO', verbose = False) :
     else: 
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s',datefmt='%m-%d-%Y %I:%M:%S %p' )
     
-    #TODO: log folder 
     #TODO: DB logging 
     log_file =  os.path.join(Dirs()['LOG'], filename)
     fh = logging.FileHandler(log_file)

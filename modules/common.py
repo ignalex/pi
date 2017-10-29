@@ -7,7 +7,7 @@ Created on Sun Aug 27 07:02:30 2017
 @author: Alexander Ignatov
 """
 #DONE: hvae 2 configs > 1 in data, 1 in git (for specific params)
-#TODO: think how to read from right config while having them controlled by GIT  (socket.gethostname() ? )
+#DONE: think how to read from right config while having them controlled by GIT  (socket.gethostname() ? )
 
 from __future__ import print_function
 import os, sys, logging, argparse, traceback, datetime

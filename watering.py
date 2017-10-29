@@ -12,9 +12,9 @@ def extra_for_weather(threshhold=20, extra=2, was_raining=5,min_temp=0):
     w.ToInt()
 
     # if min_temp > 0 - checking if actual temp > min_temp and watering only if yes
-    if min_temp > 0 and w.temp_today <= min_temp: 
+    if min_temp > 0 and w.temp_out <= min_temp: 
         Speak('it is too cold for extra watering' )
-        logger.info('temperature forecasted ' + str(w.temp_today) + ' less than ' + str(min_temp))
+        logger.info('temperature forecasted ' + str(w.temp_out) + ' less than ' + str(min_temp))
         sys.exit()
 
     if w.WasRaining(was_raining): 

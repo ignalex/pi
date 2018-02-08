@@ -11,11 +11,12 @@
 - [ ] MS > email + camera
 - [x] IR receiver (lirc)
 - [ ] fix blinds > 1 and 3 (2 is ok) / new ESP mod?
+- [x] integrate ESP 11...
 
 ##octopus
 - [ ] fix temperature report from octo
 - [ ] migrate PA
 - [ ] PA serice
 - [ ] iCloud mod
-- [ ] migrate **OCTOPUS** (rebuild?) > git repo + git hook 
-- [ ] internet speed > to hornet 
+- [ ] migrate **OCTOPUS** (rebuild?) > git repo + git hook
+- [ ] internet speed > to hornet

@@ -139,7 +139,7 @@ def Start():
 #        sys.exit()
 
 if __name__ == '__main__':
-    with daemon.DaemonContext():
+    with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
         try:
             Start()
         except:

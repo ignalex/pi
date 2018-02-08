@@ -12,6 +12,7 @@
 - [x] IR receiver (lirc)
 - [ ] fix blinds > 1 and 3 (2 is ok) / new ESP mod?
 - [x] integrate ESP 11...
+- [x] MS > 13 on / off on iPhone ping
 
 ##octopus
 - [ ] fix temperature report from octo

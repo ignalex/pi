@@ -47,7 +47,7 @@ class LCD(object):
     def PrintPos(self,pos ,text):
         position = str(pos[0])+str(self.TranslatePosition(pos[1]))
         send_string =  'P' + position + text
-        logger.debug (pos, send_string)
+        logger.debug (str(pos) + send_string)
         with Lock('serial'): self.ser.write(send_string)
     def Print(self,text):
         with Lock('serial'): self.ser.write('P00' + text)

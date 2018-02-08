@@ -15,6 +15,10 @@ current info:
 Created on Thu Oct 29 07:12:47 2015
 @author: ignalex
 """
+#DONE: fix #from modules.SHELL import PID
+#DONE: fix hanging (blank screen)
+#DONE: logging
+
 from __future__ import print_function
 
 import daemon
@@ -26,9 +30,6 @@ from modules.common import  LOGGER, PID, MainException
 from modules.weather import WEATHER
 from modules.ferry import NextFerry
 from modules.lock import LockArd as Lock
-#TODO: fix #from modules.SHELL import PID
-#TODO: fix hanging (blank screen)
-#TODO: logging
 
 class LCD(object):
     def __init__(self,DEBUG = False):

@@ -250,6 +250,7 @@ def main():
         iPhone.Ping()
         if iPhone.changed != None:
             ESP([['1' if i else '0' for i in [iPhone.changed]][0] , '5']) # ESP indicator on 5 esp
+            ESP(['6','rf433','13', ['1' if i else '0' for i in [iPhone.changed]][0]]) #['6','rf433','3','0'] # power #3 fire
             logger.info('iPhone status changed to ' + str(iPhone.changed))
         if iPhone.status == False:
             ThreadedEvent('Blink 1 1 0.3')

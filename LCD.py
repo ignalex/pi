@@ -107,6 +107,7 @@ def Start():
     PrintWeather(lcd)
     PrintNextFerry(lcd)
     lost = False
+    attempt = 1
     print_weather = datetime.now() - timedelta(seconds = 130)
 
     while True:
@@ -122,12 +123,18 @@ def Start():
                 sleep(1)
                 PrintWeather(lcd)
             sleep(1)
+            attempt = 1
 
         except: # if connection to serail lost - it can be reassigned the port
             try:
                 lcd = LCD()
                 lost = True
-            except:
+            except Exception as e:
+                attempt += 1
+                if attempt > 5:
+                    logger.fatal(str(e))
+                    return
+                logger.error('attempt' + str(attempt) + ' ' + str(e))
                 sleep(5)
 #        sys.exit()
 

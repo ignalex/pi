@@ -9,13 +9,13 @@ import os, sys
 
 from modules.common import  LOGGER
 logger = LOGGER('internet_speed', level = 'INFO')
-from common import Dirs
+from modules.common import Dirs
 log = os.path.join(Dirs()['LOG'],'internet_speed.txt') # for data
 
 from subprocess import Popen, PIPE
 from time import sleep
 #import urllib2
-from speedtest_cli import speedtest
+import speedtest
 #from modules.speakPI4 import Speak #TODO: fix
 import pandas as pd
 import plotly
@@ -86,9 +86,16 @@ class CheckInternet(object):
             return None
 
 def SpeedTest(plot = True, copyToIndex = True):
-    test  = speedtest() #speedtest function in speedtest_cli is modified to return params
-    for n,name in enumerate(['down', 'up', 'ping']):
-        LOG('speed_' + name , str(test[n]))
+    s = speedtest.Speedtest()
+    s.get_best_server()
+    s.download()
+    s.upload()
+    s.results.share() #TODO: link to site
+
+    results_dict = s.results.dict()
+
+    for n,name in enumerate(['download', 'upload', 'ping']):
+        LOG('speed_' + name ,  results_dict[name])
     if plot:
         plotting = PLOT()
         # here apache must be installed sudo apt-get install apache2 -y [ https://www.raspberrypi.org/documentation/remote-access/web-server/apache.md ]
@@ -101,7 +108,7 @@ class PLOT(object):
         self.get_plots(self.df)
     def read_dataFrame(self):
         df = pd.read_csv(os.path.join(path,'events.log'), sep = '\t', names = ['time', 'type', 'val', 'comment'], parse_dates=['time'], index_col = 'time')[[ 'type', 'val']]
-        speed = df[df['type'].isin( ['speed_down','speed_up','speed_ping','internet'])].pivot(columns = 'type', values = 'val').\
+        speed = df[df['type'].isin( ['speed_download','speed_upload','speed_ping','internet'])].pivot(columns = 'type', values = 'val').\
                 rename(columns = {'speed_up' : 'upload', 'speed_down' : 'download', 'speed_ping' : 'ping'})
         #speed = df[df['type'].str.startswith('speed') & ~df['type'].str.endswith('host')].pivot(columns = 'type', values = 'val').applymap(lambda x : np.float(x))
         #ping = pd.DataFrame({'internet': df[df['type'] == 'internet'] }) #.val.apply(lambda x : {'OK' : 1, 'rebooting' : 0, 'restarted - OK' : 1, 'still no good' : 2}[x])})

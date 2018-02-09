@@ -156,7 +156,6 @@ def SpeedTest():
     s.download()
     s.upload()
     s.results.share() #TODO: link to site
-
     results_dict = s.results.dict()
     sss = {k:v for k,v in results_dict.items() if k != 'server'}
     df = pd.DataFrame.from_dict(sss, orient='index').T
@@ -167,9 +166,10 @@ if __name__ == '__main__':
     args = sys.argv[1:]
     path = Dirs()['LOG']
     p = CONFIGURATION()
-    con = PANDAS2POSTGRES(**p.hornet_pi_db)
+    con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
     df = SpeedTest()
     con.write(df, 'internet_speed')
+    print ('done')
 #    if '-speed' in args:
 #        SpeedTest()
 ##    elif '-reboot' in args:

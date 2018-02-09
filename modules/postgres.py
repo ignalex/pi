@@ -21,11 +21,12 @@ class PANDAS2POSTGRES(object):
     def read(self, sql):
         self.df = pd.read_sql(sql = sql, con = self.engine)
         return self.df
-    def write(self, df, name, schema = None, if_exists = 'append', stamp = None ):
+    def write(self, df, name, if_exists = 'append', stamp = None): #, schema = None, ):
         "df is not necessary the one made with 'read'"
         print ('writing ' + str(stamp) + ' ' + str(df.shape[0]) + ' records' )
-        self.name, self.schema = name, schema
-        df.to_sql( name = name, con = self.engine, schema = schema, if_exists = if_exists)
+        self.name = name
+#        self.schema =  schema
+        df.to_sql( name = name, con = self.engine, if_exists = if_exists)  #schema = schema,
     def Connection(self):
         try:
             self.connection =  "dbname={DB} user={USER} password={PASS} host={HOST} port={PORT}".format(**self.connect)

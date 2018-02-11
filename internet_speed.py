@@ -57,7 +57,7 @@ def read_data_from_db(last_days=5):
 	ping :: numeric
 	from internet_speed
     where now() - timestamp <= '{} days' """.format(last_days)) #TODO: limit last days
-    df = df.set_index('timestamp').resample('15min').interpolate('pchip')
+    df = df.set_index('timestamp').resample('10min').interpolate('pchip')
     return df
 
 @app.route("/internet_speed")

@@ -66,7 +66,9 @@ def internet_speed():
     line = df[['upload', 'download' ,'ping','timestamp']].set_index('timestamp').resample('10min').interpolate('pchip')
 
     div1 = plotly.offline.plot(line.iplot(theme = 'solar', asFigure = True, title = 'internet speed'), output_type='div')
-    div2 = plotly.offline.plot(df.pivot(columns = 'hour', values='download').iplot(kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False), include_plotlyjs = False)
+    div2 = plotly.offline.plot(df[['download', 'hour']].reset_index().pivot(columns = 'hour', values='download', index='index').iplot(kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
+
+
     return div1+div2#render_template('forecasting.html', plotly_mvp=div)
 #TODO: templates / inject DIV.
 #TODO: btn 'scan now'

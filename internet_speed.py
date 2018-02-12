@@ -13,8 +13,10 @@ from modules.common import CONFIGURATION
 from modules.postgres import PANDAS2POSTGRES
 from flask import Flask
 
-
-import speedtest
+try:
+    import speedtest
+except Exception as e:
+    logger.error(str(e))
 #from modules.speakPI4 import Speak #TODO: fix
 import pandas as pd
 import plotly
@@ -22,7 +24,19 @@ import cufflinks
 import datetime
 
 p = CONFIGURATION()
-app = Flask(__name__)
+
+try:
+    from flask_compress import Compress
+    compress = Compress()
+
+    def start_app():
+        app = Flask(__name__)
+        compress.init_app(app)
+        return app
+    app = start_app()
+except:
+    logger.info ('no compress used')
+    app = Flask(__name__)
 
 def try_to_float(a):
     try:
@@ -45,6 +59,12 @@ def to_db(df):
     try:
         con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
         con.write(df, 'internet_speed')
+        logger.info('df added to DB')
+
+        div = internet_speed()
+        con.write(pd.DataFrame.from_dict({'current' : div}, orient='index').T, 'internet_speed_current', if_exists='replace')
+        logger.info('text added to DB')
+
         return True
     except Exception as e:
         logger.error(str(e))
@@ -56,7 +76,12 @@ def read_data_from_db(last_days=5):
 	round ( download :: numeric  / (1024 * 1024), 2)  as download,
 	ping :: numeric
 	from internet_speed
-    where now() - timestamp <= '{} days' """.format(last_days)) #TODO: limit last days
+    where now() - timestamp <= '{} days' """.format(last_days)) #DONE: limit last days
+    return df
+
+def read_div_from_db():
+    con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
+    df = con.read("""select current from internet_speed_current""")['current'][0]
     return df
 
 @app.route("/internet_speed")
@@ -68,8 +93,14 @@ def internet_speed():
     div1 = plotly.offline.plot(line.iplot(theme = 'solar', asFigure = True, title = 'internet speed'), output_type='div')
     div2 = plotly.offline.plot(df[['download', 'hour']].reset_index().pivot(columns = 'hour', values='download', index='index').iplot(kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
 
-
     return div1+div2#render_template('forecasting.html', plotly_mvp=div)
+
+@app.route("/internet_speed_fast")
+def internet_speed_fast():
+    div = read_div_from_db()
+    return div
+
+
 #TODO: templates / inject DIV.
 #TODO: btn 'scan now'
 #TODO: link to last scan

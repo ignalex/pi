@@ -82,24 +82,27 @@ def read_data_from_db(last_days=5):
 def read_div_from_db():
     con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
     df = con.read("""select current from internet_speed_current""")['current'][0]
-    return df
+    last_scan = con.read("""select split_part(timestamp :: text, '.', 1) as datetime, extract('minutes' from now() - timestamp) :: int as minutes,  share from internet_speed where timestamp = (select max(timestamp) from internet_speed) """).T.to_dict()[0]
+    return (df, last_scan)
 
 @app.route("/internet_speed_live_process")
 def internet_speed():
     # line chart
     df = read_data_from_db()
-    line = df[['upload', 'download' ,'ping','timestamp']].set_index('timestamp')#.resample('10min').interpolate('pchip')
+    line = df[['upload', 'download' ,'ping','timestamp']].set_index('timestamp').resample('20min').interpolate('pchip')
 
     div1 = plotly.offline.plot(line.iplot(theme = 'solar', asFigure = True, title = 'internet speed'), output_type='div', include_plotlyjs = False)
-    div2 = plotly.offline.plot(df[['download', 'hour']].reset_index().pivot(columns = 'hour', values='download', index='index').iplot(kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
+    div2 = plotly.offline.plot(df[['download', 'hour']].reset_index().pivot(columns = 'hour', values='download', index='index').iplot(title = 'download', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
+    div3 = plotly.offline.plot(df[['upload', 'hour']].reset_index().pivot(columns = 'hour', values='upload', index='index').iplot(title = 'upload', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
+    div4 = plotly.offline.plot(df[['ping', 'hour']].reset_index().pivot(columns = 'hour', values='ping', index='index').iplot(title = 'ping', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
 
-    return div1+div2#render_template('forecasting.html', plotly_mvp=div)
+    return div1 + div2 + div3 + div4
 
 @app.route("/internet_speed")
 def internet_speed_fast():
-    div1 = read_div_from_db()
+    div1, last = read_div_from_db()
 #    return div
-    return render_template('internet_speed.html', plotly_div1=div1)
+    return render_template('internet_speed.html', plotly_div1=div1, last_link=last['share'], last_scan=last['datetime'], last_min=last['minutes'])
 
 
 #TODO: templates / inject DIV.

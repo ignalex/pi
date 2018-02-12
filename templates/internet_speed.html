@@ -7,6 +7,8 @@
 
   <body>
       <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+      <div> <a href="{{ last_link }}"> last scan {{ last_scan }} which is {{ last_min }} min ago</a> </div>
+      <hr>
       <div  id="speed1"> {{ plotly_div1 | safe }} </div>
   </body>
 

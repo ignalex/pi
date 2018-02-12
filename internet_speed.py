@@ -51,21 +51,26 @@ def to_db(df):
 
 def read_data_from_db(last_days=5):
     con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
-    df = con.read("""select timestamp,
+    df = con.read("""select timestamp, extract(hour from timestamp) as hour,
 	round (upload :: numeric / (1024 * 1024), 2)  as upload,
-	round ( download :: numeric  / (1024 * 1024), 2)  as download,
-	ping :: numeric
+	round ( download :: numeric  / (1024 * 1024), 2)  as upload,
+	upload :: numeric
 	from internet_speed
     where now() - timestamp <= '{} days' """.format(last_days)) #TODO: limit last days
-    df = df.set_index('timestamp').resample('10min').interpolate('pchip')
     return df
 
 @app.route("/internet_speed")
 def internet_speed():
+    # line chart
     df = read_data_from_db()
-    div = plotly.offline.plot(df.iplot(asFigure = True, title = 'internet speed'), output_type='div')
-    return div#render_template('forecasting.html', plotly_mvp=div)
+    line = df[['upload', 'upload' ,'upload']].set_index('timestamp').resample('10min').interpolate('pchip')
 
+    div1 = plotly.offline.plot(line.iplot(theme = 'solar', asFigure = True, title = 'internet speed'), output_type='div')
+    div2 = plotly.offline.plot(df.pivot(columns = 'hour', values='download').iplot(kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False), include_plotlyjs = False)
+    return div1+div2#render_template('forecasting.html', plotly_mvp=div)
+#TODO: templates / inject DIV.
+#TODO: btn 'scan now'
+#TODO: link to last scan
 
 #%%
 if __name__ == '__main__':

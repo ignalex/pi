@@ -12,7 +12,7 @@ logger = LOGGER('internet_speed', level = 'INFO')
 from modules.common import CONFIGURATION
 from modules.postgres import PANDAS2POSTGRES
 from flask import Flask, render_template
-from pandas_highcharts import core as phch_core
+#from pandas_highcharts import core as phch_core
 import json
 
 try:

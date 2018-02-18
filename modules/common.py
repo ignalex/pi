@@ -16,7 +16,7 @@ import socket
 import __main__ as m
 
 def Dirs():
-    return {'LOG' : [i for i in ['/home/pi/LOG/', '/home/pi/temp/',         os.getcwd()] if os.path.exists(i)][0],
+    return {'LOG' : [i for i in ['/home/pi/LOG/', '/home/pi/temp/', r'C:\_LOG', os.getcwd()] if os.path.exists(i)][0],
             'DATA': [i for i in ['/home/pi/git/pi/data', '../data/',  '/home/pi/temp/',  os.getcwd()] if os.path.exists(i)][0],
             'REPO': [i for i in ['/home/pi/git/pi', '../../'] if os.path.exists(i)][0]
             }

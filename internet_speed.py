@@ -12,6 +12,7 @@ logger = LOGGER('internet_speed', level = 'INFO')
 from modules.common import CONFIGURATION
 from modules.postgres import PANDAS2POSTGRES
 from flask import Flask, render_template
+#from pandas_highcharts import core as phch_core
 
 try:
     import speedtest
@@ -45,6 +46,7 @@ def try_to_float(a):
         return a
 
 def SpeedTest():
+    "returns df with speed test"
     s = speedtest.Speedtest()
     s.get_best_server()
     s.download()
@@ -81,33 +83,49 @@ def read_data_from_db(last_days=5):
 
 def read_div_from_db():
     con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
-    df = con.read("""select current from internet_speed_current""")['current'][0]
+    df = con.read("""select current from internet_speed_current""")['current']#[0]
     last_scan = con.read("""select split_part(timestamp :: text, '.', 1) as datetime, extract('minutes' from now() - timestamp) :: int as minutes,  share from internet_speed where timestamp = (select max(timestamp) from internet_speed) """).T.to_dict()[0]
     return (df, last_scan)
 
 @app.route("/internet_speed_live_process")
 def internet_speed():
-    # line chart
-    df = read_data_from_db()
-    line = df[['upload', 'download' ,'ping','timestamp']].set_index('timestamp').resample('20min').interpolate('pchip')
+    "used 1. to read raw data, create plots and send them back to DB as current divs and 2. method to access raw data"
+    line = read_data_from_db(days=p.internet_speed.line_days)[['upload', 'download' ,'ping','timestamp']].set_index('timestamp')#.resample('20min').interpolate('pchip') # interpolation doesn't work on surface but OK on hornet :) starange
+    df = read_data_from_db(days=p.internet_speed.box_days)
 
-    div1 = plotly.offline.plot(line.iplot(theme = 'solar', asFigure = True, title = 'internet speed'), output_type='div', include_plotlyjs = False)
-    div2 = plotly.offline.plot(df[['download', 'hour']].reset_index().pivot(columns = 'hour', values='download', index='index').iplot(title = 'download', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
-    div3 = plotly.offline.plot(df[['upload', 'hour']].reset_index().pivot(columns = 'hour', values='upload', index='index').iplot(title = 'upload', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
-    div4 = plotly.offline.plot(df[['ping', 'hour']].reset_index().pivot(columns = 'hour', values='ping', index='index').iplot(title = 'ping', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
-
-    return div1 + div2 + div3 + div4
+    DIVS = dict(
+         div1 = plotly.offline.plot(line.iplot(theme = 'solar', asFigure = True, title = 'internet speed'), output_type='div', include_plotlyjs = False)
+        ,div2 = plotly.offline.plot(df[['download', 'hour']].reset_index().pivot(columns = 'hour', values='download', index='index').iplot(title = 'download', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
+        ,div3 = plotly.offline.plot(df[['upload', 'hour']].reset_index().pivot(columns = 'hour', values='upload', index='index').iplot(title = 'upload', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
+        ,div4 = plotly.offline.plot(df[['ping', 'hour']].reset_index().pivot(columns = 'hour', values='ping', index='index').iplot(title = 'ping', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
+    )
+    return DIVS # saving dict to DB > will loose KEYS, only indexes
 
 @app.route("/internet_speed")
 def internet_speed_fast():
-    div1, last = read_div_from_db()
-#    return div
-    return render_template('internet_speed.html', plotly_div1=div1, last_link=last['share'], last_scan=last['datetime'], last_min=last['minutes'])
+    global DIVS
+    divs, last = read_div_from_db()
+    DIVS = {'div' + str(i) : divs[i] for i in [k for k in divs.index] } # rebuilding keys
+    return render_template('internet_speed.html',
+                           last_link=last['share'],
+                           last_scan=last['datetime'],
+                           last_min=last['minutes'],
+                           udpate_sec = p.internet_speed.update,
+                           **DIVS)
 
+#@app.route("/internet_speed_highchart")
+#def internet_speed_hc():
+#
+#    div1, last = read_div_from_db()
+#
+#    df = read_data_from_db()[['download','upload','ping','timestamp']].set_index('timestamp')
+#    chart = phch_core.serialize(df, render_to='hichart', output_type='json')
+##    return div
+#    return render_template('internet_speed.html', chart=chart, plotly_div1=div1, last_link=last['share'], last_scan=last['datetime'], last_min=last['minutes'])
 
-#TODO: templates / inject DIV.
-#TODO: btn 'scan now'
-#TODO: link to last scan
+#DONE: templates / inject DIV.
+#NO: btn 'scan now'
+#DONE: link to last scan
 
 #%%
 if __name__ == '__main__':

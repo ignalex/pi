@@ -39,12 +39,16 @@ raspberry pi modules for home automation
   * blinds ON/OF (using http API to ESP)
   * more
 - **dynamic IP** > if changes - send email.
+- **internet speed** > ping and speed test every ... min and having results on web
+- **camera** > using camera vid / pic (used in ALARM for email pic if there is moovement and I am not at home)
 
-- **internet speed** > ping and speed test every ... min and having results on web     >> __to be migrated__
+- **dashboard** web based + flask
+- **picture frame slides** - show slides [integrate with python]
+- **video from SMB share**
 - **location tracking** > track iPhone location and measure distance to home to ON/OFF things  >> __to be migrated__
 - **ISS** > track ISS (International Space Station) location and distance to home and speak when close  >> __to be migrated__
 - **ant** > communicate to another PI using SSH >> __to be migrated__
-- **camera** > using camera vid / pic (used in ALARM for email pic if there is moovement and I am not at home)  >> __to be migrated__
+
 *** __more to come ;)__
 
 ## installation and deployment

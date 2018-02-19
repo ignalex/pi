@@ -3,14 +3,42 @@
 
   <head>
     <title>internet speed</title>
+    <meta http-equiv="refresh" content="{{udpate_sec}}">
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
   </head>
 
   <body>
       <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+
       <div> <a href="{{ last_link }}"> last scan {{ last_scan }} which is {{ last_min }} min ago</a> </div>
       <hr>
-      <div  id="speed1"> {{ plotly_div1 | safe }} </div>
-  </body>
+      <!--div  id="speed1"> {{ plotly_div1 | safe }} </div-->
 
+        <div class="container">                             <!-- ALL GRID -->
+            <div class="row">                               <!-- 2 PARTS -->
+                <div class="col-md-12 col-lg-6 col-xl-6" >
+
+                  <div  id="speed1"> {{ div0 | safe }} </div>
+                  <div  id="speed2"> {{ div1 | safe }} </div>
+                 </div>
+
+                <div class="col-md-12 col-lg-6 col-xl-6" >
+
+                  <div  id="speed3"> {{ div2 | safe }} </div>
+                  <div  id="speed4"> {{ div3 | safe }} </div>
+                </div>
+            </div>
+        </div>
+
+      <!--div id="hichart"></div-->
+      <!--script type="text/javascript"> new Highcharts.Chart({{chart|safe}}); </script-->
+      <hr>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js" integrity="sha384-3ziFidFTgxJXHMDttyPJKDuTlmxJlwbSkojudK/CkRqKDOmeSbN6KLrGdrBQnT2n" crossorigin="anonymous"></script>
+
+  </body>
 
 </html>

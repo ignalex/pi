@@ -13,11 +13,18 @@
 - [ ] fix blinds > 1 and 3 (2 is ok) / new ESP mod?
 - [x] integrate ESP 11...
 - [x] MS > 13 on / off on iPhone ping
+- [ ] logger > to HORNET db
 
 ##octopus
 - [ ] fix temperature report from octo
 - [ ] migrate PA
+- [ ] PA
 - [ ] PA serice
 - [ ] iCloud mod
 - [ ] migrate **OCTOPUS** (rebuild?) > git repo + git hook
-- [ ] internet speed > to hornet
+- [x] internet speed > to hornet
+- [ ] git hook to octopus
+- [ ] M2 -> M3
+- [ ] **dashboard** web based + flask
+- [ ] **picture frame slides** - show slides [integrate with python]
+- [x] video from SMB share

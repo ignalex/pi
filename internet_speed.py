@@ -13,7 +13,6 @@ from modules.common import CONFIGURATION
 from modules.postgres import PANDAS2POSTGRES
 from flask import Flask, render_template
 #from pandas_highcharts import core as phch_core
-import json
 
 try:
     import speedtest
@@ -47,6 +46,7 @@ def try_to_float(a):
         return a
 
 def SpeedTest():
+    "returns df with speed test"
     s = speedtest.Speedtest()
     s.get_best_server()
     s.download()
@@ -89,9 +89,9 @@ def read_div_from_db():
 
 @app.route("/internet_speed_live_process")
 def internet_speed():
-    # line chart
-    df = read_data_from_db()
-    line = df[['upload', 'download' ,'ping','timestamp']].set_index('timestamp')#.resample('20min').interpolate('pchip') # interpolation doesn't work on surface but OK on hornet :) starange
+    "used 1. to read raw data, create plots and send them back to DB as current divs and 2. method to access raw data"
+    line = read_data_from_db(days=p.internet_speed.line_days)[['upload', 'download' ,'ping','timestamp']].set_index('timestamp')#.resample('20min').interpolate('pchip') # interpolation doesn't work on surface but OK on hornet :) starange
+    df = read_data_from_db(days=p.internet_speed.box_days)
 
     DIVS = dict(
          div1 = plotly.offline.plot(line.iplot(theme = 'solar', asFigure = True, title = 'internet speed'), output_type='div', include_plotlyjs = False)
@@ -106,14 +106,12 @@ def internet_speed_fast():
     global DIVS
     divs, last = read_div_from_db()
     DIVS = {'div' + str(i) : divs[i] for i in [k for k in divs.index] } # rebuilding keys
-#    return div
-    return render_template('internet_speed.html', #plotly_div1=divs,
+    return render_template('internet_speed.html',
                            last_link=last['share'],
                            last_scan=last['datetime'],
                            last_min=last['minutes'],
                            udpate_sec = p.internet_speed.update,
                            **DIVS)
-
 
 #@app.route("/internet_speed_highchart")
 #def internet_speed_hc():

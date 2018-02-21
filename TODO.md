@@ -17,7 +17,6 @@
 
 ##octopus
 - [ ] fix temperature report from octo
-- [ ] migrate PA
 - [ ] PA
 - [ ] PA serice
 - [ ] iCloud mod
@@ -28,3 +27,10 @@
 - [ ] **dashboard** web based + flask
 - [ ] **picture frame slides** - show slides [integrate with python]
 - [x] video from SMB share
+
+##zero1
+- [x] headless start + postgres + postgis + data in
+- [ ] GPS: install + connect
+- [ ] python
+- [ ] speed function
+- [ ] direction function

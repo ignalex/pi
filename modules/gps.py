@@ -10,17 +10,19 @@ import serial
 import pynmea2
 from time import sleep
 
-serialStream = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.5)
+serialStream = serial.Serial("/dev/ttyUSB1", 9600, timeout=0.5)
 
 def gps():
-    sentence = serialStream.readline()
-    if sentence.find('GGA') > 0:
-        data = pynmea2.parse(sentence)
-        return dict(time=data.timestamp,lat=data.latitude,lon=data.longitude)
-    else:
-        return dict(time=None, lat=None, lon=None)
+    while True: 
+        sentence = serialStream.readline()
+        if sentence.find('GGA') > 0:
+            try: 
+	    	data = pynmea2.parse(sentence)
+            	return dict(time=data.timestamp,lat=data.latitude,lon=data.longitude)
+	    except: 
+		print('wrong format') 
 
 if __name__ == '__main__':
     while True:
         print ("{time}: {lat},{lon}".format(**gps()))
-        sleep(0.5)
+#        sleep(0.5)

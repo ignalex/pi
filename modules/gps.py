@@ -21,11 +21,11 @@ def gps():
                 return dict(time=data.timestamp,
                             lat=data.latitude,
                             lon=data.longitude,
-                            gps_qual=data.gps_qual,
-                            num_sats=data.num_sats,
-                            altitude=data.altitude,
-                            age_gps_data=data.age_gps_data,
-                            horizontal_dil=data.horizontal_dil)
+                            qual=data.gps_qual,
+                            N_st=data.num_sats,
+                            alt=data.altitude,
+                            age=data.age_gps_data,
+                            hord=data.horizontal_dil)
             except:
                 print('wrong format')
 

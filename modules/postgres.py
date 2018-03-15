@@ -38,3 +38,19 @@ class PANDAS2POSTGRES(object):
         self.Connection()
         self.cur.execute(sql)
         self.conn.commit()
+
+def PG_Connect(connect):
+    """creates cursor on the database
+    inputs: dict {DB, USER, HOST, (PORT - optional - if not provided then 5432), (PASS - optional - if not provided to be taken from .pgpass file)}
+    output: (conn,cur)"""
+
+    connection =  ("dbname={DB} user={USER} host={HOST} " + \
+                  ['password={PASS} ' if 'PASS' in connect.keys() else ' '][0] + \
+                  ['port=5432' if 'PORT' not in connect.keys() else 'port={PORT}'][0]).format(**connect)
+    try:
+        conn = psycopg2.connect(connection)
+        conn.autocommit = True
+        cur =  conn.cursor()
+        return (conn,cur)
+    except:
+        return (None,None)

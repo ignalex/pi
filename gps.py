@@ -9,17 +9,35 @@ from __future__ import print_function
 import os
 import serial
 import pynmea2
-import time
-from modules.postgres import PG_Connect #TODO: > pool?
+import time, datetime
+import psycopg2
 from modules.common import  LOGGER, CONFIGURATION, MainException
+
+def PG_Connect(connect):
+    """creates cursor on the database
+    inputs: dict {DB, USER, HOST, (PORT - optional - if not provided then 5432), (PASS - optional - if not provided to be taken from .pgpass file)}
+    output: (conn,cur)"""
+
+    connection =  ("dbname={DB} user={USER} host={HOST} " + \
+                  ['password={PASS} ' if 'PASS' in connect.keys() else ' '][0] + \
+                  ['port=5432' if 'PORT' not in connect.keys() else 'port={PORT}'][0]).format(**connect)
+    try:
+        conn = psycopg2.connect(connection)
+        conn.autocommit = True
+        cur =  conn.cursor()
+        return (conn,cur)
+    except:
+        return (None,None)
 
 def gps(): #TODO: joblib thread > while having other for process
     while True:
-        sentence = serialStream.readline().decode("utf-8")
-        if sentence.find('GGA') > 0:
-            try:
+        try:
+            sentence = serialStream.readline().decode("utf-8")
+            if sentence.find('GGA') > 0:
                 data = pynmea2.parse(sentence)
+                minsec = str(data.timestamp).split(':')[-2:]
                 return dict(time=data.timestamp,
+                            time_local = str(datetime.datetime.now()).split(':')[0] + ':' + ':'.join(minsec),
                             lat=data.latitude,
                             lon=data.longitude
 #                            ,qual=data.gps_qual,
@@ -28,8 +46,8 @@ def gps(): #TODO: joblib thread > while having other for process
 #                            age=data.age_gps_data,
 #                            hord=data.horizontal_dil
                             )
-            except Exception as e:
-                logger.error('error in gps module : (wrong format?) : ' + str(e))
+        except Exception as e:
+            logger.error('error in gps module : (wrong format?) : ' + str(e))
 
 def wait_for_gps(device,step=2):
     p.DEVICE = os.path.join('/dev/',device)
@@ -43,17 +61,20 @@ def wait_for_gps(device,step=2):
 
 if __name__ == '__main__':
     logger = LOGGER('gps', level = 'DEBUG')
-    logger.into('starting')
+    logger.info('starting')
     p = CONFIGURATION()
 
     try:
-        time.sleep(int(p.GPS['wait']))
-        wait_for_gps(p.GPS['device'])
-        serialStream = serial.Serial(p.DEVICE, 9600, timeout=float(p.GPS['timeout']))
-        conn, cur = PG_Connect(**p.zero1_pi_db)
+        time.sleep(int(p.GPS.wait))
+        wait_for_gps(p.GPS.device)
+        serialStream = serial.Serial(p.DEVICE, 9600, timeout=None)# float(p.GPS.timeout))
+        conn, cur = PG_Connect(p.zero1_pi_db.__dict__)
         while True:
-            di = gps()
-            print ("{time}: {lat},{lon}".format(**di))# + ' ' + str({k:v for k,v in di.items() if k not in ['time','lat','lon']}))
-            cur.execute('insert into readings (lon, lat) values ({lon},{lat})'.format(**di))
+            di = gps(); time.sleep(float(p.GPS.sleep))
+            print ("{time}: {time_local}: {lat},{lon}".format(**di))# + ' ' + str({k:v for k,v in di.items() if k not in ['time','lat','lon']}))
+            if di['lat'] != 0: # no data
+                cur.execute("insert into readings (stamp, lon, lat) values ('{time_local}' :: timestamp without time zone,{lon},{lat})".format(**di))
+            else:
+                logger.info('waiting for signal : lon / lat = 0, 0...')
     except:
         MainException()

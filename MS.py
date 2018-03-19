@@ -241,7 +241,7 @@ def iPhone_connection_lost():
     items.GLOBAL.status = False
     timing.no_movement_trigger = False
 
-GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=Event, bouncetime=1500) # was 1500 > increasing to 2000
+GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=Event, bouncetime=2000) # was 1500 > increasing to 2000
 
 #%% main
 def main():

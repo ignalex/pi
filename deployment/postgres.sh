@@ -1,7 +1,5 @@
 sudo apt-get install postgresql-9.6 postgis postgresql-plpython3-9.6 postgresql-server-dev-9.6 -y
 
-# for psycopg2 needed : postgresql-server-dev-9.6
-
 
 # sudo su postgres
 # createuser pi -P
@@ -33,5 +31,5 @@ sudo apt-get install python-dev python3-dev ipython ipython3
 
 # pandas + plotly
 sudo apt-get install python-pandas python3-pandas
-sudo pip install plotly cufflinks psycopg2 python-daemon pyicloud pynmea2
-sudo pip3 install plotly cufflinks psycopg2 python-daemon pynmea2
+sudo pip install plotly cufflinks psycopg2 python-daemon pyicloud pynmea2 speedtest-cli sqlalchemy
+sudo pip3 install plotly cufflinks psycopg2 python-daemon pynmea2 speedtest-cli sqlalchemy

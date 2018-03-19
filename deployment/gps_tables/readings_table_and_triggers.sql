@@ -1,17 +1,54 @@
-﻿
--- tab structure 
-alter table readings add column delta_seconds double precision; 
-create index idx_id on readings (id);
+﻿-- readings table 
+-- Table: public.readings
 
-alter table readings add column distance int; 
-alter table readings add column bearing int; 
-alter table readings add column speed int; 
-alter table readings add column cm_type character varying; 
-alter table readings add column cm_direction int; 
-alter table readings add column cm_speed_limit int; 
-alter table readings add column cm_dist int; 
+-- DROP TABLE public.readings;
 
--- calcs 
+CREATE TABLE public.readings
+(
+  id integer NOT NULL DEFAULT nextval('readings_id_seq'::regclass),
+  stamp timestamp without time zone DEFAULT now(),
+  lat numeric,
+  lon numeric,
+  geom geometry,
+  delta_seconds double precision,
+  distance integer,
+  bearing integer,
+  speed integer,
+  cm_direction integer,
+  cm_type character varying,
+  cm_speed_limit integer,
+  cm_dist integer
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.readings
+  OWNER TO pi;
+
+-- Index: public.idx_id
+
+-- DROP INDEX public.idx_id;
+
+CREATE INDEX idx_id
+  ON public.readings
+  USING btree
+  (id);
+
+-- Index: public.idx_stamp
+
+-- DROP INDEX public.idx_stamp;
+
+CREATE INDEX idx_stamp
+  ON public.readings
+  USING brin
+  (stamp);
+
+
+-- Trigger: make_calcs on public.readings
+-- Function: public.make_calcs()
+
+-- DROP FUNCTION public.make_calcs();
+
 CREATE OR REPLACE FUNCTION public.make_calcs()
   RETURNS trigger AS
 $BODY$
@@ -47,6 +84,10 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
+ALTER FUNCTION public.make_calcs()
+  OWNER TO pi;
+
+-- DROP TRIGGER make_calcs ON public.readings;
 
 CREATE TRIGGER make_calcs
   BEFORE INSERT
@@ -54,7 +95,3 @@ CREATE TRIGGER make_calcs
   FOR EACH ROW
   EXECUTE PROCEDURE public.make_calcs();
 
-
-
--- test 
-insert into readings (lon, lat) values (151,-32.2); 

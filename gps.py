@@ -73,8 +73,13 @@ if __name__ == '__main__':
             di = gps(); time.sleep(float(p.GPS.sleep))
             print ("{time}: {time_local}: {lat},{lon}".format(**di))# + ' ' + str({k:v for k,v in di.items() if k not in ['time','lat','lon']}))
             if di['lat'] != 0: # no data
-                cur.execute("insert into readings (stamp, lon, lat) values ('{time_local}' :: timestamp without time zone,{lon},{lat})".format(**di))
+                try:
+                    cur.execute("insert into readings (stamp, lon, lat) values ('{time_local}' :: timestamp without time zone,{lon},{lat})".format(**di))
+                except Exception as e:
+                    if str(e).find('Connection timed out') != -1:
+                        logger.info('Connection timed out, resetting')
+                        conn, cur = PG_Connect(p.zero1_pi_db.__dict__)
             else:
-                logger.info('waiting for signal : lon / lat = 0, 0...')
+                logger.info('lat lon 0 0')
     except:
         MainException()

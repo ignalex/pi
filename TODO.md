@@ -14,6 +14,7 @@
 - [x] integrate ESP 11...
 - [x] MS > 13 on / off on iPhone ping
 - [ ] logger > to HORNET db
+- [ ] fix internet speed
 
 ##octopus
 - [ ] fix temperature report from octo
@@ -30,7 +31,8 @@
 
 ##zero1
 - [x] headless start + postgres + postgis + data in
-- [ ] GPS: install + connect
-- [ ] python
-- [ ] speed function
-- [ ] direction function
+- [x] GPS: install + connect
+- [x] python
+- [x] speed function
+- [x] direction function
+- [ ] GPS signal strength?

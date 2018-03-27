@@ -114,7 +114,8 @@ GPIO.ON = GPIO.LOW
 GPIO.OFF = GPIO.HIGH
 
 GPIO.setup(p.pins.BLINK, GPIO.OUT, initial = GPIO.INIT)
-GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) #TODO: to try PUD_UP PUD DOWN
+#GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #TODO: to try PUD_UP PUD DOWN
 
 #%% extra modules
 def Blink(args = [1,1,0.1]):
@@ -241,7 +242,8 @@ def iPhone_connection_lost():
     items.GLOBAL.status = False
     timing.no_movement_trigger = False
 
-GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=Event, bouncetime=2000) # was 1500 > increasing to 2000
+#TODO: RISING / FALLING / BOTH
+GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=Event, bouncetime=1500) # was 1500 > increasing to 2000
 
 #%% main
 def main():

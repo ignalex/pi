@@ -23,7 +23,8 @@ from modules.talk import Speak, Phrase#, TALKING_PARAMETERS
 from modules.send_email_v2 import sendMail
 from modules.mod_spatial import Distance, PointToKML
 from modules.iCloud import (InstantLocation, iCloudConnect, AllEvents)
-from modules.weather import WEATHER as WEATHER_class
+from modules.weatherzone import WEATHER as WEATHER_class
+from modules.weather_yahoo import weather_yahoo
 from heater import TranslateForHornet as HEATER
 from modules.slang import SLANG
 from modules.control_esp import ESP as esp #control_esp as ESP
@@ -113,6 +114,10 @@ def WEATHER(arg):
     else:
         Phrase({'TYPE' : 'WEATHER2', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
                 'FORECAST': str(w.forecast),'TMAX' : str(w.temp_today), 'WIND' : str(w.wind), 'WND_GUST' : str(w.wind_gust)  })
+
+def WEAHTERYAHOO(arg):
+    w = weather_yahoo()
+    Speak(w.all)
 
 def MAIL(arg):
     if 'EMAIL' in params.INI.keys() and params.INI['EMAIL'] != 'NO':

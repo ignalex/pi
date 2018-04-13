@@ -15,6 +15,7 @@
 - [x] MS > 13 on / off on iPhone ping
 - [ ] logger > to HORNET db
 - [ ] fix internet speed
+- [ ] reboot on router lost
 
 ##octopus
 - [ ] fix temperature report from octo

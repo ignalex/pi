@@ -27,7 +27,7 @@ sys.path.append('/home/pi/git/pi/') #needed if started from crontab
 from datetime import datetime , timedelta
 from time import sleep
 from modules.common import  LOGGER, PID, MainException
-from modules.weather import WEATHER
+from modules.weatherzone import WEATHER
 from modules.ferry import NextFerry
 from modules.lock import LockArd as Lock
 

@@ -64,7 +64,7 @@ def Speak(text): # This will call mplayer and will play the sound
     for k,v in Substitutons(): text = text.replace('%'+k,v)
     print (text)
     lock.Lock()
-    Google_speak(text)
+    Google_speak(text, 'ru') #FIXME: patch
     lock.Unlock()
     print ('---')
 
@@ -90,10 +90,10 @@ class Google_speak(object):
         self.path_to_speak = os.path.join([i for i in ['/home/pi',os.getcwd()] if os.path.exists(i)][0],'speak')
         if not os.path.exists(self.path_to_speak):
             os.mkdir(self.path_to_speak)
-        try:
-            self.mp3 = os.path.join(self.path_to_speak,name_from_text(self.text) + '.mp3')
-        except:
-            self.mp3 = os.path.join(self.path_to_speak,random_name(20) + '.mp3') #FIXME: bad patch
+#        try:
+#            self.mp3 = os.path.join(self.path_to_speak,name_from_text(self.text) + '.mp3')
+#        except:
+        self.mp3 = os.path.join(self.path_to_speak,random_name(20) + '.mp3') #FIXME: bad patch
 
         if os.path.exists(self.mp3):
             print ('mp3 exists - OK')
@@ -106,6 +106,7 @@ class Google_speak(object):
         #self.mp3 = tempfile.mktemp() + '.mp3'
         print (self.mp3)
         self.tts.save(self.mp3)
+
     def Speak(self):
         if os.name == 'posix': # Linux
             cmd = "mpg123 " + self.mp3 #cmd = "omxplayer -o local " + self.mp3

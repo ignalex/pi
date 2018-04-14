@@ -12,7 +12,7 @@ import __main__ as m
 from modules.common import  LOGGER, PID, MainException, Dirs
 from modules.common import CONFIGURATION as PARAMETERS # fis later
 
-from sync import LockArd as Lock # it has nothing to do with Ard, but still works
+from modules.lock import LockArd as Lock # it has nothing to do with Ard, but still works
 from gtts import gTTS
 
 #TODO: disconnect from PA.INI

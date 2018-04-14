@@ -20,7 +20,7 @@ requests.packages.urllib3.disable_warnings()
 
 from modules.talk import Speak, Phrase#, TALKING_PARAMETERS
 #talk_p = TALKING_PARAMETERS()
-from modules.send_email_v2 import sendMail
+from modules.send_email import sendMail
 #from modules.mod_spatial import Distance, PointToKML
 from modules.iCloud import AllEvents #(InstantLocation, iCloudConnect, AllEvents)
 from modules.weatherzone import WEATHER as WEATHER_class

@@ -6,7 +6,7 @@ v2 - params in class
 """
 from __future__ import print_function
 
-import subprocess, urllib, sys, random, os, datetime , tempfile, socket, string
+import subprocess, urllib, sys, random, os, datetime , tempfile, socket, string, re
 import __main__ as m
 #from SHELL import PARAMETERS
 from modules.common import  LOGGER, PID, MainException, Dirs
@@ -115,11 +115,8 @@ class Google_speak(object):
 
 
 def name_from_text(text):
-    try:
-        return text.translate(str.maketrans('','',""",- !@#$%^&*;:."(')//\\""")).lower()[:255]
-    except Exception as e:
-        print(str(e))
-        return text.translate(None, """,- !@#$%^&*;:."(')//\\""").lower()[:255]
+    return re.sub(""",- !@#$%^&*;:."(')//\\""", '', text)
+
 
 def random_name(x = 10):
     return "".join( [random.choice(string.letters) for i in range(x)] )

@@ -78,7 +78,7 @@ def Event (args):
         #GENERAL([module])
 
 def PA():
-    TASKS = [item for sublist in [i.split(':') for i in [j.upper() for j in sys.argv[1:]]] for item in sublist] # taking args and splitting by :
+    TASKS = [item for sublist in [i.split(':') for i in [j.upper() for j in sys.argv[1:] if j!='-d']] for item in sublist] # taking args and splitting by :
     logger.debug(str(TASKS))
     for task in TASKS:
         logger.debug(str(task))

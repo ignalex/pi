@@ -119,7 +119,9 @@ def WEATHER(arg):
 
 def WEATHERYAHOO(arg):
     w = weather_yahoo()
+    logger.debug('w element ok')
     Speak(w.all)
+    logger.debug('spoken done')
 
 def MAIL(arg):
     if 'EMAIL' in p.INI.keys() and p.INI['EMAIL'] != 'NO':

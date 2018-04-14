@@ -61,30 +61,13 @@ def Speak(text): # This will call mplayer and will play the sound
     global p
     lock = Lock('speak')
     if 'p' not in globals(): p = PARAMETERS('PA.INI')
-    if not p.SPEAK: return
     for k,v in Substitutons(): text = text.replace('%'+k,v)
     if p.DEBUG: print (text)
-
-    if not p.SIMULATE:
-        if p.INI['SPEAKING_DEVICE'] != 'SELF': # to be hostname
-            keys ={'octopus' : '192.168.1.154:2227', 'hornet' : '192.168.1.153:2226'}
-            os.system("ssh -p {} -i /home/pi/.ssh/{} pi@{} nohup sudo python /home/pi/PYTHON/GPIO/modules/talk.py '\"".\
-                      format(keys[p.INI['SPEAKING_DEVICE']].split(':')[1],p.INI['SPEAKING_DEVICE'], keys[p.INI['SPEAKING_DEVICE']].split(':')[0]) +text+"\"'")
-            return
-        lock.Lock()
-        if p.INI['ENGINE'] == 'Google':
-            subprocess.call(["mplayer","-speed",p.INI['SPEED'],"-af","scaletempo",getSpeech(text)], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        elif p.INI['ENGINE'] == 'Espeak':
-            subprocess.call(['espeak','-ven','-k5','-s150','"'+text+'"','2>/dev/null'], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if p.INI['ENGINE'] == 'gTTS':
-            Google_speak(text)
-        lock.Unlock()
+    lock.Lock()
+    Google_speak(text)
+    lock.Unlock()
     if p.DEBUG: print ('---')
-    if p.LOG:
-        try:
-            m.log(text)
-        except:
-            pass
+
 
 def Phrase(about):
     global p

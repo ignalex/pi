@@ -117,7 +117,7 @@ def WEATHER(arg):
         Phrase({'TYPE' : 'WEATHER2', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
                 'FORECAST': str(w.forecast),'TMAX' : str(w.temp_today), 'WIND' : str(w.wind), 'WND_GUST' : str(w.wind_gust)  })
 
-def WEAHTERYAHOO(arg):
+def WEATHERYAHOO(arg):
     w = weather_yahoo()
     Speak(w.all)
 

@@ -31,5 +31,5 @@ sudo apt-get install python-dev python3-dev ipython ipython3
 
 # pandas + plotly
 sudo apt-get install python-pandas python3-pandas
-sudo pip install plotly cufflinks psycopg2 python-daemon pyicloud pynmea2 speedtest-cli sqlalchemy
-sudo pip3 install plotly cufflinks psycopg2 python-daemon pynmea2 speedtest-cli sqlalchemy
+sudo pip install plotly cufflinks psycopg2 python-daemon pyicloud pynmea2 speedtest-cli sqlalchemy googletrans weather-api
+sudo pip3 install plotly cufflinks psycopg2 python-daemon pynmea2 speedtest-cli sqlalchemy googletrans weather-api

@@ -6,14 +6,14 @@ Created on Tue Jul 29 10:19:08 2014
 """
 from __future__ import print_function
 
-import sys, os,  subprocess
+import sys, os
 from time import sleep
-from modules.common import  LOGGER, PID, CONFIGURATION, MainException, Dirs
+from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
 
-from modules.SHELL import SimpleIni,  ReadFileBySSH, PARAMETERS #TODO: fix
+#from modules.SHELL import SimpleIni,  ReadFileBySSH, PARAMETERS
 #loging = LOGGING('PA')
+
 PID()
-self_path = os.getcwd()
 
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
@@ -21,12 +21,15 @@ requests.packages.urllib3.disable_warnings()
 from modules.talk import Speak, Phrase#, TALKING_PARAMETERS
 #talk_params = TALKING_PARAMETERS()
 from modules.send_email_v2 import sendMail
-from modules.mod_spatial import Distance, PointToKML
-from modules.iCloud import (InstantLocation, iCloudConnect, AllEvents)
+#from modules.mod_spatial import Distance, PointToKML
+from modules.iCloud import AllEvents #(InstantLocation, iCloudConnect, AllEvents)
 from modules.weatherzone import WEATHER as WEATHER_class
-from modules.weather_yahoo import weather_yahoo
-from heater import TranslateForHornet as HEATER
-from modules.slang import SLANG
+try:
+    from modules.weather_yahoo import weather_yahoo
+except:
+    pass
+#from heater import TranslateForHornet as HEATER
+#from modules.slang import SLANG
 from modules.control_esp import ESP as esp #control_esp as ESP
 
 #class PARAMETERS (object):
@@ -36,9 +39,9 @@ from modules.control_esp import ESP as esp #control_esp as ESP
 #        self.INI = SimpleIni('PA.INI')
 #        for p in ['DAEMON', 'SIMULATE','DEBUG']: setattr(self, p, [True if i == 'YES' else False for i in [self.INI[p]]][0])
 
-class PLACES (object):
-    def __init__(self):
-        self.LOCATIONS = SimpleIni('locations.INI')
+#class PLACES (object):
+#    def __init__(self):
+#        self.LOCATIONS = SimpleIni('locations.INI')
 
 
 #def ReadLastTemp(minutes):
@@ -76,14 +79,13 @@ def Event (args):
 
 def PA():
     TASKS = [item for sublist in [i.split(':') for i in [j.upper() for j in sys.argv[1:]]] for item in sublist] # taking args and splitting by :
-    log(str(TASKS))
+    logger.debug(str(TASKS))
     for task in TASKS:
-        if params.DEBUG: log(str(task))
+        logger.debug(str(task))
         Event(task)
-        if params.DEBUG: log(str(task) + ' . ')
+        logger.debug(str(task) + ' . ')
         sleep(int(params.PAUSE))
 
-# -----------------------------------------------
 def GENERAL(arg):
     try:
         logger.debug( str(arg))
@@ -106,7 +108,7 @@ def TEMP(arg):
 def WEATHER(arg):
     w = WEATHER_class()
     w.ToInt()
-    if params.DEBUG: log('weather read and parsed ' +  '\t'.join([str(w.temp_out) , str(w.humidity) ,  str(w.pressure) , str(w.rain) , str(w.forecast) , str(w.temp_today)]))
+    if params.DEBUG: logger.info('weather read and parsed ' +  '\t'.join([str(w.temp_out) , str(w.humidity) ,  str(w.pressure) , str(w.rain) , str(w.forecast) , str(w.temp_today)]))
     if w.rain_at_all:
         Phrase({'TYPE' : 'WEATHER1', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
                 'RAIN' : str(w.rain), 'FORECAST': str(w.forecast),'TMAX' : str(w.temp_today), \
@@ -121,7 +123,7 @@ def WEAHTERYAHOO(arg):
 
 def MAIL(arg):
     if 'EMAIL' in params.INI.keys() and params.INI['EMAIL'] != 'NO':
-        log( 'mailing to ' + params.INI['EMAIL'] + ' file ' + str(arg[0]) + ' located at ' + str(params.INI[arg[0]]))
+        logger.info( 'mailing to ' + params.INI['EMAIL'] + ' file ' + str(arg[0]) + ' located at ' + str(params.INI[arg[0]]))
         status = []
         if len(arg) > 1:
             subj = arg[1]
@@ -129,14 +131,6 @@ def MAIL(arg):
             subj = arg[0]
         for recepient in  params.INI['EMAIL'].split(','):
             status.append(sendMail([recepient],params.INI['SMTP'].split(','), subj,'' , params.INI[arg[0]].split(';')))
-
-def R(arg):
-    if 'R' in params.INI.keys() and params.INI['R'] =='YES':
-        rscript = arg[0] #, arg[1]
-        if params.DEBUG:
-            log( str(rscript ) + ' ' + str( params.INI[rscript]))
-        if not params.SIMULATE:
-            subprocess.call(["Rscript",params.INI[rscript]], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def MONEYREPORT(arg = ''):
@@ -159,9 +153,6 @@ def REMINDER(arg):
     else:
         Phrase({'TYPE' : 'REMINDER', 'ACTION' : arg[0].replace('-',' '),'LEFT' : arg[1]})
 
-def PROX(arg):
-    PROXIMITY(arg)
-
 def ESP(arg):
     # FIXME: handle capitals
     arg = [i.lower() for i in arg]
@@ -169,35 +160,39 @@ def ESP(arg):
 #    e.Go(arg )
     e.Go_parallel(arg )
 
-def PROXIMITY(arg):
-    """pa proximity_home_100_me
-    """
-    places = PLACES()
-    if params.DEBUG: log(str(places.LOCATIONS))
-    destination = float(places.LOCATIONS[arg[0]].split(',')[0]),float(places.LOCATIONS[arg[0]].split(',')[1])
-    distance_report = int(arg[1]) # meters
-    log('looking for destination ' + arg[0] + ' : distance = ' + str(distance_report))
-    params.iCloudApi = iCloudConnect()
-    while True:
-        loc = [float(i) for i in InstantLocation(params.iCloudApi)]
-        dist = int(Distance(loc, destination))
-        log(str(loc) + ' : ' + str(dist))
-        if dist <= distance_report:
-            log_string = 'PROXIMITY: position ' + str(loc) + ' is ' + str(dist) + 'm. from ' + arg[0]
-            log(log_string)
-            #sendMail([params.INI['EMAIL']],params.INI['SMTP'].split(','), 'PROXIMITY',log_string , [])
-            if params.DEBUG: log(str(arg))
-            if len(arg) == 3:
-                address = SimpleIni('contacts.INI')[arg[2]]
-                kml = PointToKML(loc,os.path.join('/home/pi/tracking','location.kml'))
-                sendMail([address],params.INI['SMTP'].split(','), 'Alex is in' + str(dist) + ' m. from ' + arg[0], log_string , [kml])
-                log('email sent to ' + address)
-            break
-        sleep(int(params.INI['TRACKING_INTERVAL']))
 
-def SPENDINGS(args):
-    text = [i for i in ReadFileBySSH().splitlines() if i != '']
-    for t in text:  Speak(t)
+#def PROX(arg):
+#    PROXIMITY(arg)
+
+#def PROXIMITY(arg):
+#    """pa proximity_home_100_me
+#    """
+#    places = PLACES()
+#    if params.DEBUG: log(str(places.LOCATIONS))
+#    destination = float(places.LOCATIONS[arg[0]].split(',')[0]),float(places.LOCATIONS[arg[0]].split(',')[1])
+#    distance_report = int(arg[1]) # meters
+#    log('looking for destination ' + arg[0] + ' : distance = ' + str(distance_report))
+#    params.iCloudApi = iCloudConnect()
+#    while True:
+#        loc = [float(i) for i in InstantLocation(params.iCloudApi)]
+#        dist = int(Distance(loc, destination))
+#        log(str(loc) + ' : ' + str(dist))
+#        if dist <= distance_report:
+#            log_string = 'PROXIMITY: position ' + str(loc) + ' is ' + str(dist) + 'm. from ' + arg[0]
+#            log(log_string)
+#            #sendMail([params.INI['EMAIL']],params.INI['SMTP'].split(','), 'PROXIMITY',log_string , [])
+#            if params.DEBUG: log(str(arg))
+#            if len(arg) == 3:
+#                address = SimpleIni('contacts.INI')[arg[2]]
+#                kml = PointToKML(loc,os.path.join('/home/pi/tracking','location.kml'))
+#                sendMail([address],params.INI['SMTP'].split(','), 'Alex is in' + str(dist) + ' m. from ' + arg[0], log_string , [kml])
+#                log('email sent to ' + address)
+#            break
+#        sleep(int(params.INI['TRACKING_INTERVAL']))
+
+#def SPENDINGS(args):
+#    text = [i for i in ReadFileBySSH().splitlines() if i != '']
+#    for t in text:  Speak(t)
 
 def ALLEVENTSTODAY(args):
     "speak all events from the iCloud calendar"
@@ -216,6 +211,7 @@ def CAMERA(args):
 if __name__ == '__main__':
     params = PARAMETERS('PA.INI')
     logger = LOGGER('PA', 'INFO')
+    p = CONFIGURATION()
 
     try:
         if params.DAEMON == True:

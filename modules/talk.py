@@ -8,9 +8,8 @@ from __future__ import print_function
 
 import subprocess, urllib, sys, random, os, datetime , tempfile, socket, string, re
 import __main__ as m
-#from SHELL import PARAMETERS
 from modules.common import  LOGGER, PID, MainException, Dirs
-from modules.common import CONFIGURATION as PARAMETERS # fis later
+from modules.common import CONFIGURATION as PARAMETERS # fix later
 
 from modules.lock import LockArd as Lock # it has nothing to do with Ard, but still works
 from gtts import gTTS
@@ -50,43 +49,41 @@ def PhraseDict():
             param[GROUP].append(p_item)
     return param
 
-def getSpeech(phrase):
-    googleAPIurl = "http://translate.google.com/translate_tts?tl=en_gb&"
-    param = {'q': phrase}
-    data = urllib.urlencode(param)
-    googleAPIurl += data # Append the parameters
-    return googleAPIurl
-
-def Speak(text): # This will call mplayer and will play the sound
-    global p
-    lock = Lock('speak')
-    if 'p' not in globals(): p = PARAMETERS('PA.INI')
-    for k,v in Substitutons(): text = text.replace('%'+k,v)
-    print (text)
-    lock.Lock()
-    Google_speak(text, 'ru') #FIXME: patch
-    lock.Unlock()
-    print ('---')
-
-
 def Phrase(about):
     global p
     if 'p' not in globals(): p = PARAMETERS('PA.INI')
-    if not p.SPEAK: return
     options = PhraseDict()[about['TYPE']]
     choice = options[int(random.random()*len(options))]
     for k,v in [(a,b) for (a,b) in about.items() if a != 'TYPE']:
         choice = choice.replace('%'+k,v)
     Speak( choice )
 
+
+#def getSpeech(phrase):
+#    googleAPIurl = "http://translate.google.com/translate_tts?tl=en_gb&"
+#    param = {'q': phrase}
+#    data = urllib.urlencode(param)
+#    googleAPIurl += data # Append the parameters
+#    return googleAPIurl
+
+def Speak(text): # This will call mplayer and will play the sound
+    global p
+    if 'p' not in globals(): p = PARAMETERS('PA.INI')
+    for k,v in Substitutons(): text = text.replace('%'+k,v)
+    print (text)
+    lock = Lock('speak'); lock.Lock()
+    Google_speak(text, p.LANGUAGE)
+    lock.Unlock()
+    print ('---')
+
+
 class Google_speak(object):
-    def __init__(self, text, lang = 'en', store = True):
+    def __init__(self, text, lang = 'en', store = False):
         self.text, self.lang, self.store = text, lang, store
-        #self.Get_GTTS()
-        self.check_already_exists()
+        self.get_mp3()
         self.Speak()
         if not self.store: self.Del()
-    def check_already_exists(self):
+    def get_mp3(self):
         self.path_to_speak = os.path.join([i for i in ['/home/pi',os.getcwd()] if os.path.exists(i)][0],'speak')
         if not os.path.exists(self.path_to_speak):
             os.mkdir(self.path_to_speak)
@@ -108,10 +105,10 @@ class Google_speak(object):
         self.tts.save(self.mp3)
 
     def Speak(self):
-        if os.name == 'posix': # Linux
-            cmd = "mpg123 " + self.mp3 #cmd = "omxplayer -o local " + self.mp3
-        else: # windows
-            cmd = 'start ' + self.mp3 + ''
+#        if os.name == 'posix': # Linux
+        cmd = "mpg123 " + self.mp3 #cmd = "omxplayer -o local " + self.mp3
+#        else: # windows
+#            cmd = 'start ' + self.mp3 + ''
         subprocess.call(cmd.split(' '), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print ('ok : ' + self.mp3)
     def Del(self):
@@ -122,16 +119,15 @@ class Google_speak(object):
 def name_from_text(text):
     return re.sub(r""",- !@#$%^&*;:."(')//\\""", '', text).lower()[:250]
 
-
 def random_name(x = 10):
     return "".join( [random.choice(string.letters) for i in range(x)] )
 
+
 if __name__ == "__main__":
+    p = PARAMETERS('PA.INI')
+
     if len(sys.argv) > 1:
         text = sys.argv[1]
     else:
         text = "Hello world"
-    sys.path.append([i for i in ['/home/pi/PYTHON/GPIO/','/storage/PYTHON/GPIO/','E:\\Dropbox\\PI\\GPIO'] if os.path.exists(i) == True][0])
-    #m.talk_params = TALKING_PARAMETERS() # THIS NEEDED IN THE MAIN FILE
-    p = PARAMETERS('PA.INI')
     Speak(text)

@@ -115,11 +115,8 @@ class Google_speak(object):
 
 
 def name_from_text(text):
-    try:
-        return text.translate(None,""",- !@#$%^&*;:."(')//\\""").lower()[:255]
-    except Exception as e:
-        print (str(e) + ' OK')
-        return text.translate(""",- !@#$%^&*;:."(')//\\""").lower()[:255]
+    return text.translate(str.maketrans('','',""",- !@#$%^&*;:."(')//\\""")).lower()[:255]
+
 
 def random_name(x = 10):
     return "".join( [random.choice(string.letters) for i in range(x)] )

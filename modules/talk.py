@@ -90,7 +90,11 @@ class Google_speak(object):
         self.path_to_speak = os.path.join([i for i in ['/home/pi',os.getcwd()] if os.path.exists(i)][0],'speak')
         if not os.path.exists(self.path_to_speak):
             os.mkdir(self.path_to_speak)
-        self.mp3 = os.path.join(self.path_to_speak,name_from_text(self.text) + '.mp3')
+        try:
+            self.mp3 = os.path.join(self.path_to_speak,name_from_text(self.text) + '.mp3')
+        except:
+            self.mp3 = os.path.join(self.path_to_speak,random_name(20) + '.mp3') #FIXME: bad patch
+
         if os.path.exists(self.mp3):
             print ('mp3 exists - OK')
             return True

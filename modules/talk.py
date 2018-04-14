@@ -115,7 +115,7 @@ class Google_speak(object):
 
 
 def name_from_text(text):
-    return re.sub(r""",- !@#$%^&*;:."(')//\\""", '', text).lower()[:255]
+    return re.sub(r""",- !@#$%^&*;:."(')//\\""", '', text).lower()[:250]
 
 
 def random_name(x = 10):

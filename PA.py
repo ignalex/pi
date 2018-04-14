@@ -84,7 +84,7 @@ def PA():
         logger.debug(str(task))
         Event(task)
         logger.debug(str(task) + ' . ')
-        sleep(int(p.PAUSE))
+        sleep(1)
 
 def GENERAL(arg):
     try:
@@ -102,7 +102,7 @@ def TEMP(arg):
     w.ToInt()
     Phrase({'TYPE' : 'INSIDE_TEMP', 'T' : str(w.temp_in)})
     if arg[0] != 'IN':
-        sleep(int(p.PAUSE))
+        sleep(1)
         Phrase({'TYPE' : 'OUTSIDE', 'T' : str(w.temp_out),'HUM' : str(w.humidity) })
 
 def WEATHER(arg):

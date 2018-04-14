@@ -62,11 +62,11 @@ def Speak(text): # This will call mplayer and will play the sound
     lock = Lock('speak')
     if 'p' not in globals(): p = PARAMETERS('PA.INI')
     for k,v in Substitutons(): text = text.replace('%'+k,v)
-    if p.DEBUG: print (text)
+    print (text)
     lock.Lock()
     Google_speak(text)
     lock.Unlock()
-    if p.DEBUG: print ('---')
+    print ('---')
 
 
 def Phrase(about):

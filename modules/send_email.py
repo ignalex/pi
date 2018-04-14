@@ -4,8 +4,13 @@ import os, smtplib
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.Utils import COMMASPACE, formatdate
 from email import encoders
+
+try:
+    from email.Utils import COMMASPACE, formatdate
+except:
+    from email.utils import COMMASPACE, formatdate
+
 
 def sendMail(to, from_credentials, subject, text, files):
     try:

@@ -8,18 +8,12 @@ from __future__ import print_function
 
 import sys, os
 from time import sleep
-from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
-
-#from modules.SHELL import SimpleIni,  ReadFileBySSH, PARAMETERS
-#loging = LOGGING('PA')
-
-PID()
+from modules.common import  LOGGER, CONFIGURATION, MainException
 
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
-from modules.talk import Speak, Phrase#, TALKING_PARAMETERS
-#talk_p = TALKING_PARAMETERS()
+from modules.talk import Speak, Phrase
 from modules.send_email import sendMail
 #from modules.mod_spatial import Distance, PointToKML
 from modules.iCloud import AllEvents #(InstantLocation, iCloudConnect, AllEvents)
@@ -75,7 +69,6 @@ def Event (args):
             GENERAL([module])
     except:
         logger.error('error in module ' + module + ' ' + str(sys.exc_info()))
-        #GENERAL([module])
 
 def PA():
     TASKS = [item for sublist in [i.split(':') for i in [j.upper() for j in sys.argv[1:] if j!='-d']] for item in sublist] # taking args and splitting by :
@@ -156,10 +149,8 @@ def REMINDER(arg):
         Phrase({'TYPE' : 'REMINDER', 'ACTION' : arg[0].replace('-',' '),'LEFT' : arg[1]})
 
 def ESP(arg):
-    # FIXME: handle capitals
     arg = [i.lower() for i in arg]
     e = esp()
-#    e.Go(arg )
     e.Go_parallel(arg )
 
 
@@ -215,11 +206,11 @@ if __name__ == '__main__':
     p = CONFIGURATION()
 
     try:
-#        import daemon
-#        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-#            PA()
-#        else:
-#            PA()
-        PA()
+        try:
+            import daemon
+            with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+                PA()
+        except:
+            PA()
     except:
         MainException()

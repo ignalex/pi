@@ -6,7 +6,7 @@ Created on Mon Aug 04 17:12:41 2014
 """
 from pyicloud import PyiCloudService
 import datetime
-from common import CONFIGURATION
+from modules.common import CONFIGURATION
 import __main__ as m
 
 p = CONFIGURATION()

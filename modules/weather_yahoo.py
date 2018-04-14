@@ -40,7 +40,10 @@ class weather_yahoo():
 
         if language != 'en':
             translator = Translator()
-            t = translator.translate(self.all, dest='ru')
+            try:
+                t = translator.translate(self.all, dest='ru')
+            except Exception as e:
+                print ('error registered' + str(e))
             self.all = t.text
         print (self.all)
 

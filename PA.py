@@ -19,7 +19,7 @@ import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
 from modules.talk import Speak, Phrase#, TALKING_PARAMETERS
-#talk_params = TALKING_PARAMETERS()
+#talk_p = TALKING_PARAMETERS()
 from modules.send_email_v2 import sendMail
 #from modules.mod_spatial import Distance, PointToKML
 from modules.iCloud import AllEvents #(InstantLocation, iCloudConnect, AllEvents)
@@ -46,21 +46,21 @@ from modules.control_esp import ESP as esp #control_esp as ESP
 
 #def ReadLastTemp(minutes):
 #    try:
-#        current = LastLine(params.INI['TEMPERATURE'])
+#        current = LastLine(p.INI['TEMPERATURE'])
 #    except:
 #        print 'no TEMP file available'
 #        return [False]
 #
 #    last_time = datetime.datetime.strptime(current.split('\t')[0], '%Y-%m-%d %H:%M')
 #
-#    if (params.current_time - last_time).seconds/60 <= minutes:
+#    if (p.current_time - last_time).seconds/60 <= minutes:
 #        return current.split('\t')[1:]
 #    else:
 #        return [False]
 
 def Event (args):
-    module, params  = args.split('_')[0], args.split('_')[1:]
-    logger.info('module ' + module + ', args ' + str(params))
+    module, p  = args.split('_')[0], args.split('_')[1:]
+    logger.info('module ' + module + ', args ' + str(p))
     try:
         if len(args.split('_')) == 1 and module in globals(): # no arguments
             try:
@@ -69,7 +69,7 @@ def Event (args):
                 logger.error('error in module ' + module + ' ' + str(sys.exc_info()))
         elif module in globals():
             logger.info('module imported')
-            globals()[module](params)
+            globals()[module](p)
         else:
             logger.info('to general')
             GENERAL([module])
@@ -84,7 +84,7 @@ def PA():
         logger.debug(str(task))
         Event(task)
         logger.debug(str(task) + ' . ')
-        sleep(int(params.PAUSE))
+        sleep(int(p.PAUSE))
 
 def GENERAL(arg):
     try:
@@ -102,13 +102,13 @@ def TEMP(arg):
     w.ToInt()
     Phrase({'TYPE' : 'INSIDE_TEMP', 'T' : str(w.temp_in)})
     if arg[0] != 'IN':
-        sleep(int(params.PAUSE))
+        sleep(int(p.PAUSE))
         Phrase({'TYPE' : 'OUTSIDE', 'T' : str(w.temp_out),'HUM' : str(w.humidity) })
 
 def WEATHER(arg):
     w = WEATHER_class()
     w.ToInt()
-    if params.DEBUG: logger.info('weather read and parsed ' +  '\t'.join([str(w.temp_out) , str(w.humidity) ,  str(w.pressure) , str(w.rain) , str(w.forecast) , str(w.temp_today)]))
+    if p.DEBUG: logger.info('weather read and parsed ' +  '\t'.join([str(w.temp_out) , str(w.humidity) ,  str(w.pressure) , str(w.rain) , str(w.forecast) , str(w.temp_today)]))
     if w.rain_at_all:
         Phrase({'TYPE' : 'WEATHER1', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
                 'RAIN' : str(w.rain), 'FORECAST': str(w.forecast),'TMAX' : str(w.temp_today), \
@@ -122,19 +122,19 @@ def WEAHTERYAHOO(arg):
     Speak(w.all)
 
 def MAIL(arg):
-    if 'EMAIL' in params.INI.keys() and params.INI['EMAIL'] != 'NO':
-        logger.info( 'mailing to ' + params.INI['EMAIL'] + ' file ' + str(arg[0]) + ' located at ' + str(params.INI[arg[0]]))
+    if 'EMAIL' in p.INI.keys() and p.INI['EMAIL'] != 'NO':
+        logger.info( 'mailing to ' + p.INI['EMAIL'] + ' file ' + str(arg[0]) + ' located at ' + str(p.INI[arg[0]]))
         status = []
         if len(arg) > 1:
             subj = arg[1]
         else:
             subj = arg[0]
-        for recepient in  params.INI['EMAIL'].split(','):
-            status.append(sendMail([recepient],params.INI['SMTP'].split(','), subj,'' , params.INI[arg[0]].split(';')))
+        for recepient in  p.INI['EMAIL'].split(','):
+            status.append(sendMail([recepient],p.INI['SMTP'].split(','), subj,'' , p.INI[arg[0]].split(';')))
 
 
 def MONEYREPORT(arg = ''):
-    today_file = params.INI['MONEY_REPORT']
+    today_file = p.INI['MONEY_REPORT']
     spendings = [(i.split(' ')[2].replace('_',' '),i.split('\t')[-3].replace('-','')) for i in [i for i in open(today_file,'r').read().splitlines() if i.startswith('20')]]
     delta = [i for i in open(today_file,'r').read().splitlines() if i.startswith('DELTA')][0].replace('DELTA', 'Delta on the end of the year is ')
     if spendings != []:
@@ -168,27 +168,27 @@ def ESP(arg):
 #    """pa proximity_home_100_me
 #    """
 #    places = PLACES()
-#    if params.DEBUG: log(str(places.LOCATIONS))
+#    if p.DEBUG: log(str(places.LOCATIONS))
 #    destination = float(places.LOCATIONS[arg[0]].split(',')[0]),float(places.LOCATIONS[arg[0]].split(',')[1])
 #    distance_report = int(arg[1]) # meters
 #    log('looking for destination ' + arg[0] + ' : distance = ' + str(distance_report))
-#    params.iCloudApi = iCloudConnect()
+#    p.iCloudApi = iCloudConnect()
 #    while True:
-#        loc = [float(i) for i in InstantLocation(params.iCloudApi)]
+#        loc = [float(i) for i in InstantLocation(p.iCloudApi)]
 #        dist = int(Distance(loc, destination))
 #        log(str(loc) + ' : ' + str(dist))
 #        if dist <= distance_report:
 #            log_string = 'PROXIMITY: position ' + str(loc) + ' is ' + str(dist) + 'm. from ' + arg[0]
 #            log(log_string)
-#            #sendMail([params.INI['EMAIL']],params.INI['SMTP'].split(','), 'PROXIMITY',log_string , [])
-#            if params.DEBUG: log(str(arg))
+#            #sendMail([p.INI['EMAIL']],p.INI['SMTP'].split(','), 'PROXIMITY',log_string , [])
+#            if p.DEBUG: log(str(arg))
 #            if len(arg) == 3:
 #                address = SimpleIni('contacts.INI')[arg[2]]
 #                kml = PointToKML(loc,os.path.join('/home/pi/tracking','location.kml'))
-#                sendMail([address],params.INI['SMTP'].split(','), 'Alex is in' + str(dist) + ' m. from ' + arg[0], log_string , [kml])
+#                sendMail([address],p.INI['SMTP'].split(','), 'Alex is in' + str(dist) + ' m. from ' + arg[0], log_string , [kml])
 #                log('email sent to ' + address)
 #            break
-#        sleep(int(params.INI['TRACKING_INTERVAL']))
+#        sleep(int(p.INI['TRACKING_INTERVAL']))
 
 #def SPENDINGS(args):
 #    text = [i for i in ReadFileBySSH().splitlines() if i != '']
@@ -209,16 +209,15 @@ def CAMERA(args):
 # -----------------------------------------------
 
 if __name__ == '__main__':
-    params = PARAMETERS('PA.INI')
     logger = LOGGER('PA', 'INFO')
     p = CONFIGURATION()
 
     try:
-        if params.DAEMON == True:
-            import daemon
-            with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-                PA()
-        else:
-            PA()
+#        import daemon
+#        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+#            PA()
+#        else:
+#            PA()
+        PA()
     except:
         MainException()

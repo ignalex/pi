@@ -119,7 +119,6 @@ def name_from_text(text):
         return text.translate(str.maketrans('','',""",- !@#$%^&*;:."(')//\\""")).lower()[:255]
     except:
         print('er1')
-
         return text.translate(None, """,- !@#$%^&*;:."(')//\\""").lower()[:255]
 
 def random_name(x = 10):

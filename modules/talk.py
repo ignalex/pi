@@ -8,9 +8,9 @@ from __future__ import print_function
 import __main__ as m
 
 import subprocess, sys, random, os, datetime, string, re
-from modules.common import  LOGGER, Dirs, CONFIGURATION
+from common import  LOGGER, Dirs, CONFIGURATION
 
-from modules.lock import LockArd as Lock # it has nothing to do with Ard, but still works
+from lock import LockArd as Lock # it has nothing to do with Ard, but still works
 from gtts import gTTS
 from googletrans import Translator
 
@@ -121,7 +121,8 @@ if __name__ == "__main__":
     p = CONFIGURATION()
 
     if len(sys.argv) > 1:
-        text = sys.argv[1]
+        text = ' '.join([ i for i in sys.argv[1:] if i!='-d'])
+        if text == '': text = 'Hello world'
     else:
         text = "Hello world"
     Speak(text)

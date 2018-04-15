@@ -14,7 +14,7 @@ PAGE="""\
 </head>
 <body>
 <h1>PiCamera MJPEG Streaming Demo</h1>
-<img src="stream.mjpg" width="640" height="480" />
+<img src="asdfasdfasdf589589589_stream.mjpg" width="640" height="480" />
 </body>
 </html>
 """
@@ -38,18 +38,19 @@ class StreamingOutput(object):
 
 class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/':
-            self.send_response(301)
-            self.send_header('Location', '/index.html')
-            self.end_headers()
-        elif self.path == '/index.html':
+#        if self.path == '/':
+#            self.send_response(301)
+#            self.send_header('Location', '/index.html')
+#            self.end_headers()
+#        elif self.path == '/index.html':
+        if self.path == '/asdfasdfasdf589589589.html':
             content = PAGE.encode('utf-8')
             self.send_response(200)
             self.send_header('Content-Type', 'text/html')
             self.send_header('Content-Length', len(content))
             self.end_headers()
             self.wfile.write(content)
-        elif self.path == '/stream.mjpg':
+        elif self.path == '/asdfasdfasdf589589589_stream.mjpg':
             self.send_response(200)
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')

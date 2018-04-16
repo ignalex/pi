@@ -52,7 +52,7 @@ def Speak(text, store=True):
     for k,v in Substitutons(): text = text.replace('%'+k,v)
     m.logger.info('SPEAKING ' + text)
     lock = Lock('speak'); lock.Lock()
-    Google_speak(text, m.p.LANGUAGE)
+    Google_speak(text, m.p.LANGUAGE, store)
     lock.Unlock()
     m.logger.debug ('---')
 

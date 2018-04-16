@@ -82,7 +82,7 @@ def PA():
 def GENERAL(arg):
     try:
         logger.debug( str(arg))
-        Phrase({'TYPE' : arg[0]})
+        Phrase({'TYPE' : arg[0]}) # speak phrase if nothing else.
     except:
         logger.error( 'nothing suitable found in the dict' )
 

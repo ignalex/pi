@@ -42,16 +42,15 @@ def PhraseDict():
     return param
 
 def Phrase(about):
-#    if 'p' not in globals(): p = PARAMETERS('PA.INI')
     options = PhraseDict()[about['TYPE']]
     choice = options[int(random.random()*len(options))]
     for k,v in [(a,b) for (a,b) in about.items() if a != 'TYPE']:
         choice = choice.replace('%'+k,v)
     Speak( choice )
 
-def Speak(text):
+def Speak(text, store=True):
     for k,v in Substitutons(): text = text.replace('%'+k,v)
-    m.logger.debug(text)
+    m.logger.info('SPEAKING ' + text)
     lock = Lock('speak'); lock.Lock()
     Google_speak(text, m.p.LANGUAGE)
     lock.Unlock()
@@ -59,35 +58,22 @@ def Speak(text):
 
 
 class Google_speak(object):
-    def __init__(self, text, lang = 'en', store = False):
+    "text - in English, land - to speak, store - store mp3 for later of not."
+    "if lang != 'en' > translate first (but file stored Eng anyway)"
+    def __init__(self, text, lang = 'en', store = True):
         self.text, self.lang, self.store = text, lang, store
-        if self.lang != 'en':
-            self.translate()
-        self.get_mp3()
+        self.mp3 = os.path.join(Dirs()['SPEAK'],name_from_text(self.text) + '.mp3')
+
+        if not os.path.exists(self.mp3): # no file > need to TRANSLATE and DOWNLOAD
+            m.logger.debug('no file stored > need to download')
+            if self.lang != 'en': self.translate()
+            self.Get_GTTS()
+
         self.Speak()
         if not self.store: self.Del()
-    def get_mp3(self):
-        self.path_to_speak = os.path.join([i for i in ['/home/pi','/Users/s84004/temp', os.getcwd()] if os.path.exists(i)][0],'speak')
-        if not os.path.exists(self.path_to_speak):
-            os.mkdir(self.path_to_speak)
-#        try:
-#            self.mp3 = os.path.join(self.path_to_speak,name_from_text(self.text) + '.mp3')
-#        except:
-        self.mp3 = os.path.join(self.path_to_speak,random_name(20) + '.mp3') #FIXME: bad patch
-
-        if os.path.exists(self.mp3):
-            m.logger.debug ('mp3 exists - OK')
-            return True
-        else:
-            self.Get_GTTS()
-            m.logger.debug ('mp3 downloaded - OK')
-    def Get_GTTS(self):
-        self.tts = gTTS(text=self.text, lang = self.lang, slow=False)
-        #self.mp3 = tempfile.mktemp() + '.mp3'
-        m.logger.debug (self.mp3)
-        self.tts.save(self.mp3)
 
     def translate(self):
+        m.logger.debug('translating into ' + self.lang)
         translator = Translator()
         try:
             self.text = translator.translate(self.text, dest=self.lang).text
@@ -95,18 +81,25 @@ class Google_speak(object):
         except Exception as e:
             m.logger.error(str(e))
 
+    def Get_GTTS(self):
+        m.logger.debug('gTTS >> ' + self.mp3)
+        self.tts = gTTS(text=self.text, lang = self.lang, slow=False)
+        self.tts.save(self.mp3)
+
     def Speak(self):
         cmd = ['afplay ' if sys.platform == 'darwin' else 'mpg123 '][0] + self.mp3 # mac vs linux
         subprocess.call(cmd.split(' '), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         m.logger.debug ('ok : ' + self.mp3)
 
     def Del(self):
+        m.logger.debug('deleting mp3')
         try: os.remove(self.mp3)
-        except: pass
+        except:
+            m.logger.debug("can't delete mp3")
 
 
 def name_from_text(text):
-    return re.sub(r""",- !@#$%^&*;:."(')//\\""", '', text).lower()[:250]
+    return re.sub(r""",- !@#$%^&*;:."(')//\\""", '', text).replace(' ','').lower()[:250]
 
 def random_name(x = 10):
     try:

@@ -113,7 +113,7 @@ def WEATHER(arg):
 def WEATHERYAHOO(arg):
     w = weather_yahoo()
     logger.debug('w element ok')
-    Speak(w.all)
+    Speak(w.all, store=False) # cause filename <250
     logger.debug('spoken done')
 
 def MAIL(arg):

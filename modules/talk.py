@@ -15,7 +15,7 @@ from gtts import gTTS
 from googletrans import Translator
 
 
-def Substitutons():
+def Substitutons(): # need also small for RU text > otherwise lines detected as UPPER and not dict element.s
     sub_dict = {'H' : str(datetime.datetime.now().hour), 'h' : str(datetime.datetime.now().hour),
                 'M' : str(datetime.datetime.now().minute), 'm' : str(datetime.datetime.now().minute),
                 'DT' : [t for (n,t) in enumerate(['night','morning','day','evening','night']) if n == int(datetime.datetime.now().hour/5)][0],

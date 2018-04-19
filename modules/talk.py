@@ -17,7 +17,7 @@ from googletrans import Translator
 
 def Substitutons():
     sub_dict = {'H' : str(datetime.datetime.now().hour), 'h' : str(datetime.datetime.now().hour),
-                'M' : str(datetime.datetime.now().minute), 'm' : str(datetime.datetime.now().minute)
+                'M' : str(datetime.datetime.now().minute), 'm' : str(datetime.datetime.now().minute),
                 'DT' : [t for (n,t) in enumerate(['night','morning','day','evening','night']) if n == int(datetime.datetime.now().hour/5)][0],
                 'NAME' : m.p.INI['NAME']}
     return sub_dict.items()

@@ -91,8 +91,12 @@ def TIME(arg):
     Phrase({'TYPE' : 'TIME_'+arg[0]})
 
 def RUTIME(arg):
-    if arg[0] == '': arg[0] = 'HM'
-    Phrase({'TYPE' : 'RUTIME_'+arg[0]})
+    try:
+        logger.debug(str(arg))
+        if arg[0] == '': arg[0] = 'HM'
+        Phrase({'TYPE' : 'RUTIME_'+arg[0]})
+    except:
+        MainException()
 
 def TEMP(arg):
     w = WEATHER_class()

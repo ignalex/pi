@@ -90,6 +90,10 @@ def TIME(arg):
     if arg[0] == '': arg[0] = 'HM'
     Phrase({'TYPE' : 'TIME_'+arg[0]})
 
+def RUTIME(arg):
+    if arg[0] == '': arg[0] = 'HM'
+    Phrase({'TYPE' : 'RUTIME_'+arg[0]})
+
 def TEMP(arg):
     w = WEATHER_class()
     w.ToInt()

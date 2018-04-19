@@ -66,11 +66,16 @@ class Google_speak(object):
 
         if not os.path.exists(self.mp3): # no file > need to TRANSLATE and DOWNLOAD
             m.logger.debug('no file stored > need to download')
-            if self.lang != 'en': self.translate()
+            if self.lang != 'en' and not self.Detect_Russian(): # translate if need RU and text not RU
+                self.translate()
             self.Get_GTTS()
 
         self.Speak()
         if not self.store: self.Del()
+
+    def Detect_Russian(self):
+        'detect russian / english by the 1st char'
+        return True if ord(self.text[0])>1000 else False
 
     def translate(self):
         m.logger.debug('translating into ' + self.lang)
@@ -117,5 +122,5 @@ if __name__ == "__main__":
         text = ' '.join([ i for i in sys.argv[1:] if i!='-d'])
         if text == '': text = 'Hello world'
     else:
-        text = "Hello world"
+        text = "привет как дела"
     Speak(text)

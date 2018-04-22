@@ -24,7 +24,7 @@ def RebootOnLostConnection():
             return
         sleep(60)
     m.logger.error('REBOOTING PI')
-    #os.system('sudo reboot')
+    os.system('sudo reboot')
 
 if __name__ == '__main__':
     logger = LOGGER('RebootOnLostConnection')

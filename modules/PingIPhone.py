@@ -36,7 +36,8 @@ def PingIP(IP = '155'):
     stdout, stderr = process.communicate()
 
     REPLIES  = {"0 packets received" : False,
-                "1 packets received"  : True}
+                "1 packets received"  : True,
+                "1 received" : True}
     print (str (cmd))
     print (stdout)
     try:

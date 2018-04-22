@@ -20,7 +20,7 @@ def RebootOnLostConnection():
         if PingIP(1)[0] == False:
             m.logger.info('no connection found, attempt ' + str(attempt))
         else:
-            m.logger.debug('router ping : OK')
+            m.logger.info('router ping : OK')
             return
         sleep(60)
     m.logger.error('REBOOTING PI')

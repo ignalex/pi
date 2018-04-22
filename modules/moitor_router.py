@@ -9,6 +9,7 @@ Created on Sun Apr 22 07:14:48 2018
 from __future__ import print_function
 import __main__ as m
 import os
+from time import sleep
 
 from common import  LOGGER
 from PingIPhone import PingIP
@@ -21,8 +22,9 @@ def RebootOnLostConnection():
         else:
             m.logger.debug('router ping : OK')
             return
+        sleep(60)
     m.logger.error('REBOOTING PI')
-    os.system('sudo reboot')
+    #os.system('sudo reboot')
 
 if __name__ == '__main__':
     logger = LOGGER('RebootOnLostConnection')

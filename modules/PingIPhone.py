@@ -37,7 +37,8 @@ def PingIP(IP = '155'):
 
     REPLIES  = {"0 packets received" : False,
                 "1 packets received"  : True}
-
+    print (str (cmd))
+    print (stdout)
     try:
         return [[ v for k,v in REPLIES.items() if str(stdout).find(k) != -1][0],None]
     except:

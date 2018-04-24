@@ -34,7 +34,7 @@ class weather_yahoo():
             )
 
         self.start = 'weather forecast for ' + name
-        self.today = 'temperature today from {today_low} to {today_high}, {now_text}, wind {today_wind} meters per second'.format(**self.params)
+        self.today = 'temperature today from {today_low} to {today_high}, {now_text}, wind {today_wind} km per hr'.format(**self.params)
         self.sunrise = 'sunrise {today_sunrise}, sunset {today_sunset}'.format(**self.params)
         self.tomorrow = 'tomorrow temperature from {tomorrow_low} to {tomorrow_high}, {tomorrow_text}'.format(**self.params)
         self.all = '\n'.join([self.start, self.today, self.sunrise, self.tomorrow])
@@ -43,4 +43,4 @@ class weather_yahoo():
 
 
 if __name__ == '__main__':
-    WEATHER = weather_yahoo('kislovodsk', 'ru')
+    WEATHER = weather_yahoo('kislovodsk')

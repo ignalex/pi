@@ -13,7 +13,7 @@ from time import sleep
 from datetime import datetime, timedelta
 from subprocess import Popen, PIPE
 
-from common import CONFIGURATION, Dirs
+from common import CONFIGURATION, Dirs, Platform
 #TODO: config MAC to outside func
 #TODO: esp signal on ON / OFF
 
@@ -21,23 +21,27 @@ def PingIPhoneOnce(source = 'BT', log = True):
     if source == 'BT':
         result =  PingBT()
     elif source == 'WF':
-        result =  PingWF()
+        result =  PingIP()
     elif source == 'Hornet':
         result =  PingHornet()
     return result
 
-def PingWF(IP = '155'):
+def PingIP(IP = '155'):
     "ping device via wifi by IP. not stable for dynamic IPs, but still usefull"
-    # optionally : "sudo bluez-simple-agent hci0 E4:25:E7:E4:E6:E5"
-    # "sudo", - FOR RASPBIAN
+    IP = str(IP)
+    cmd = ["ping","-c","1","192.168.1."+IP]
+    if Platform()[0]: cmd = ['sudo'] + cmd # "sudo", - FOR RASPBIAN
 
-    process = Popen(["ping","-c","1","192.168.1."+IP], stdout=PIPE, stderr=PIPE)
+    process = Popen(cmd, stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
 
     REPLIES  = {"0 packets received" : False,
-                "1 packets received"  : True}
+                "1 packets received"  : True,
+                "1 received" : True}
+    print (str (cmd))
+    print (stdout)
     try:
-        return [[ v for k,v in REPLIES.items() if stdout.find(k) != -1][0],None]
+        return [[ v for k,v in REPLIES.items() if str(stdout).find(k) != -1][0],None]
     except:
         return [False,None]
 

@@ -181,3 +181,7 @@ def PID(onoff = '+' ,message = ''):
 
 def LastLine(file_to_read, lines = 1):
     return Popen(("tail -{} ".format(lines) +  file_to_read).split(' '), stdout=PIPE, stderr=PIPE).communicate()[0]
+
+def Platform():
+    'returns True for RaspPI and name of platform'
+    return (True if sys.platform == 'linux2' else False, sys.platform)

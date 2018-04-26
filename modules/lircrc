@@ -1,0 +1,373 @@
+begin
+ button = KEY_POWER
+ prog = test
+ config = power
+end
+
+begin
+ button = KEY_A
+ prog = test
+ config = plus
+end
+
+begin
+ button = KEY_B
+ prog = test
+ config = minus
+end
+
+begin
+ button = KEY_0
+ prog = test
+ config = 0
+end
+begin
+ button = KEY_1
+ prog = test
+ config = 1
+end
+begin
+ button = KEY_2
+ prog = test
+ config = 2
+end
+begin
+ button = KEY_3
+ prog = test
+ config = 3
+end
+begin
+ button = KEY_4
+ prog = test
+ config = 4
+end
+begin
+ button = KEY_5
+ prog = test
+ config = 5
+end
+begin
+ button = KEY_6
+ prog = test
+ config = 6
+end
+begin
+ button = KEY_7
+ prog = test
+ config = 7
+end
+begin
+ button = KEY_8
+ prog = test
+ config = 8
+end
+begin
+ button = KEY_9
+ prog = test
+ config = 9
+end
+begin
+ button = KEY_VOLUMEDOWN
+ prog = test
+ config = KEY_VOLUMEDOWN
+end
+
+begin
+ button = KEY_VOLUMEUP
+ prog = test
+ config = KEY_VOLUMEUP
+end
+
+begin
+ button = KEY_NEXT
+ prog = test
+ config = KEY_NEXT
+end
+
+begin
+ button = KEY_PLAY
+ prog = test
+ config = KEY_PLAY
+end
+
+begin
+ button = KEY_SUBTITLE
+ prog = test
+ config = SUBTITLE
+end
+
+begin
+ button = BTN_BASE6
+ prog = test
+ config = BTN_BASE6
+end
+
+begin
+ button = BTN_BASE5
+ prog = test
+ config = BTN_BASE5
+end
+
+begin
+ button = BTN_BASE4
+ prog = test
+ config = BTN_BASE4
+end
+
+begin
+ button = BTN_BASE3
+ prog = test
+ config = BTN_BASE3
+end
+
+begin
+ button = BTN_BASE2
+ prog = test
+ config = BTN_BASE2
+end
+
+begin
+ button = BTN_BASE
+ prog = test
+ config = BTN_BASE
+end
+
+begin
+ button = BTN_0
+ prog = test
+ config = BOSE_BTN_0
+end
+
+begin
+ button = BTN_1
+ prog = test
+ config = BOSE_BTN_1
+end
+
+begin
+ button = BTN_2
+ prog = test
+ config = BOSE_BTN_2
+end
+
+begin
+ button = BTN_3
+ prog = test
+ config = BOSE_BTN_3
+end
+
+begin
+ button = BTN_4
+ prog = test
+ config = BOSE_BTN_4
+end
+
+begin
+ button = BTN_5
+ prog = test
+ config = BOSE_BTN_5
+end
+
+begin
+ button = BTN_6
+ prog = test
+ config = BOSE_BTN_6
+end
+
+begin
+ button = BTN_7
+ prog = test
+ config = BOSE_BTN_7
+end
+
+begin
+ button = BTN_8
+ prog = test
+ config = BOSE_BTN_8
+end
+
+begin
+ button = BTN_9
+ prog = test
+ config = BOSE_BTN_9
+end
+
+begin
+ button = KEY_OK
+ prog = test
+ config = BOSE_KEY_OK
+end
+
+begin
+ button = KEY_ENTER
+ prog = test
+ config = BOSE_KEY_ENTER
+end
+
+begin
+ button = KEY_RED
+ prog = test
+ config = BOSE_KEY_RED
+end
+
+begin
+ button = KEY_GREEN
+ prog = test
+ config = BOSE_KEY_GREEN
+end
+
+begin
+ button = KEY_YELLOW
+ prog = test
+ config = BOSE_KEY_YELLOW
+end
+
+begin
+ button = KEY_BLUE
+ prog = test
+ config = BOSE_KEY_BLUE
+end
+
+begin
+ button = KEY_PLAY
+ prog = test
+ config = BOSE_KEY_PLAY
+end
+
+begin
+ button = KEY_PAUSE
+ prog = test
+ config = BOSE_KEY_PAUSE
+end
+
+begin
+ button = KEY_FASTFORWARD
+ prog = test
+ config = BOSE_KEY_FASTFORWARD
+end
+
+begin
+ button = KEY_RECORD
+ prog = test
+ config = BOSE_KEY_RECORD
+end
+
+begin
+ button = KEY_REWIND
+ prog = test
+ config = BOSE_KEY_REWIND
+end
+
+begin
+ button = KEY_FORWARD
+ prog = test
+ config = BOSE_KEY_FORWARD
+end
+
+begin
+ button = KEY_STOP
+ prog = test
+ config = BOSE_KEY_STOP
+end
+
+begin
+ button = KEY_BACK
+ prog = test
+ config = BOSE_KEY_BACK
+end
+
+begin
+ button = KEY_D
+ prog = test
+ config = BOSE_KEY_D
+end
+
+begin
+ button = KEY_INFO
+ prog = test
+ config = BOSE_KEY_INFO
+end
+
+begin
+ button = KEY_MENU
+ prog = test
+ config = BOSE_KEY_MENU
+end
+
+begin
+ button = KEY_G
+ prog = test
+ config = BOSE_KEY_G
+end
+
+begin
+ button = KEY_EXIT
+ prog = test
+ config = BOSE_KEY_EXIT
+end
+
+begin
+ button = KEY_CHANNELDOWN
+ prog = test
+ config = BOSE_KEY_CHANNELDOWN
+end
+
+begin
+ button = KEY_CHANNELUP
+ prog = test
+ config = BOSE_KEY_CHANNELUP
+end
+
+begin
+ button = KEY_UP
+ prog = test
+ config = BOSE_KEY_UP
+end
+
+begin
+ button = KEY_DOWN
+ prog = test
+ config = BOSE_KEY_DOWN
+end
+
+begin
+ button = KEY_LEFT
+ prog = test
+ config = BOSE_KEY_LEFT
+end
+
+begin
+ button = KEY_RIGHT
+ prog = test
+ config = BOSE_KEY_RIGHT
+end
+
+begin
+ button = KEY_C
+ prog = test
+ config = BOSE_KEY_C
+end
+
+begin
+ button = KEY_VOLUMEDOWN
+ prog = test
+ config = BOSE_KEY_VOLUMEDOWN
+end
+
+begin
+ button = KEY_VOLUMEUP
+ prog = test
+ config = BOSE_KEY_VOLUMEUP
+end
+
+begin
+ button = KEY_POWER
+ prog = test
+ config = BOSE_KEY_POWER
+end
+
+begin
+ button = KEY_MUTE
+ prog = test
+ config = BOSE_KEY_MUTE
+end

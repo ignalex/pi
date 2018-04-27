@@ -122,5 +122,5 @@ if __name__ == "__main__":
         text = ' '.join([ i for i in sys.argv[1:] if i!='-d'])
         if text == '': text = 'Hello world'
     else:
-        text = "привет как дела"
+        text = "hello world"
     Speak(text)

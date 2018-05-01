@@ -114,8 +114,8 @@ GPIO.ON = GPIO.LOW
 GPIO.OFF = GPIO.HIGH
 
 GPIO.setup(p.pins.BLINK, GPIO.OUT, initial = GPIO.INIT)
-GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) #TODO: to try PUD_UP PUD DOWN
-#GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #TODO: to try PUD_UP PUD DOWN
+#GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) #TODO: to try PUD_UP PUD DOWN
+GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #TODO: to try PUD_UP PUD DOWN
 
 #%% extra modules
 def Blink(args = [1,1,0.1]):

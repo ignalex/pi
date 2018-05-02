@@ -20,16 +20,19 @@ sudo service postgresql restart
 # postgis
 #sudo apt-get install postgis -y
 
-#plpython3u
-#sudo apt-get install postgresql-plpython3-9.6
 
 # create extension postgis;
 # create extension plpython3u;
 
 # extra for python
 sudo apt-get install python-dev python3-dev ipython ipython3
+sudo apt-get install mpg123
 
 # pandas + plotly
 sudo apt-get install python-pandas python3-pandas
-sudo pip install plotly cufflinks psycopg2 python-daemon pyicloud pynmea2 speedtest-cli sqlalchemy googletrans weather-api gTTS
-sudo pip3 install plotly cufflinks psycopg2 python-daemon pynmea2 speedtest-cli sqlalchemy googletrans weather-api gTTS
+sudo pip install plotly cufflinks psycopg2 python-daemon pyicloud speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
+sudo pip3 install plotly cufflinks psycopg2 python-daemon pyicloud speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
+
+# issues with pynmea2 installing together.
+sudo pip install pynmea2
+sudo pip3 install pynmea2

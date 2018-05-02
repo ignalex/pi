@@ -16,6 +16,8 @@
 - [ ] logger > to HORNET db
 - [ ] fix internet speed
 - [ ] reboot on router lost
+- [ ] speaker + talks
+- [ ] wire network
 
 ##octopus
 - [ ] fix temperature report from octo
@@ -37,3 +39,10 @@
 - [x] speed function
 - [x] direction function
 - [ ] GPS signal strength?
+
+##srimp
+- [x] ssh + putty
+- [x] git
+- [ ] router repoint + static IP?
+- [ ] pa
+- [ ] old crontabs

@@ -16,7 +16,7 @@ requests.packages.urllib3.disable_warnings()
 from modules.talk import Speak, Phrase
 from modules.send_email import sendMail
 #from modules.mod_spatial import Distance, PointToKML
-from modules.iCloud import AllEvents #(InstantLocation, iCloudConnect, AllEvents)
+from modules.iCloud import AllEvents#(InstantLocation, iCloudConnect, AllEvents)
 from modules.weatherzone import WEATHER as WEATHER_class
 try:
     from modules.weather_yahoo import weather_yahoo
@@ -24,7 +24,7 @@ except:
     pass
 #from heater import TranslateForHornet as HEATER
 #from modules.slang import SLANG
-from modules.control_esp import ESP as esp #control_esp as ESP
+from modules.control_esp import ESP as esp  #control_esp as ESP
 
 #class PARAMETERS (object):
 #    def __init__(self, ID = ''):
@@ -213,12 +213,14 @@ if __name__ == '__main__':
     logger = LOGGER('PA', 'INFO')
     p = CONFIGURATION()
 
-    try:
-        try:
-            import daemon
-            with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-                PA()
-        except:
+    try: #FIXME: with daemon works very slow
+#        try:
+#            import daemon
+#            with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+#                logger.debug('PA with daemon')
+#                PA()
+#        except:
+            logger.debug('PA without daemon')
             PA()
     except:
         MainException()

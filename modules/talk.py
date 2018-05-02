@@ -7,10 +7,15 @@ v2 - params in class
 from __future__ import print_function
 import __main__ as m
 
-import subprocess, sys, random, os, datetime, string, re
-from common import  LOGGER, Dirs, CONFIGURATION
+try:
+    from .common import  LOGGER, Dirs, CONFIGURATION
+    from .lock import LockArd as Lock # it has nothing to do with Ard, but still works
+except:
+    from common import  LOGGER, Dirs, CONFIGURATION
+    from lock import LockArd as Lock # it has nothing to do with Ard, but still works
 
-from lock import LockArd as Lock # it has nothing to do with Ard, but still works
+import subprocess, sys, random, os, datetime, string, re
+
 from gtts import gTTS
 from googletrans import Translator
 
@@ -27,12 +32,9 @@ def PhraseDict():
         INI_file = open(os.path.join(Dirs()['DATA'],'phrases.ini'),'r').read().splitlines()
     except:
         return False
-
     INI_file = [i for i in INI_file if len(i) != 0] # empty strings
     INI_file = [i for i in INI_file if i[0] != '#']
-
     param, GROUP = {}, ''
-
     for p_item in INI_file:
         if p_item.isupper():
             GROUP = p_item.replace(' ','')
@@ -63,20 +65,16 @@ class Google_speak(object):
     def __init__(self, text, lang = 'en', store = True):
         self.text, self.lang, self.store = text, lang, store
         self.mp3 = os.path.join(Dirs()['SPEAK'],name_from_text(self.text) + '.mp3')
-
         if not os.path.exists(self.mp3): # no file > need to TRANSLATE and DOWNLOAD
             m.logger.debug('no file stored > need to download')
             if self.lang != 'en' and not self.Detect_Russian(): # translate if need RU and text not RU
                 self.translate()
             self.Get_GTTS()
-
         self.Speak()
         if not self.store: self.Del()
-
     def Detect_Russian(self):
         'detect russian / english by the 1st char'
         return True if ord(self.text[0])>1000 else False
-
     def translate(self):
         m.logger.debug('translating into ' + self.lang)
         translator = Translator()
@@ -85,17 +83,14 @@ class Google_speak(object):
             m.logger.info(self.text)
         except Exception as e:
             m.logger.error(str(e))
-
     def Get_GTTS(self):
         m.logger.debug('gTTS >> ' + self.mp3)
         self.tts = gTTS(text=self.text, lang = self.lang, slow=False)
         self.tts.save(self.mp3)
-
     def Speak(self):
         cmd = ['afplay ' if sys.platform == 'darwin' else 'mpg123 '][0] + self.mp3 # mac vs linux
         subprocess.call(cmd.split(' '), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         m.logger.debug ('ok : ' + self.mp3)
-
     def Del(self):
         m.logger.debug('deleting mp3')
         try: os.remove(self.mp3)
@@ -114,9 +109,9 @@ def random_name(x = 10):
 
 
 if __name__ == "__main__":
-
-    logger = LOGGER('PA', 'INFO')
+    logger = LOGGER('TALK', 'INFO')
     p = CONFIGURATION()
+    logger.debug ('config read')
 
     if len(sys.argv) > 1:
         text = ' '.join([ i for i in sys.argv[1:] if i!='-d'])

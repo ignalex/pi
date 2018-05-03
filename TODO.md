@@ -16,8 +16,10 @@
 - [ ] logger > to HORNET db
 - [ ] fix internet speed
 - [ ] reboot on router lost
-- [ ] speaker + talks
-- [ ] wire network
+- [x] speaker + talks
+- [ ] wired network
+- [x] pa service
+- [ ] fix pa / not from ssh + speak over ssh
 
 ##octopus
 - [ ] fix temperature report from octo
@@ -44,5 +46,5 @@
 - [x] ssh + putty
 - [x] git
 - [ ] router repoint + static IP?
-- [ ] pa
+- [x] pa
 - [ ] old crontabs

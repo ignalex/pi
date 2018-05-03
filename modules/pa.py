@@ -9,6 +9,7 @@ Created on Sat Aug 02 08:04:03 2014
 #DONE: pa vs oct
 #DONE: default setup where to run pa
 #DONE: pa path OUT
+#TODO: pa via ssh or directly
 
 
 from __future__ import print_function
@@ -23,7 +24,10 @@ def pa(arg):
     config = CONFIGURATION().pa.__dict__
     config['arg'] =  [ arg[0] if type(arg) == list else arg][0]
 
-    cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/PA.py '{arg}' &".format(**config)
+    if 'ssh' in config.keys():
+        cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/PA.py '{arg}' &".format(**config)
+    else:
+        cmd = "python /home/pi/git/pi/PA.py '{arg}' &".format(**config)
     m.logger.info(cmd)
     os.system(cmd)
 

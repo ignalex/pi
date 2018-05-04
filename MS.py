@@ -35,7 +35,7 @@ from modules.sunrise import Sun
 #    from modules.mod_movement_email import mail #TODO: email mod and phrase
 from modules.KODI_control import kodi
 from modules.wol import wol
-from modules.talk import Phrase #FIXME: from modules.talk import Phrase
+from modules.talk import Phrase
 from modules.pa import pa
 from modules.PingIPhone import PING
 from modules.control_esp import ESP

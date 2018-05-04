@@ -1,5 +1,5 @@
 ##hornet
-- [ ] **finish migrating existing modules**
+- [x] finish migrating existing modules
 - [x] config - part 2 from higher level
 - [x] clean existing code
 - [x] CI GIT hooks integration > flask API to trigger GIT PULL
@@ -8,31 +8,29 @@
 - [x] DDNS
 - [x] ESP repo
 - [x] change timings on rf433 > + increase timeout from MS
-- [ ] MS > email + camera
 - [x] IR receiver (lirc)
-- [ ] fix blinds > 1 and 3 (2 is ok) / new ESP mod?
 - [x] integrate ESP 11...
 - [x] MS > 13 on / off on iPhone ping
-- [ ] logger > to HORNET db
-- [ ] fix internet speed
-- [ ] reboot on router lost
 - [x] speaker + talks
 - [x] wired network
 - [x] pa service
 - [x] fix pa / not from ssh + speak over ssh
+- [ ] **lirc**
+- [ ] fix temperature report
+- [ ] MS > email + camera
+- [ ] blinds > 1 and 3 (2 is ok) / new ESP mod?
+- [ ] logger > to HORNET db
+- [ ] fix internet speed
+- [ ] play / music ? __maybe via ESP + IR__
 
-##octopus
-- [ ] fix temperature report from octo
-- [ ] PA
-- [ ] PA serice
-- [ ] iCloud mod
-- [ ] migrate **OCTOPUS** (rebuild?) > git repo + git hook
+##octopus / parents
+- [x] PA
+- [x] PA serice
+- [x] migrate **OCTOPUS** (rebuild?) > git repo + git hook
 - [x] internet speed > to hornet
-- [ ] git hook to octopus
-- [ ] M2 -> M3
-- [ ] **dashboard** web based + flask
-- [ ] **picture frame slides** - show slides [integrate with python]
+- [x] picture frame slides - show slides [integrate with python]
 - [x] video from SMB share
+- [ ] git hook to octopus
 
 ##zero1
 - [x] headless start + postgres + postgis + data in
@@ -45,6 +43,12 @@
 ##srimp
 - [x] ssh + putty
 - [x] git
-- [ ] router repoint + static IP?
 - [x] pa
+- [ ] router repoint + static IP?
 - [ ] old crontabs
+- [ ] M2 -> M3
+- [ ] git hook to shrimp
+- [ ] reboot on router lost
+- [ ] dashboard web based + flask
+- [ ] picture frame slides - show slides [integrate with python]
+- [ ] video / mirror

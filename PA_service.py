@@ -75,7 +75,8 @@ def PA_service():
             min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
             reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
             logger.info(reminder)
-            os.system('sudo python {} {}'.format(os.path.join(Dirs()['REPO'],'PA.py'), reminder))  #TODO: fix > why not via internal call to PA?
+#            os.system('sudo python {} {}'.format(os.path.join(Dirs()['REPO'],'PA.py'), reminder))  #TODO: fix > why not via internal call to PA?
+            os.system('python {} {}'.format(os.path.join(Dirs()['REPO'],'PA.py'), reminder))  #TODO: fix > why not via internal call to PA?
 
         # daytime / esp
         # if IsItNowTimeOfTheDay('total_dark')   : esp.Go(['0','123'])
@@ -90,8 +91,8 @@ if __name__ == '__main__':
     PID()
 
     try:
-        import daemon
-        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-            PA_service()
+#        import daemon
+#        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+        PA_service()
     except:
         MainException()

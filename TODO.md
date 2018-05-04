@@ -17,9 +17,9 @@
 - [ ] fix internet speed
 - [ ] reboot on router lost
 - [x] speaker + talks
-- [ ] wired network
+- [x] wired network
 - [x] pa service
-- [ ] fix pa / not from ssh + speak over ssh
+- [x] fix pa / not from ssh + speak over ssh
 
 ##octopus
 - [ ] fix temperature report from octo

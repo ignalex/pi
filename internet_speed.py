@@ -71,14 +71,14 @@ def to_db(df):
     except Exception as e:
         logger.error(str(e))
 
-def read_data_from_db(last_days=5):
+def read_data_from_db(days=5):
     con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
     df = con.read("""select timestamp, extract(hour from timestamp) as hour,
 	round (upload :: numeric / (1024 * 1024), 2)  as upload,
 	round ( download :: numeric  / (1024 * 1024), 2)  as download,
 	ping :: numeric
 	from internet_speed
-    where now() - timestamp <= '{} days' """.format(last_days)) #DONE: limit last days
+    where now() - timestamp <= '{} days' """.format(days)) #DONE: limit last days
     return df
 
 def read_div_from_db():

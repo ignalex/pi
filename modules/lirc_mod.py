@@ -6,10 +6,10 @@ Created on Sat Feb 14 20:19:13 2015
 
 #DONE: fix mapping buttons what do they do
 #DONE: integration to new ESP mod via control/rf433/...
-#DONE: light on / off 
+#DONE: light on / off
 #DONE:  dim ON / off
-#DONE: error handling > if error skip 
-#TODO: add all coded keys > with nothing mapped. 
+#DONE: error handling > if error skip
+#TODO: add all coded keys > with nothing mapped.
 
 from __future__ import print_function
 
@@ -42,15 +42,15 @@ def Start():
                       'BOSE_BTN_3' : ['1','123'],
                       'BOSE_BTN_4' : ['0', '1'],
                       'BOSE_BTN_5' : ['0','23'],
-                      'BOSE_BTN_6' : ['0','123'], 
-                      'BOSE_BTN_7' : ['6','rf433', 'dimlight', 'on'], 
-                      'BOSE_BTN_8' : ['6','rf433', 'dimlight', 'off'], 
-                      'BOSE_BTN_9' : ['6','rf433', 'light', 'on'], 
+                      'BOSE_BTN_6' : ['0','123'],
+                      'BOSE_BTN_7' : ['6','rf433', 'dimlight', 'on'],
+                      'BOSE_BTN_8' : ['6','rf433', 'dimlight', 'off'],
+                      'BOSE_BTN_9' : ['6','rf433', 'light', 'on'],
                       'BOSE_BTN_0' : ['6','rf433', 'light', 'off']
                       }
     last = [None, datetime.datetime.now()]
     while True:
-        try: 
+        try:
             codeIR = lirc.nextcode()
             if codeIR != []:
                 IR = str(codeIR[0])
@@ -65,7 +65,7 @@ def Start():
                         log.info('speaking only ' + IR)
                         Speak(IR)
                 last = [IR, datetime.datetime.now()]
-        except: 
+        except:
             log.error('error : ' + str(sys.exc_info()))
             Speak('error in lirc module')
             sleep (2)
@@ -77,6 +77,7 @@ if __name__ == '__main__':
             from common import LOGGER, PID
             log = LOGGER('lirc')
             logger = log # compatibility
+            logger.info('starting lirc')
             from time import sleep
             from KODI_control import kodi
             PID()

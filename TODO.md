@@ -16,11 +16,11 @@
 - [x] pa service
 - [x] fix pa / not from ssh + speak over ssh
 - [ ] **lirc**
-- [ ] fix temperature report
+- [x] fix temperature report
 - [ ] MS > email + camera
 - [ ] blinds > 1 and 3 (2 is ok) / new ESP mod?
 - [ ] logger > to HORNET db
-- [ ] fix internet speed
+- [x] fix internet speed
 - [ ] play / music ? __maybe via ESP + IR__
 
 ##octopus / parents

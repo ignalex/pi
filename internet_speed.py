@@ -53,7 +53,7 @@ def SpeedTest():
     s.upload()
     s.results.share()
     results_dict = s.results.dict()
-    df = pd.DataFrame.from_dict( {k : try_to_float(v) for k, v in results_dict.items() if k not in ['server', 'timestamp']}, orient='index').T
+    df = pd.DataFrame.from_dict( {k : try_to_float(v) for k, v in results_dict.items() if k not in ['server', 'timestamp', 'client']}, orient='index').T
     df ['timestamp'] = datetime.datetime.now()
     return df
 

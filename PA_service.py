@@ -90,9 +90,12 @@ if __name__ == '__main__':
     p.last_scan = '' # addition
     PID()
 
-    try:
-#        import daemon
-#        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-        PA_service()
-    except:
-        MainException()
+    while True:
+        try:
+    #        import daemon
+    #        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+            PA_service()
+        except:
+            MainException()
+            logger.info('waiting 1 min and retrying...')
+            sleep (60)

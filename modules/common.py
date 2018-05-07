@@ -159,7 +159,7 @@ def LOGGER(filename = r'log_filename.txt', level = 'INFO', verbose = False) :
     return logger
 
 def MainException():
-    "logger must be created in the main module with the name 'log'"
+    "logger must be created in the main module"
     exc_type, exc_value, exc_traceback = sys.exc_info()
     try:
         m.logger.error(sys.argv[0].split('\\')[-1] + ' ['+ m.__doc__.split('\n')[-2].split(' ')[0] + ']')

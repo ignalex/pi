@@ -1,6 +1,5 @@
 sudo apt-get install postgresql-9.6 postgis postgresql-plpython3-9.6 postgresql-server-dev-9.6 -y
 
-
 # sudo su postgres
 # createuser pi -P
 # pi
@@ -36,3 +35,8 @@ sudo pip3 install plotly cufflinks psycopg2 python-daemon pyicloud speedtest-cli
 # issues with pynmea2 installing together.
 sudo pip install pynmea2
 sudo pip3 install pynmea2
+
+# extra for LIRC
+sudo apt-get install lirc python3-lirc python-lirc -y
+sudo cp ~/git/pi/data/lircrc /etc/lirc/lircrc
+sudo cp ~/git/pi/data/lircd.conf /etc/lirc/lircd.conf

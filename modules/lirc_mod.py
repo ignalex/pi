@@ -13,12 +13,13 @@ Created on Sat Feb 14 20:19:13 2015
 
 from __future__ import print_function
 
-import daemon, sys
+#import daemon
 from control_esp import ESP #control_esp as ESP
-from speak_over_ssh import Speak
-import datetime
+from talk import Speak
+import datetime, sys
 
 def Start():
+    logger.debug('entered START')
     XBMC_dic = {'KEY_VOLUMEUP' : 'up',
                 'KEY_VOLUMEDOWN' : 'down',
                 'KEY_NEXT' : 'next',
@@ -54,7 +55,7 @@ def Start():
             codeIR = lirc.nextcode()
             if codeIR != []:
                 IR = str(codeIR[0])
-                log.info( 'code : ' + str(IR))
+                logger.info( 'code : ' + str(IR))
                 if not (IR == last[0] and (datetime.datetime.now() - last[1]).seconds < 1) :  # bouncing
                     if IR in XBMC_dic.keys():
                         kodi(XBMC_dic[IR])
@@ -62,21 +63,21 @@ def Start():
                         e = ESP()
                         e.Go_parallel(extra_esp_keys[IR])
                     else:
-                        log.info('speaking only ' + IR)
+                        logger.info('speaking only ' + IR)
                         Speak(IR)
                 last = [IR, datetime.datetime.now()]
         except:
-            log.error('error : ' + str(sys.exc_info()))
+            logger.error('error : ' + str(sys.exc_info()))
             Speak('error in lirc module')
             sleep (2)
         sleep(0.3)
 
 if __name__ == '__main__':
-    with daemon.DaemonContext():
+#    with daemon.DaemonContext():
         try:
             from common import LOGGER, PID
-            log = LOGGER('lirc')
-            logger = log # compatibility
+            logger = LOGGER('lirc')
+#            logger = log # compatibility
             logger.info('starting lirc')
             from time import sleep
             from KODI_control import kodi
@@ -85,4 +86,4 @@ if __name__ == '__main__':
             sockid = lirc.init("test", blocking = False)
             Start()
         except:
-            log.error('error on initiation: ' + str(sys.exc_info()))
+            logger.error('error on initiation: ' + str(sys.exc_info()))

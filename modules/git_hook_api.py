@@ -19,7 +19,7 @@ from __future__ import print_function
 from flask import Flask, request
 from common import LOGGER, Dirs, CONFIGURATION#, MainException
 from send_email import sendMail
-from speak_over_ssh import Speak
+from talk import Speak
 import pickle, os, datetime
 from subprocess import Popen, PIPE
 import daemon, socket

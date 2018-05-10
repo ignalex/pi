@@ -60,7 +60,8 @@ def Event (args):
             try:
                 globals()[module]([''])
             except:
-                logger.error('error in module ' + module + ' ' + str(sys.exc_info()))
+                logger.error('error in module ' + module )
+                MainException()
         elif module in globals():
             logger.info('module imported')
             globals()[module](p)
@@ -211,7 +212,7 @@ def CAMERA(args):
 # -----------------------------------------------
 
 if __name__ == '__main__':
-    logger = LOGGER('PA', 'INFO')
+    logger = LOGGER('pa', 'INFO')
     p = CONFIGURATION()
 
     try: #FIXME: with daemon works very slow

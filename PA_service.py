@@ -85,7 +85,7 @@ def PA_service():
         sleep(60)
 
 if __name__ == '__main__':
-    logger = LOGGER('PA_service', level = 'INFO')
+    logger = LOGGER('pa_service', level = 'INFO')
     p = CONFIGURATION() #pins
     p.last_scan = '' # addition
     PID()

@@ -301,6 +301,7 @@ if __name__ == '__main__':
         for mods in ['GLOBAL','lamp','play']: items.Child(mods,False)
         items.Available()
 
+        logger.info('\n')
         logger.info ('started ' + ' '.join(sys.argv) )
         logger.info ('on alarm '.upper() + str(control.alarm))
         logger.info ('on move '.upper() + str(control.move))

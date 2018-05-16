@@ -58,7 +58,7 @@ def Speak(text, store=True):
         m.logger.debug('passing to ' + str(m.p.talk.ip))
         config = m.p.talk.__dict__
         config['text'] = text
-        cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/modules/talk.py '\"{text}'\"' &".format(**config)
+        cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/modules/talk.py '\"{text}\"' &".format(**config)
         os.system(cmd)
     else: # direct
         lock = Lock('speak'); lock.Lock()

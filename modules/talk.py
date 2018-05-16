@@ -55,7 +55,7 @@ def Speak(text, store=True):
     for k,v in Substitutons(): text = text.replace('%'+k,v)
     m.logger.info('SPEAKING ' + text)
     if hasattr(m.p,'talk'): # talk over ssh
-        m.logger.debug('passing to ' + str(m.p.ip))
+        m.logger.debug('passing to ' + str(m.p.talk.ip))
         config = m.p.talk.__dict__
         config['text'] = text
         cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/modules/talk.py '\"{text}'\" &".format(**config)

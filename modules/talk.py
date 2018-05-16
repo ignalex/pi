@@ -51,11 +51,19 @@ def Phrase(about):
     Speak( choice )
 
 def Speak(text, store=True):
+    #TODO: if p has attr talk > pass it via ssh
     for k,v in Substitutons(): text = text.replace('%'+k,v)
     m.logger.info('SPEAKING ' + text)
-    lock = Lock('speak'); lock.Lock()
-    Google_speak(text, m.p.LANGUAGE, store)
-    lock.Unlock()
+    if hasattr(m.p,'talk'): # talk over ssh
+        m.logger.debug('passing to ' + str(m.p.ip))
+        config = m.p.talk.__dict__
+        config['text'] = text
+        cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/modules/talk.py '\"{text}'\" &".format(**config)
+        os.system(cmd)
+    else: # direct
+        lock = Lock('speak'); lock.Lock()
+        Google_speak(text, m.p.LANGUAGE, store)
+        lock.Unlock()
     m.logger.debug ('---')
 
 

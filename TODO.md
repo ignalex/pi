@@ -52,3 +52,4 @@
 - [ ] dashboard web based + flask
 - [ ] picture frame slides - show slides [integrate with python]
 - [ ] video / mirror
+- [ ] keyboard

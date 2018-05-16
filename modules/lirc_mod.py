@@ -2,6 +2,19 @@
 """
 Created on Sat Feb 14 20:19:13 2015
 @author: ignalex
+
+sudo systemctl restart lircd
+
+rpi3 ~$ systemctl status lircd.service
+rpi3 ~$ systemctl status lircd.socket
+
+rpi3 ~$ sudo systemctl stop lircd.service
+rpi3 ~$ sudo systemctl stop lircd socket
+rpi3 ~$ sudo mode2 --driver default --device /dev/lirc0
+
+rpi3 ~$ sudo systemctl start lircd.socket
+rpi3 ~$ sudo systemctl start lircd.service
+
 """
 
 #DONE: fix mapping buttons what do they do

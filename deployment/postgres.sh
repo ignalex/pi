@@ -26,6 +26,7 @@ sudo service postgresql restart
 # extra for python
 sudo apt-get install python-dev python3-dev ipython ipython3
 sudo apt-get install mpg123
+sudo apt-get install fbi
 
 # pandas + plotly
 sudo apt-get install python-pandas python3-pandas

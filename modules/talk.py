@@ -51,14 +51,16 @@ def Phrase(about):
     Speak( choice )
 
 def Speak(text, store=True):
-    #TODO: if p has attr talk > pass it via ssh
+    #DONE: if p has attr talk > pass it via ssh
+    if not hasattr(m,'p'):      m.p = CONFIGURATION()
+    if not hasattr(m,'logger'): m.logger = LOGGER('TALK', 'INFO')
     for k,v in Substitutons(): text = text.replace('%'+k,v)
     m.logger.info('SPEAKING ' + text)
     if hasattr(m.p,'talk'): # talk over ssh
         m.logger.debug('passing to ' + str(m.p.talk.ip))
         config = m.p.talk.__dict__
         config['text'] = text
-        cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/modules/talk.py '\"{text}\"' &".format(**config)
+        cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/modules/talk.py '\"{text}\"'".format(**config) # was with &
         os.system(cmd)
     else: # direct
         lock = Lock('speak'); lock.Lock()

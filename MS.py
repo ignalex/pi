@@ -29,7 +29,9 @@ import sys, datetime
 from time import sleep
 from threading import Thread
 from modules.common import  LOGGER, PID, CONFIGURATION, MainException
-#sys.path.append(os.path.dirname(sys.argv[0])) # path to 'modules' subfolder
+
+logger = LOGGER('ms', level = 'INFO')
+p = CONFIGURATION() #pins
 
 from modules.sunrise import Sun
 #    from modules.mod_movement_email import mail #TODO: email mod and phrase
@@ -39,10 +41,6 @@ from modules.talk import Phrase
 from modules.pa import pa
 from modules.PingIPhone import PING
 from modules.control_esp import ESP
-
-logger = LOGGER('ms', level = 'INFO')
-p = CONFIGURATION() #pins
-
 
 #%% def
 class ARGUMENTS(object):
@@ -114,8 +112,7 @@ GPIO.ON = GPIO.LOW
 GPIO.OFF = GPIO.HIGH
 
 GPIO.setup(p.pins.BLINK, GPIO.OUT, initial = GPIO.INIT)
-#GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) #TODO: to try PUD_UP PUD DOWN
-GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #TODO: to try PUD_UP PUD DOWN
+GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #DONE: UP works 
 
 #%% extra modules
 def Blink(args = [1,1,0.1]):
@@ -185,6 +182,7 @@ def esp(TASK):
     TASK = TASK[0].split('_')
     m.logger.info('esp task : ' + str(TASK))
     ESP(TASK)
+    #TODO: fix ESP 175 code / return bad > need to update
 
 #%%
 def Event(channel):
@@ -242,8 +240,7 @@ def iPhone_connection_lost():
     items.GLOBAL.status = False
     timing.no_movement_trigger = False
 
-#TODO: RISING / FALLING / BOTH
-GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=Event, bouncetime=1500) # was 1500 > increasing to 2000
+GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=Event, bouncetime=1500) # RISING works
 
 #%% main
 def main():

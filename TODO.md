@@ -15,12 +15,12 @@
 - [x] wired network
 - [x] pa service
 - [x] fix pa / not from ssh + speak over ssh
-- [ ] **lirc**
 - [x] fix temperature report
+- [x] fix internet speed
+- [ ] lirc
 - [ ] MS > email + camera
 - [ ] blinds > 1 and 3 (2 is ok) / new ESP mod?
 - [ ] logger > to HORNET db
-- [x] fix internet speed
 - [ ] play / music ? __maybe via ESP + IR__
 
 ##octopus / parents
@@ -44,12 +44,17 @@
 - [x] ssh + putty
 - [x] git
 - [x] pa
+- [x] picture frame slides - show slides [integrate with python]
+- [x] keyboard
+- [ ] **google assist**
+    > autostart
+    > modules / how to start
+    > recognise word > trigger event
+    > private events: calendar / email etc
 - [ ] router repoint + static IP?
 - [ ] old crontabs
 - [ ] M2 -> M3
 - [ ] git hook to shrimp
 - [ ] reboot on router lost
 - [ ] dashboard web based + flask
-- [ ] picture frame slides - show slides [integrate with python]
 - [ ] video / mirror
-- [ ] keyboard

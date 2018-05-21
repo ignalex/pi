@@ -25,9 +25,9 @@ def pa(arg):
     config['arg'] =  [ arg[0] if type(arg) == list else arg][0]
 
     if 'ssh' in config.keys():
-        cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/PA.py '{arg}' &".format(**config)
+        cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/PA.py '{arg}'".format(**config)
     else:
-        cmd = "python /home/pi/git/pi/PA.py '{arg}' &".format(**config)
+        cmd = "python /home/pi/git/pi/PA.py '{arg}'".format(**config) #was &
     m.logger.info(cmd)
     os.system(cmd)
 

@@ -150,7 +150,7 @@ def AcquireResult(allowed_delay_min = 5):
     if more time passed than allowed_delay_min since last ping > returns None *too old log
     ** to be run from another device with SSH / RSA keys on it"""
 
-    path_to_log = '/home/pi/LOG/log_ping_iPhone.txt'
+    path_to_log = os.path.join(Dirs()['LOG'],'log_ping_iPhone.txt')
     com =  "tail -1 " + path_to_log
 
     process = Popen(com.split(' '), stdout=PIPE, stderr=PIPE)

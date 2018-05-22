@@ -25,6 +25,7 @@ except:
 #from heater import TranslateForHornet as HEATER
 #from modules.slang import SLANG
 from modules.control_esp import ESP as esp  #control_esp as ESP
+from modules.PingIPone import AcquireResult
 
 #class PARAMETERS (object):
 #    def __init__(self, ID = ''):
@@ -148,15 +149,19 @@ def MONEYREPORT(arg = ''):
     Speak(delta)
 
 def REMINDER(arg):
-    if int(arg[1]) % 60 == 0:
-        h = str(int(arg[1]) / 60)
-        if h == 1:
-            end = ''
+    #DONE: work only with iPone connected
+    if AcquireResult(): # reading last reading iPhone reading
+        if int(arg[1]) % 60 == 0:
+            h = str(int(arg[1]) / 60)
+            if h == 1:
+                end = ''
+            else:
+                end = 's'
+            Phrase({'TYPE' : 'REMINDER_H', 'ACTION' : arg[0].replace('-',' '),'LEFT' : h, 'END' : end})
         else:
-            end = 's'
-        Phrase({'TYPE' : 'REMINDER_H', 'ACTION' : arg[0].replace('-',' '),'LEFT' : h, 'END' : end})
+            Phrase({'TYPE' : 'REMINDER', 'ACTION' : arg[0].replace('-',' '),'LEFT' : arg[1]})
     else:
-        Phrase({'TYPE' : 'REMINDER', 'ACTION' : arg[0].replace('-',' '),'LEFT' : arg[1]})
+        logger.debug('reminder NOT spoken > iPhone not around')
 
 def ESP(arg):
     arg = [i.lower() for i in arg]

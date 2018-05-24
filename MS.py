@@ -35,8 +35,8 @@ p = CONFIGURATION() #pins
 
 from modules.sunrise import Sun
 #    from modules.mod_movement_email import mail #TODO: email mod and phrase
-from modules.KODI_control import kodi
-from modules.wol import wol
+#from modules.KODI_control import kodi
+#from modules.wol import wol
 from modules.talk import Phrase
 from modules.pa import pa
 from modules.PingIPhone import PING
@@ -124,29 +124,29 @@ def Blink(args = [1,1,0.1]):
             sleep(float(args[2]))
         if int(args[0]) != 1: sleep(0.3)
 
-def play(TASK = ['play_current']):
-    wip = kodi('what_is_playing')
-    m.logger.info('TASK recieved: ' + TASK[0] + ', wip answer: '+ wip)
-    if TASK == ['pause']:
-        if wip == 'audio':
-            kodi('pause')
-            m.logger.info('pausing music')
-            m.items.play.status = False
-        elif wip == 'video':
-            m.logger.info('video is playing. Won\'t stop')
-        elif wip == 'nothing':
-            m.logger.info('nothing is playing')
-    else:
-        if wip == 'nothing':
-            kodi(TASK[0])
-            m.logger.info('starting playing current')
-            m.items.play.status = True
-        elif wip == 'audio':
-            kodi('resume')
-            m.logger.info('resuming audio')
-            m.items.play.status = True
-        elif wip == 'video':
-            m.logger.info('video is current. won\'t do anything')
+#def play(TASK = ['play_current']):
+#    wip = kodi('what_is_playing')
+#    m.logger.info('TASK recieved: ' + TASK[0] + ', wip answer: '+ wip)
+#    if TASK == ['pause']:
+#        if wip == 'audio':
+#            kodi('pause')
+#            m.logger.info('pausing music')
+#            m.items.play.status = False
+#        elif wip == 'video':
+#            m.logger.info('video is playing. Won\'t stop')
+#        elif wip == 'nothing':
+#            m.logger.info('nothing is playing')
+#    else:
+#        if wip == 'nothing':
+#            kodi(TASK[0])
+#            m.logger.info('starting playing current')
+#            m.items.play.status = True
+#        elif wip == 'audio':
+#            kodi('resume')
+#            m.logger.info('resuming audio')
+#            m.items.play.status = True
+#        elif wip == 'video':
+#            m.logger.info('video is current. won\'t do anything')
 
 def lamp(TASK):
     "to be used only from inside MS"
@@ -271,7 +271,7 @@ def main():
         sleep(iPhone.Pause([5,45]))  #was 5 - 30
 
     # finishing
-    if ('play' in control.move.keys() or 'play' in control.stb.keys()) and items.play.status: play(['pause'])
+#    if ('play' in control.move.keys() or 'play' in control.stb.keys()) and items.play.status: play(['pause'])
     if 'lamp' in control.move.keys(): lamp(['OFF'])
     if datetime.datetime.now().hour >= 20: Phrase({'TYPE' :'GOOD_NIGHT'})
 

@@ -52,9 +52,9 @@
     > recognise word > trigger event
     > private events: calendar / email etc
 - [ ] router repoint + static IP?
-- [ ] old crontabs
+- [x] old crontabs
 - [ ] M2 -> M3
-- [ ] git hook to shrimp
+- [x] git hook to shrimp
 - [ ] reboot on router lost
 - [ ] dashboard web based + flask
 - [ ] video / mirror

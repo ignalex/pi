@@ -25,7 +25,7 @@ except:
 #from heater import TranslateForHornet as HEATER
 #from modules.slang import SLANG
 from modules.control_esp import ESP as esp  #control_esp as ESP
-from modules.PingIPhone import AcquireResult
+from modules.PingIPhone import AcquireResult #FIXME: this will crash octopus 
 
 #class PARAMETERS (object):
 #    def __init__(self, ID = ''):

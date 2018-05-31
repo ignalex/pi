@@ -5,7 +5,6 @@ Created on Mon Dec 07 06:48:31 2015
 @author: Alex
 """
 from __future__ import print_function
-import pandas as pd 
 import requests, datetime, os, time , math 
 
 # disabling warning message
@@ -13,7 +12,8 @@ import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
 from common import  LOGGER, Dirs, CONFIGURATION, MainException
-from postgres import PANDAS2POSTGRES
+from postgres import PG_Connect# PANDAS2POSTGRES
+from send_email import sendMail
 
 class GET_API(object): 
     """generic API call request class"""
@@ -39,8 +39,9 @@ class ISS(GET_API):
     def Log(self):       
         print ('\t'.join([str(getattr(self,i)) for i in self.keys + ['how_far']]) )
         #to DB 
-        self.df = pd.DataFrame.from_dict({i : getattr(self,i) for i in self.keys + ['how_far']}, orient='index').T
-        con.write(self.df, 'iss_position', if_exists='append')
+        sql = "insert into iss_position (timestamp,latitude,longitude,velocity,altitude,how_far) values ('{}',{},{},{},{},{})".\
+            format(self.timestamp, self.latitude, self.longitude, self.velocity, self.altitude, self.how_far)
+        cur.execute(sql)                                                        
         
         if alert: 
             Alert(self.how_far)
@@ -66,7 +67,12 @@ def Alert(distance):
             elif alert_type == 'print': 
                 print ('international space station approaching, distance is {0}'.format(str(distance)))
             alert_time = datetime.datetime.now()
-        print ('\t'.join([str(i) for i in [str(datetime.datetime.now()).split('.')[0], distance, iss.latitude, iss.longitude]]), open(os.path.join(Dirs()['LOG'], 'iss_alert'),'a'))
+        
+        alert_message = '\t'.join([str(i) for i in [str(datetime.datetime.now()).split('.')[0], distance, iss.latitude, iss.longitude]]) 
+        print (alert_message, open(os.path.join(Dirs()['LOG'], 'iss_alert'),'a'))
+        
+        logger.info(alert_message)
+        logger.info('sending email ... ' + sendMail([p.email.address], [p.email.address, p.email.login, p.email.password], 'ISS approaching alert ', alert_message ,[]))
 
 def Start(): 
     global iss, delay
@@ -81,12 +87,12 @@ if __name__ == '__main__':
 
     #DONE: logger + data > to DB 
     #TODO: distance calc from DB 
-    #TODO: indexes to DB + geom + make table instead of pandas
+    #DONE: indexes to DB + geom + make table instead of pandas
     
     logger = LOGGER('iss', 'INFO')
     p = CONFIGURATION()
     
-    con = PANDAS2POSTGRES(getattr(p,p.ISS.db).__dict__)
+    con, cur = PG_Connect(getattr(p,p.ISS.db).__dict__)
     
     delay = int(p.ISS.delay) # secs 
     location = (151.2, -33.85)

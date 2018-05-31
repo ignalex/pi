@@ -22,6 +22,7 @@ raspberry pi modules for home automation
     * weather now and forecast, temperature inside, next ferry, time.
 - **talk** > speaking using gTTs API
     * incl sending speaking command to another PI
+    * incl translating to another language
 - **ferry** timetable > next ferry is in ... min
 - **ping iPhone bluetooth** > to know if you are home or not and turn ON/OFF things
 - **wol** > Wake On LAN > send magic packet to another PC to wake up

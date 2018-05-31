@@ -31,6 +31,7 @@
 - [x] picture frame slides - show slides [integrate with python]
 - [x] video from SMB share
 - [ ] git hook to octopus
+- [ ] **how to make it stable**
 
 ##zero1
 - [x] headless start + postgres + postgis + data in

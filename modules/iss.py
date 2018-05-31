@@ -61,7 +61,6 @@ def Alert(distance):
     global alert_time, iss 
     if distance <= alert_distance: 
         if (datetime.datetime.now() - alert_time).seconds > 5 * 60 : #and \
-        #((datetime.datetime.now().hour > alert_time_window[0]) and (datetime.datetime.now().hour < alert_time_window[1])): 
             if alert_type == 'speak': 
                 os.system('python /home/pi/git/pi/modules/talk.py "international space station approaching, distance is {0} kilometers"'.format(str(distance)))
             elif alert_type == 'print': 
@@ -81,11 +80,15 @@ def Start():
 if __name__ == '__main__': 
 
     #DONE: logger + data > to DB 
+    #TODO: distance calc from DB 
+    #TODO: indexes to DB + geom + make table instead of pandas
+    
     logger = LOGGER('iss', 'INFO')
     p = CONFIGURATION()
-    con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
     
-    delay = 10 # secs 
+    con = PANDAS2POSTGRES(getattr(p,p.ISS.db).__dict__)
+    
+    delay = int(p.ISS.delay) # secs 
     location = (151.2, -33.85)
     alert, alert_type, alert_distance, alert_time, alert_time_window = True, 'speak', 500, datetime.datetime.now() - datetime.timedelta(hours = 12), (6,21) # initital time > setting to yesterday 
     proxies = {}

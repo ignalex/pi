@@ -5,10 +5,15 @@ Created on Mon Dec 07 06:48:31 2015
 @author: Alex
 """
 from __future__ import print_function
-import __main__ as m
-from common import  LOGGER, Dirs, CONFIGURATION
-
+import pandas as pd 
 import requests, datetime, os, time , math 
+
+# disabling warning message
+import requests.packages.urllib3
+requests.packages.urllib3.disable_warnings()
+
+from common import  LOGGER, Dirs, CONFIGURATION, MainException
+from postgres import PANDAS2POSTGRES
 
 class GET_API(object): 
     """generic API call request class"""
@@ -21,7 +26,7 @@ class GET_API(object):
     def Parse(self,name): 
         setattr(self,name,self.response.json()) 
 
-class ISS2(GET_API): 
+class ISS(GET_API): 
     """ISS postition and people class v 2 - realtime """
     def __init__(self): 
         GET_API.__init__(self,url = "https://api.wheretheiss.at/v1/satellites/25544", params = None, name = 'iss',proxies = proxies)    
@@ -31,12 +36,12 @@ class ISS2(GET_API):
         self.HowFar()
     def HowFar(self): 
         self.how_far = int(Distance(location,(( self.longitude,self.latitude)))/1000)
-    def Log(self): 
-        to_log = '\t'.join([str(getattr(self,i)) for i in self.keys + ['how_far']]) 
-        if not os.path.exists(log_file): 
-            print ('\t'.join(self.keys + ['how_far']), open(log_file,'a'))
-        print (to_log, file=open(log_file,'a'))
-        print (to_log)
+    def Log(self):       
+        print ('\t'.join([str(getattr(self,i)) for i in self.keys + ['how_far']]) )
+        #to DB 
+        self.df = pd.DataFrame.from_dict({i : getattr(self,i) for i in self.keys + ['how_far']}, orient='index').T
+        con.write(self.df, 'iss_position', if_exists='append')
+        
         if alert: 
             Alert(self.how_far)
 
@@ -62,36 +67,30 @@ def Alert(distance):
             elif alert_type == 'print': 
                 print ('international space station approaching, distance is {0}'.format(str(distance)))
             alert_time = datetime.datetime.now()
-        print ('\t'.join([str(i) for i in [str(datetime.datetime.now()).split('.')[0], distance, iss.latitude, iss.longitude]]), open(log_file + '_alert','a'))
+        print ('\t'.join([str(i) for i in [str(datetime.datetime.now()).split('.')[0], distance, iss.latitude, iss.longitude]]), open(os.path.join(Dirs()['LOG'], 'iss_alert'),'a'))
 
 def Start(): 
-    global iss 
+    global iss, delay
     last_time_stamp = None
     while True: 
-        iss = ISS2()
+        iss = ISS()
         if iss.timestamp != last_time_stamp: iss.Log()
         last_time_stamp =  iss.timestamp    
         time.sleep(delay)
-        return 
-
-
+         
 if __name__ == '__main__': 
-    mode = os.name
+
+    #DONE: logger + data > to DB 
+    logger = LOGGER('iss', 'INFO')
+    p = CONFIGURATION()
+    con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
     
-    log_file = os.path.join(Dirs()['LOG'], 'iss')
-    delay = 10 
+    delay = 10 # secs 
     location = (151.2, -33.85)
-    alert, alert_type,alert_distance, alert_time, alert_time_window = True, 'speak', 500, datetime.datetime.now() - datetime.timedelta(hours = 12), (6,21) # initital time > setting to yesterday 
-    #PID()
+    alert, alert_type, alert_distance, alert_time, alert_time_window = True, 'speak', 500, datetime.datetime.now() - datetime.timedelta(hours = 12), (6,21) # initital time > setting to yesterday 
     proxies = {}
-    Start()
-#    if mode == 'posix': 
-#        #import daemon
-#        proxies = {}
-#        #with daemon.DaemonContext(): 
-#        Start()
-#    else:
-#        proxies = {}
-#        #proxies = {"http": "10.139.234.210:8080" , 'https' : "10.139.234.210:8080" }
-#       # location = {'lat':-33.85,'lon':151.2}
-#        Start()
+    try: 
+        logger.info('starting')
+        Start()
+    except: 
+        MainException()

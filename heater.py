@@ -16,12 +16,11 @@ Created on Mon Jun 01 21:18:58 2015
 import sys, datetime
 from modules.weatherzone import WEATHER as WEATHER_class
 from time import sleep
-from modules.common import   MainException, LOGGER
+from modules.common import   MainException, LOGGER, CONFIGURATION
 from modules.PingIPhone import AcquireResult
 import daemon
-from modules.speak_over_ssh import  Speak # alternatively can import speak from talk and use the same PI
+from modules.talk import  Speak
 from modules.control_esp import ESP
-
 
 class TIMING(object):
     def __init__(self, stop = 1):
@@ -42,7 +41,6 @@ class SPEAK_TEMP(object):
         else:
             return False
 
-
 class ONOFF(object):
     def __init__(self):
         self.status = 'off'
@@ -55,8 +53,8 @@ class ONOFF(object):
                 Speak("heater " + ['ON' if self.status == 'on' else 'OFF'][0] )
 #                Phrase({'TYPE' : 'HEATER_' + ['ON' if self.status == 'on' else 'OFF'][0]})
 
-def TranslateForHornet(agr):
-    Start(temp = {'min' : 20, 'max' : 21} ,armed_time = 1,check_ping = 0, speak = True )
+#def TranslateForHornet(agr):
+#    Start(temp = {'min' : 20, 'max' : 21} ,armed_time = 1,check_ping = 0, speak = True )
 
 def Start(temp, armed_time, check_ping):
     global log, logger
@@ -87,8 +85,9 @@ if __name__ == '__main__':
         args = [float(i) for i in sys.argv[1:] if not i.startswith('-')]
     temp = {'min' : args[0], 'max' : args[1]}
 
-    logger = LOGGER('HEATER','INFO', True)
+    logger = LOGGER('heater','INFO', True)
     log = logger.info
+    p = CONFIGURATION()
 
     if len(args)> 2:
         armed_time = args[2]

@@ -12,6 +12,8 @@ Created on Mon Dec 07 06:48:31 2015
     #TODO: when approaching > reduce delay 
     #TODO: alert only once per approach > accumulate and send once 
     #DONE: class initiate only once
+    #TODO: simplify table structure > staging > geom
+    #TODO: ask where > answer continent / country 
     
 """
 from __future__ import print_function

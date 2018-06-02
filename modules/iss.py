@@ -26,6 +26,7 @@ requests.packages.urllib3.disable_warnings()
 from common import  LOGGER, Dirs, CONFIGURATION, MainException
 from postgres import PG_Connect# PANDAS2POSTGRES
 from send_email import sendMail
+from talk import  Speak
 
 class GET_API(object): 
     """generic API call request class"""
@@ -73,7 +74,7 @@ def Alert(distance):
         if (datetime.datetime.now() - alert_time).seconds > 5 * 60 :  
             alert_time = datetime.datetime.now()            
             if alert_type == 'speak' and alert_time.hour > 7 and alert_time.hour < 22: 
-                os.system('python /home/pi/git/pi/modules/talk.py "international space station approaching, distance is {0} kilometers" &'.format(str(distance)))
+                Speak("international space station approaching, distance is {0} kilometers".format(str(distance)))
 
         alert_message = '\t'.join([str(i) for i in [str(datetime.datetime.now()).split('.')[0], distance, iss.latitude, iss.longitude]]) 
         print (alert_message, open(os.path.join(Dirs()['LOG'], 'iss_alert'),'a'))
@@ -106,3 +107,5 @@ if __name__ == '__main__':
         Start()
     except: 
         MainException()
+        Speak('ISS scanning stopped')
+    

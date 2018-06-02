@@ -18,7 +18,7 @@ from modules.weatherzone import WEATHER as WEATHER_class
 from time import sleep
 from modules.common import   MainException, LOGGER, CONFIGURATION
 from modules.PingIPhone import AcquireResult
-import daemon
+#import daemon #TODO: >> takes 100% CPU? why? 
 from modules.talk import  Speak
 from modules.control_esp import ESP
 
@@ -103,9 +103,9 @@ if __name__ == '__main__':
         speak = False # default
     logger.info('\n\n' + str(temp) + ' time: ' + str(armed_time) + '\tping: ' + str(check_ping) + '\tspeak:' + str(speak))
     if speak and datetime.datetime.now().hour >= 6 : Speak('starting monitoring temperature inside') #Phrase({'TYPE' : 'HEATER_START', 'T1' : str(int(temp['min'])), 'T2' : str(int(temp['max'])), 'HH' : str(int(armed_time))})
-    with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-        try:
-            Start(temp,armed_time,check_ping)
-        except:
-            MainException()
-        if speak: Speak('I am no longer monitoring temperature inside') #Phrase({'TYPE' : 'HEATER_STOP'})
+#    with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+    try:
+        Start(temp,armed_time,check_ping)
+    except:
+        MainException()
+    if speak: Speak('I am no longer monitoring temperature inside') #Phrase({'TYPE' : 'HEATER_STOP'})

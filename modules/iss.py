@@ -73,11 +73,11 @@ def Alert(distance):
     if distance <= alert_distance: 
         if (datetime.datetime.now() - alert_time).seconds > 5 * 60 :  
             alert_time = datetime.datetime.now()            
-            if alert_type == 'speak' and alert_time.hour > 7 and alert_time.hour < 22: 
+            if alert_type == 'speak' and alert_time.hour > alert_time_window[0] and alert_time.hour < alert_time_window[1]: 
                 Speak("international space station approaching, distance is {0} kilometers".format(str(distance)))
 
         alert_message = '\t'.join([str(i) for i in [str(datetime.datetime.now()).split('.')[0], distance, iss.latitude, iss.longitude]]) 
-        print (alert_message, open(os.path.join(Dirs()['LOG'], 'iss_alert'),'a'))
+        print (alert_message, file=open(os.path.join(Dirs()['LOG'], 'iss_alert'),'a'))
         logger.info(alert_message)
         logger.info('sending email ... ' + sendMail([p.email.address], [p.email.address, p.email.login, p.email.password], 'ISS approaching alert ', alert_message ,[]))
 

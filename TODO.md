@@ -22,6 +22,7 @@
 - [ ] blinds > 1 and 3 (2 is ok) / new ESP mod?
 - [ ] logger > to HORNET db
 - [ ] play / music ? __maybe via ESP + IR__
+- [ ] **BASH takes 100% CPU > why?**
 
 ##octopus / parents
 - [x] PA

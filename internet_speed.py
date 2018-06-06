@@ -127,6 +127,10 @@ def internet_speed_fast():
 #NO: btn 'scan now'
 #DONE: link to last scan
 
+@app.route("/m3")
+def m3(): 
+    return open('/home/pi/git/m3/next_days/plot1.html','r').read()
+
 #%%
 if __name__ == '__main__':
     args = sys.argv[1:]

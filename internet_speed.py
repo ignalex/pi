@@ -39,7 +39,7 @@ def authenticate():
 def requires_auth(f):
     def check_auth(username, password):
         global p
-        return [username, password] in [i.split(':') for j,i in p.auth.items() if j != 'required']
+        return [username, password] in [i.split(':') for j,i in p.auth.__dict__.items() if j != 'required']
 
     @wraps(f)
     def decorated(*args, **kwargs):

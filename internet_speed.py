@@ -11,7 +11,9 @@ from modules.common import  LOGGER
 logger = LOGGER('internet_speed', level = 'INFO')
 from modules.common import CONFIGURATION
 from modules.postgres import PANDAS2POSTGRES
-from flask import Flask, render_template
+from flask import Flask, render_template, Response, request
+from functools import wraps
+
 #from pandas_highcharts import core as phch_core
 
 try:
@@ -25,6 +27,29 @@ import cufflinks
 import datetime
 
 p = CONFIGURATION()
+
+#%% authentication
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    def check_auth(username, password):
+        global p
+        return [username, password] in [i.split(':') for j,i in p.auth.items() if j != 'required']
+
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        global p
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+#%%
 
 try:
     from flask_compress import Compress
@@ -128,8 +153,9 @@ def internet_speed_fast():
 #DONE: link to last scan
 
 @app.route("/m3")
-def m3(): 
-    return open('/home/pi/git/m3/next_days/plot1.html','r').read()
+@requires_auth
+def m3():
+    return open('/home/pi/LOG/next_days/plot1.html','r').read()
 
 #%%
 if __name__ == '__main__':

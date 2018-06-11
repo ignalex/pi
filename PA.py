@@ -8,7 +8,7 @@ from __future__ import print_function
 
 import sys, os
 from time import sleep
-from modules.common import  LOGGER, CONFIGURATION, MainException
+from modules.common import  LOGGER, CONFIGURATION, MainException, Dirs
 
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
@@ -198,9 +198,9 @@ def ESP(arg):
 #            break
 #        sleep(int(p.INI['TRACKING_INTERVAL']))
 
-#def SPENDINGS(args):
-#    text = [i for i in ReadFileBySSH().splitlines() if i != '']
-#    for t in text:  Speak(t)
+def SPENDINGS(args):
+    text = [i for i in open(os.path.join(Dirs()['SPENDINGS'],'today.txt'),'r').read().splitlines() if i != '']
+    for t in text:  Speak(t)
 
 def ALLEVENTSTODAY(args):
     "speak all events from the iCloud calendar"

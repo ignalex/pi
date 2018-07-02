@@ -305,7 +305,7 @@ if __name__ == '__main__':
         logger.info ('on standby '.upper() + str(control.stb))
         logger.info ('once '.upper() + str(control.once))
         logger.info ('Fire time: '+ str((timing.fire_time/3600)) + ' hours' )
-        Phrase({'TYPE' : 'START_MS'})
+        #Phrase({'TYPE' : 'START_MS'})
         #self_path = os.path.dirname(sys.argv[0])
 
         main()

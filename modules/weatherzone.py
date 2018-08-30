@@ -24,13 +24,16 @@ Created on Tue Jan 27 10:58:24 2015
 @author: aignatov
 """
 from __future__ import print_function
+
 try:
     import urllib2 #TODO: replace for PY3 compatibility
 except:
     pass
-import os, datetime #, sys
+import os, datetime, sys
+sys.path.append('/home/pi/git/pi')
 from modules.common import Dirs, CONFIGURATION
 p = CONFIGURATION()
+
 
 if os.name == 'posix':
     try:
@@ -49,6 +52,7 @@ class WEATHER(object):
                      'wind'     : ["<b>Wind:</b> "," km/h"," at "],
                      'wind_gust': ["gusting to "," km/h"],
                      'temp_today' : ['C - ','&#176;']}
+        self.readings = {}
         try:
             self.html = urllib2.urlopen(self.link,timeout = 10).read()
             self.timeout = False
@@ -95,6 +99,7 @@ class WEATHER(object):
     def Report(self, LOG = True):
         for r in sorted(self.call.keys()):
             print (r, getattr(self,r))
+            self.readings[r] = getattr(self,r)
             if LOG:
                 print (str(self.now)[:-3] + '\t' +r + '\t' + str(getattr(self,r)), file= open(self.Log, 'a'))
 
@@ -104,7 +109,24 @@ class WEATHER(object):
         else:
             return False
 
+def to_db(w):
+    print ('adding to db')
+    from modules.postgres import PANDAS2POSTGRES
+    import pandas as pd
+    try:
+        con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
+        con.write(pd.DataFrame.from_dict(w, orient='index').T, 'weather')
+        return True
+    except Exception as e:
+        print (str(e))
 
 if __name__ == '__main__':
+    args = sys.argv[1:]
     w = WEATHER()
     if not w.timeout: w.Report()
+    
+    if '-DB' in args:
+        w.readings['datetime'] = datetime.datetime.now()
+        status = to_db(w.readings)
+        print('to DB ' + str(status))
+

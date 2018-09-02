@@ -30,7 +30,7 @@ try:
 except:
     pass
 import os, datetime, sys
-sys.path.append('/home/pi/git/pi')
+sys.path.append('/home/pi/git/pi') # for running from command line.
 from modules.common import Dirs, CONFIGURATION
 p = CONFIGURATION()
 

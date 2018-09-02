@@ -157,6 +157,28 @@ def internet_speed_fast():
 def m3():
     return open('/home/pi/LOG/next_days/plot1.html','r').read()
 
+@app.route("/weather") 
+def weather(days=7): 
+    #TODO: days from line
+    #TODO: render template 
+    #TODO: pressure, wind, rain 
+    """   index bigint,
+          wind_gust double precision,
+          datetime timestamp without time zone,
+          rain double precision,
+          temp_in double precision,
+          pressure double precision,
+          temp_today double precision,
+          temp_out double precision,
+          humidity double precision,
+          wind double precision"""
+    con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
+    df = con.read("""select datetime, 
+    	temp_in, temp_out, temp_today
+    	from weather where now() - datetime <= '{} days' ; """.format(days)).set_index('datetime')
+    div_weather = plotly.offline.plot(df.iplot(theme = 'solar', asFigure = True, title = 'weather'), output_type='div', include_plotlyjs = True)
+    return div_weather
+
 #%%
 if __name__ == '__main__':
     args = sys.argv[1:]

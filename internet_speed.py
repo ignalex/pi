@@ -157,11 +157,11 @@ def internet_speed_fast():
 def m3():
     return open('/home/pi/LOG/next_days/plot1.html','r').read()
 
-@app.route("/weather") 
-def weather(days=7): 
+@app.route("/weather")
+def weather(days=3):
     #TODO: days from line
-    #TODO: render template 
-    #TODO: pressure, wind, rain 
+    #TODO: render template
+    #TODO: pressure, wind, rain
     """   index bigint,
           wind_gust double precision,
           datetime timestamp without time zone,
@@ -173,11 +173,25 @@ def weather(days=7):
           humidity double precision,
           wind double precision"""
     con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
-    df = con.read("""select datetime, 
-    	temp_in, temp_out, temp_today
+
+    df = con.read("""select datetime,
+    	temp_in, temp_out, temp_today,
+        pressure,
+        wind, wind_gust,
+        humidity, rain
     	from weather where now() - datetime <= '{} days' ; """.format(days)).set_index('datetime')
-    div_weather = plotly.offline.plot(df.iplot(theme = 'solar', asFigure = True, title = 'weather'), output_type='div', include_plotlyjs = True)
-    return div_weather
+
+    tempearture = plotly.offline.plot(df[['temp_in', 'temp_out', 'temp_today']].iplot(theme = 'solar', asFigure = True, title = 'temperature'), output_type='div', include_plotlyjs = False)
+    pressure = plotly.offline.plot(df[['pressure']].iplot(theme = 'solar', asFigure = True, title = 'pressure'), output_type='div', include_plotlyjs = False)
+    wind = plotly.offline.plot(df[['wind', 'wind_gust']].iplot(theme = 'solar', asFigure = True, title = 'wind'), output_type='div', include_plotlyjs = False)
+    rain = plotly.offline.plot(df[['humidity', 'rain']].iplot(theme = 'solar', asFigure = True, title = 'humidity and rain'), output_type='div', include_plotlyjs = False)
+
+    return render_template('weather.html',
+                           udpate_sec = p.weather.update,
+                           tempearture = tempearture,
+                           pressure = pressure,
+                           wind = wind,
+                           rain = rain)
 
 #%%
 if __name__ == '__main__':

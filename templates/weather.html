@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>weather</title>
+    <meta http-equiv="refresh" content="{{udpate_sec}}">
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+  </head>
+
+  <body>
+      <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+
+      <hr>
+
+        <div class="container">                             <!-- ALL GRID -->
+            <div class="row">                               <!-- 2 PARTS -->
+                <div class="col-md-12 col-lg-6 col-xl-6" style="padding-right: 0px;padding-left: 0px;">
+                  <div  id="temperature"> {{ temperature | safe }} </div>
+                  <div  id="pressure"> {{ pressure | safe }} </div>
+                 </div>
+
+                <div class="col-md-12 col-lg-6 col-xl-6" style="padding-right: 0px;padding-left: 0px;" >
+                  <div  id="wind"> {{ wind | safe }} </div>
+                </div>
+
+                <div class="col-md-12 col-lg-6 col-xl-6" style="padding-right: 0px;padding-left: 0px;" >
+                  <div  id="humidity"> {{ humidity | safe }} </div>
+                  <div  id="rain"> {{ rain | safe }} </div>
+                </div>
+
+            </div>
+        </div>
+
+      <hr>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js" integrity="sha384-3ziFidFTgxJXHMDttyPJKDuTlmxJlwbSkojudK/CkRqKDOmeSbN6KLrGdrBQnT2n" crossorigin="anonymous"></script>
+
+  </body>
+
+</html>

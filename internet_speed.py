@@ -115,7 +115,7 @@ def read_div_from_db():
 @app.route("/internet_speed_live_process")
 def internet_speed():
     "used 1. to read raw data, create plots and send them back to DB as current divs and 2. method to access raw data"
-    line = read_data_from_db(days=p.internet_speed.line_days)[['upload', 'download' ,'ping','timestamp']].set_index('timestamp')#.resample('20min').interpolate('pchip') # interpolation doesn't work on surface but OK on hornet :) starange
+    line = read_data_from_db(days=p.internet_speed.line_days)[['upload', 'download' ,'ping','timestamp']].set_index('timestamp').resample('10min').bfill(limit=1).interpolate('pchip')# interpolation doesn't work on surface but OK on hornet :) starange
     df = read_data_from_db(days=p.internet_speed.box_days)
 
     DIVS = dict(

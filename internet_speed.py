@@ -181,14 +181,14 @@ def weather(days=3):
         humidity, rain
     	from weather where now() - datetime <= '{} days' ; """.format(days)).set_index('datetime')
 
-    tempearture = plotly.offline.plot(df[['temp_in', 'temp_out', 'temp_today']].iplot(theme = 'solar', asFigure = True, title = 'temperature'), output_type='div', include_plotlyjs = False)
+    temperature = plotly.offline.plot(df[['temp_in', 'temp_out', 'temp_today']].iplot(theme = 'solar', asFigure = True, title = 'temperature'), output_type='div', include_plotlyjs = False)
     pressure = plotly.offline.plot(df[['pressure']].iplot(theme = 'solar', asFigure = True, title = 'pressure'), output_type='div', include_plotlyjs = False)
     wind = plotly.offline.plot(df[['wind', 'wind_gust']].iplot(theme = 'solar', asFigure = True, title = 'wind'), output_type='div', include_plotlyjs = False)
     rain = plotly.offline.plot(df[['humidity', 'rain']].iplot(theme = 'solar', asFigure = True, title = 'humidity and rain'), output_type='div', include_plotlyjs = False)
 
     return render_template('weather.html',
                            udpate_sec = p.weather.update,
-                           tempearture = tempearture,
+                           temperature = temperature,
                            pressure = pressure,
                            wind = wind,
                            rain = rain)

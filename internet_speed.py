@@ -158,7 +158,7 @@ def m3():
     return open('/home/pi/LOG/next_days/plot1.html','r').read()
 
 @app.route("/weather")
-def weather(days=3):
+def weather():
     #TODO: days from line
     #TODO: render template
     #TODO: pressure, wind, rain
@@ -172,6 +172,7 @@ def weather(days=3):
           temp_out double precision,
           humidity double precision,
           wind double precision"""
+    days = [i if i is not None else 7 for i in [request.args.get('days')]][0]
     con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
 
     df = con.read("""select datetime,

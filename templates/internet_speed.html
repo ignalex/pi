@@ -15,27 +15,24 @@
 
       <div> <a href="{{ last_link }}"> last scan {{ last_scan }} which is {{ last_min }} min ago</a> </div>
       <hr>
-      <!--div  id="speed1"> {{ plotly_div1 | safe }} </div-->
 
-        <div class="container">                             <!-- ALL GRID -->
-            <div class="row">                               <!-- 2 PARTS -->
-                <div class="col-md-12 col-lg-6 col-xl-6" style="padding-right: 0px;padding-left: 0px;">
-
-                  <div  id="speed1"> {{ div0 | safe }} </div>
-                  <div  id="speed2"> {{ div1 | safe }} </div>
-                 </div>
-
-                <div class="col-md-12 col-lg-6 col-xl-6" style="padding-right: 0px;padding-left: 0px;" >
-
-                  <div  id="speed3"> {{ div2 | safe }} </div>
+        <!--div class="container"-->
+            <div class="row">   
+               <div class="col-md-12 col-lg-12 col-xl-12" style="padding-right: 0px;padding-left: 0px;">
                   <div  id="speed4"> {{ div3 | safe }} </div>
-                </div>
+               </div> 
             </div>
-        </div>
+            
+            <div class="col-md-12 col-lg-12 col-xl-12" style="padding-right: 0px;padding-left: 0px;">
+                <div class="row">                             
+                      <div class="col-sm-4 col-lg-4" style="padding-right: 0px;padding-left: 0px;"> <div id="speed1"> {{ div0 | safe }} </div> </div> 
+                      <div class="col-sm-4 col-lg-4" style="padding-right: 0px;padding-left: 0px;"> <div id="speed2"> {{ div1 | safe }} </div> </div> 
+                      <div class="col-sm-4 col-lg-4" style="padding-right: 0px;padding-left: 0px;"> <div id="speed3"> {{ div2 | safe }} </div> </div> 
+                 </div>
+            </div>
+        <!--/div-->
 
-      <!--div id="hichart"></div-->
-      <!--script type="text/javascript"> new Highcharts.Chart({{chart|safe}}); </script-->
-      <hr>
+       <hr>
       
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js" integrity="sha384-3ziFidFTgxJXHMDttyPJKDuTlmxJlwbSkojudK/CkRqKDOmeSbN6KLrGdrBQnT2n" crossorigin="anonymous"></script>

@@ -95,3 +95,5 @@ CREATE TRIGGER make_calcs
   FOR EACH ROW
   EXECUTE PROCEDURE public.make_calcs();
 
+-- once > geom index 
+create index sidx_readings on readings using gist(geom); 

@@ -119,10 +119,10 @@ def internet_speed():
     df = read_data_from_db(days=p.internet_speed.box_days)
 
     DIVS = dict(
-         div1 = plotly.offline.plot(line.iplot(theme = 'solar', asFigure = True, title = 'internet speed'), output_type='div', include_plotlyjs = False)
-        ,div2 = plotly.offline.plot(df[['download', 'hour']].reset_index().pivot(columns = 'hour', values='download', index='index').iplot(title = 'download', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
-        ,div3 = plotly.offline.plot(df[['upload', 'hour']].reset_index().pivot(columns = 'hour', values='upload', index='index').iplot(title = 'upload', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
-        ,div4 = plotly.offline.plot(df[['ping', 'hour']].reset_index().pivot(columns = 'hour', values='ping', index='index').iplot(title = 'ping', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False)
+         div1 = plotly.offline.plot(line.iplot(theme = 'solar', asFigure = True, title = 'internet speed'), output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+        ,div2 = plotly.offline.plot(df[['download', 'hour']].reset_index().pivot(columns = 'hour', values='download', index='index').iplot(title = 'download', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+        ,div3 = plotly.offline.plot(df[['upload', 'hour']].reset_index().pivot(columns = 'hour', values='upload', index='index').iplot(title = 'upload', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+        ,div4 = plotly.offline.plot(df[['ping', 'hour']].reset_index().pivot(columns = 'hour', values='ping', index='index').iplot(title = 'ping', kind = 'box', asFigure=True, boxpoints='all', theme='solar', legend=False),  output_type='div',include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
     )
     return DIVS # saving dict to DB > will loose KEYS, only indexes
 

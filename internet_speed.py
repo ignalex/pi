@@ -183,17 +183,17 @@ def weather(days=3):
 
     fig_t = df[['temp_in', 'temp_out', 'temp_today']].iplot(theme = 'solar', asFigure = True, title = 'temperature')
     fig_t.layout['legend']['orientation']='h'
-    temperature = plotly.offline.plot(fig_t, output_type='div', include_plotlyjs = False, show_link = False)
+    temperature = plotly.offline.plot(fig_t, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
 
-    pressure = plotly.offline.plot(df[['pressure']].iplot(theme = 'solar', asFigure = True, title = 'pressure'), output_type='div', include_plotlyjs = False, show_link = False)
+    pressure = plotly.offline.plot(df[['pressure']].iplot(theme = 'solar', asFigure = True, title = 'pressure'), output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
 
     fig_w = df[['wind', 'wind_gust']].iplot(theme = 'solar', asFigure = True, title = 'wind')
     fig_w.layout['legend']['orientation']='h'
-    wind = plotly.offline.plot(fig_w, output_type='div', include_plotlyjs = False, show_link = False)
+    wind = plotly.offline.plot(fig_w, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
 
     fig_r = df[['humidity', 'rain']].iplot(theme = 'solar', asFigure = True, title = 'humidity and rain')
     fig_r.layout['legend']['orientation']='h'
-    rain = plotly.offline.plot(fig_r, output_type='div', include_plotlyjs = False, show_link = False)
+    rain = plotly.offline.plot(fig_r, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
 
     return render_template('weather.html',
                            udpate_sec = p.weather.update,

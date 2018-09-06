@@ -171,13 +171,14 @@ def weather():
           temp_today double precision,
           temp_out double precision,
           humidity double precision,
-          wind double precision"""
+          wind double precision,
+          light double precision"""
     days = [i if i is not None else 7 for i in [request.args.get('days')]][0]
     con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
 
     df = con.read("""select datetime,
     	temp_in, temp_out, temp_today,
-        pressure,
+        pressure, light, 
         wind, wind_gust,
         humidity, rain
     	from weather where now() - datetime <= '{} days' ; """.format(days)).set_index('datetime')

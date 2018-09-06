@@ -17,7 +17,6 @@ def PG_Connect(connect):
     """creates cursor on the database
     inputs: dict {DB, USER, HOST, (PORT - optional - if not provided then 5432), (PASS - optional - if not provided to be taken from .pgpass file)}
     output: (conn,cur)"""
-
     connection =  ("dbname={DB} user={USER} host={HOST} " + \
                   ['password={PASS} ' if 'PASS' in connect.keys() else ' '][0] + \
                   ['port=5432' if 'PORT' not in connect.keys() else 'port={PORT}'][0]).format(**connect)
@@ -29,7 +28,7 @@ def PG_Connect(connect):
     except:
         return (None,None)
 
-def gps(): #TODO: joblib thread > while having other for process
+def gps(): 
     while True:
         try:
             sentence = serialStream.readline().decode("utf-8")
@@ -37,7 +36,7 @@ def gps(): #TODO: joblib thread > while having other for process
                 data = pynmea2.parse(sentence)
                 minsec = str(data.timestamp).split(':')[-2:]
                 return dict(time=data.timestamp,
-                            time_local = str(datetime.datetime.now()).split(':')[0] + ':' + ':'.join(minsec),
+                            time_local = str(datetime.datetime.now()).split(':')[0] + ':' + ':'.join(minsec), # THIS IS BAD! - pi time!
                             lat=data.latitude,
                             lon=data.longitude
 #                            ,qual=data.gps_qual,
@@ -60,7 +59,7 @@ def wait_for_gps(device,step=2):
             time.sleep(2)
 
 if __name__ == '__main__':
-    logger = LOGGER('gps', level = 'DEBUG')
+    logger = LOGGER('gps', level = 'INFO')
     logger.info('starting')
     p = CONFIGURATION()
 
@@ -71,15 +70,17 @@ if __name__ == '__main__':
         conn, cur = PG_Connect(p.zero1_pi_db.__dict__)
         while True:
             di = gps(); time.sleep(float(p.GPS.sleep))
-            print ("{time}: {time_local}: {lat},{lon}".format(**di))# + ' ' + str({k:v for k,v in di.items() if k not in ['time','lat','lon']}))
             if di['lat'] != 0: # no data
                 try:
                     cur.execute("insert into readings (stamp, lon, lat) values ('{time_local}' :: timestamp without time zone,{lon},{lat})".format(**di))
+                    logger.debug( "{time}: {time_local}: {lat},{lon}".format(**di)) 
                 except Exception as e:
-                    if str(e).find('Connection timed out') != -1:
-                        logger.info('Connection timed out, resetting')
+                    if str(e).find('Connection timed out') != -1 or str(e).find("has no attribute 'execute'") != -1:
+                        logger.error('Connection timed out, resetting')
                         conn, cur = PG_Connect(p.zero1_pi_db.__dict__)
+                    else: 
+                        logger.error(str(e))
             else:
-                logger.info('lat lon 0 0')
+                logger.error("{time}: {time_local}: {lat},{lon} NO DATA".format(**di))
     except:
         MainException()

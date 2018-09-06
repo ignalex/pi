@@ -42,7 +42,7 @@ if os.name == 'posix':
         pass
 
 class WEATHER(object):
-    def __init__(self,TempIn = True):
+    def __init__(self,TempIn = True, LightSensor=True):
         self.link = p.WEATHER_LINK
         self.Log = os.path.join(Dirs()['LOG'],'sensors.log')
         self.call = {'rain' : ["<b>Rain:</b> ","mm since"],
@@ -64,6 +64,7 @@ class WEATHER(object):
         self.rain_at_all = [True if float(i) > 0 else False for i in [self.rain]][0]
         self.DateTime()
         if os.name == 'posix' and TempIn: self.TempIn()
+        if LightSensor: self.LightSensor()
         self.Forecast()
     def Process(self,name,f):
         f1_pos = self.html.find(f[0])+len(f[0])
@@ -87,6 +88,11 @@ class WEATHER(object):
     def TempIn(self):
         self.temp_in = Temp()
         self.call['temp_in'] = ["",""]
+
+    def LightSensor(self):
+        self.light = light_sensor()
+        self.call['light'] = ["",""]
+                
     def DateTime(self):
         f = ["<pubDate>"," +"]
         f1_pos = self.html.find(f[0])+len(f[0])+5
@@ -108,6 +114,17 @@ class WEATHER(object):
             return True
         else:
             return False
+
+def light_sensor(link='http://192.168.1.175/sensor'): 
+    try: 
+        html = urllib2.urlopen(link,timeout = 3).read()
+        f1_pos = html.find('<body>\n')+15
+        f2_pos = html.find('\n',f1_pos)
+        light = html[f1_pos : f2_pos]
+        return light
+    except: 
+        return None
+    
 
 def to_db(w):
     print ('adding to db')

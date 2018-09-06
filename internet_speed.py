@@ -187,9 +187,13 @@ def weather():
     fig_t.layout['legend']['orientation']='h'
     temperature = plotly.offline.plot(fig_t, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
 
-    fig_pl = df[['pressure', 'light']].iplot(theme = 'solar', asFigure = True, title = 'pressure and light')
-    fig_pl.layout['legend']['orientation']='h'   
-    pressure_light = plotly.offline.plot(fig_pl, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+    fig_l = df[['light']].iplot(theme = 'solar', asFigure = True, title = 'light')
+    fig_l.layout['legend']['orientation']='h'   
+    light = plotly.offline.plot(fig_l, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+
+    fig_p = df[['pressure']].iplot(theme = 'solar', asFigure = True, title = 'pressure')
+    fig_p.layout['legend']['orientation']='h'   
+    pressure = plotly.offline.plot(fig_p, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
 
     fig_w = df[['wind', 'wind_gust']].iplot(theme = 'solar', asFigure = True, title = 'wind')
     fig_w.layout['legend']['orientation']='h'
@@ -202,9 +206,10 @@ def weather():
     return render_template('weather.html',
                            udpate_sec = p.weather.update,
                            temperature = temperature,
-                           pressure_light = pressure_light,
+                           light = light,
                            wind = wind,
-                           rain = rain)
+                           rain = rain, 
+                           pressure = pressure)
 
 #%%
 if __name__ == '__main__':

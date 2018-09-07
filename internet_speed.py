@@ -159,7 +159,9 @@ def weather():
           temp_out double precision,
           humidity double precision,
           wind double precision,
-          light double precision"""
+          light_1 double precision,
+          light_2 double precision
+          """
     start = datetime.datetime.now()
     days = [i if i is not None else 7 for i in [request.args.get('days')]][0]
     resample = [i if i is not None else False for i in [request.args.get('resample')]][0]
@@ -167,7 +169,8 @@ def weather():
 
     df = con.read("""select datetime,
     	temp_in, temp_out, temp_today,
-        pressure, light,
+        pressure,
+        light_1, light_2,
         wind, wind_gust,
         humidity, rain
     	from weather where now() - datetime <= '{} days'
@@ -177,7 +180,7 @@ def weather():
         df = df.resample(resample).bfill(limit=1).interpolate('pchip')
 
     DIV = {'temperature' : parse_df_for_figure(df, ['temp_in', 'temp_out', 'temp_today'], 'temperature'),
-           'light' : parse_df_for_figure(df, ['light'], 'light'),
+           'light' : parse_df_for_figure(df, ['light_1', 'light_2'], 'light'),
            'pressure' : parse_df_for_figure(df, ['pressure'], 'pressure'),
            'wind' : parse_df_for_figure(df, ['wind', 'wind_gust'], 'wind'),
            'rain' : parse_df_for_figure(df, ['humidity', 'rain'], 'humidity and rain')

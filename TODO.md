@@ -40,7 +40,7 @@
 - [x] python
 - [x] speed function
 - [x] direction function
-- [ ] GPS signal strength?
+- [ ] GPS signal strength? -- loosing connectivity to DB
 
 ##srimp
 - [x] ssh + putty
@@ -53,7 +53,6 @@
     > modules / how to start
     > recognise word > trigger event
     > private events: calendar / email etc
-- [ ] router repoint + static IP?
 - [x] old crontabs
 - [ ] M2 -> M3
 - [x] git hook to shrimp

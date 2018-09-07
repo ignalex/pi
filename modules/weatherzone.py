@@ -89,10 +89,12 @@ class WEATHER(object):
         self.temp_in = Temp()
         self.call['temp_in'] = ["",""]
 
-    def LightSensor(self):
-        self.light = light_sensor()
-        self.call['light'] = ["",""]
-                
+    def LightSensor(self, sensors = {'light_1' : 'http://192.168.1.175/control/sensor',
+                                     'light_2' : 'http://192.168.1.176/control/sensor'}):
+        for light, link in sensors.items():
+            setattr(self, light, light_sensor(link))
+            self.call[light] = ["",""]
+
     def DateTime(self):
         f = ["<pubDate>"," +"]
         f1_pos = self.html.find(f[0])+len(f[0])+5
@@ -115,16 +117,16 @@ class WEATHER(object):
         else:
             return False
 
-def light_sensor(link='http://192.168.1.175/sensor'): 
-    try: 
+def light_sensor(link='http://192.168.1.175/control/sensor'):
+    try:
         html = urllib2.urlopen(link,timeout = 3).read()
-        f1_pos = html.find('<body>\n')+15
-        f2_pos = html.find('\n',f1_pos)
+        f1_pos = html.find('adc=')+4
+        f2_pos = html.find('<br>',f1_pos)
         light = html[f1_pos : f2_pos]
         return light
-    except: 
+    except:
         return None
-    
+
 
 def to_db(w):
     print ('adding to db')
@@ -141,7 +143,7 @@ if __name__ == '__main__':
     args = sys.argv[1:]
     w = WEATHER()
     if not w.timeout: w.Report()
-    
+
     if '-DB' in args:
         w.readings['datetime'] = datetime.datetime.now()
         status = to_db(w.readings)

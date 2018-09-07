@@ -4,6 +4,8 @@ Created on Fri Feb  9 07:38:54 2018
 
 @author: Alexander Ignatov
 """
+#TODO: split internet speed and server
+
 from __future__ import print_function
 import sys
 
@@ -14,13 +16,11 @@ from modules.postgres import PANDAS2POSTGRES
 from flask import Flask, render_template, Response, request
 from functools import wraps
 
-#from pandas_highcharts import core as phch_core
-
 try:
     import speedtest
 except Exception as e:
+    logger.error("speed test module cant't be loaded")
     logger.error(str(e))
-#from modules.speakPI4 import Speak #TODO: fix
 import pandas as pd
 import plotly
 import cufflinks
@@ -138,20 +138,6 @@ def internet_speed_fast():
                            udpate_sec = p.internet_speed.update,
                            **DIVS)
 
-#@app.route("/internet_speed_highchart")
-#def internet_speed_hc():
-#
-#    div1, last = read_div_from_db()
-#
-#    df = read_data_from_db()[['download','upload','ping','timestamp']].set_index('timestamp')
-#    chart = phch_core.serialize(df, render_to='hichart', output_type='json')
-##    return div
-#    return render_template('internet_speed.html', chart=chart, plotly_div1=div1, last_link=last['share'], last_scan=last['datetime'], last_min=last['minutes'])
-
-#DONE: templates / inject DIV.
-#NO: btn 'scan now'
-#DONE: link to last scan
-
 @app.route("/m3")
 @requires_auth
 def m3():
@@ -159,9 +145,10 @@ def m3():
 
 @app.route("/weather")
 def weather():
-    #DONR: days from line
+    #DONE: days from line
     #DONE: render template
     #DONE: pressure, wind, rain
+    #DONE: interpolate on request
     """   index bigint,
           wind_gust double precision,
           datetime timestamp without time zone,
@@ -173,48 +160,35 @@ def weather():
           humidity double precision,
           wind double precision,
           light double precision"""
+    start = datetime.datetime.now()
     days = [i if i is not None else 7 for i in [request.args.get('days')]][0]
+    resample = [i if i is not None else False for i in [request.args.get('resample')]][0]
     con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
 
     df = con.read("""select datetime,
     	temp_in, temp_out, temp_today,
-        pressure, light, 
+        pressure, light,
         wind, wind_gust,
         humidity, rain
-    	from weather where now() - datetime <= '{} days' 
+    	from weather where now() - datetime <= '{} days'
         order by datetime; """.format(days)).set_index('datetime')
 
-    DIV = {'temperature' : parse_df_for_figure(df, ['temp_in', 'temp_out', 'temp_today'], 'temperature'), 
-           'light' : parse_df_for_figure(df, ['light'], 'light'), 
-           'pressure' : parse_df_for_figure(df, ['pressure'], 'pressure'), 
-           'wind' : parse_df_for_figure(df, ['wind', 'wind_gust'], 'wind'), 
-           'rain' : parse_df_for_figure(df, ['humidity', 'rain'], 'humidity and rain')           
+    if resample != False:
+        df = df.resample(resample).bfill(limit=1).interpolate('pchip')
+
+    DIV = {'temperature' : parse_df_for_figure(df, ['temp_in', 'temp_out', 'temp_today'], 'temperature'),
+           'light' : parse_df_for_figure(df, ['light'], 'light'),
+           'pressure' : parse_df_for_figure(df, ['pressure'], 'pressure'),
+           'wind' : parse_df_for_figure(df, ['wind', 'wind_gust'], 'wind'),
+           'rain' : parse_df_for_figure(df, ['humidity', 'rain'], 'humidity and rain')
            }
-
-#    fig_t = df[['temp_in', 'temp_out', 'temp_today']].iplot(theme = 'solar', asFigure = True, title = 'temperature')
-#    fig_t.layout['legend']['orientation']='h'
-#    temperature = plotly.offline.plot(fig_t, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
-#
-#    fig_l = df[['light']].iplot(theme = 'solar', asFigure = True, title = 'light')
-#    fig_l.layout['legend']['orientation']='h'   
-#    light = plotly.offline.plot(fig_l, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
-#
-#    fig_p = df[['pressure']].iplot(theme = 'solar', asFigure = True, title = 'pressure')
-#    fig_p.layout['legend']['orientation']='h'   
-#    pressure = plotly.offline.plot(fig_p, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
-#
-#    fig_w = df[['wind', 'wind_gust']].iplot(theme = 'solar', asFigure = True, title = 'wind')
-#    fig_w.layout['legend']['orientation']='h'
-#    wind = plotly.offline.plot(fig_w, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
-#
-#    fig_r = df[['humidity', 'rain']].iplot(theme = 'solar', asFigure = True, title = 'humidity and rain')
-#    fig_r.layout['legend']['orientation']='h'
-#    rain = plotly.offline.plot(fig_r, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
-
+    generated = 'updated ' + str(datetime.datetime.now()).split('.')[0] + ', generated in ' +  str((datetime.datetime.now() - start).total_seconds()) + ' sec.'
     return render_template('weather.html',
                            udpate_sec = p.weather.update,
+                           generated=generated,
                            **DIV)
-def parse_df_for_figure(df, cols, title): 
+
+def parse_df_for_figure(df, cols, title):
     "splitting df for graphs. cols - array"
     fig = df[cols].iplot(theme = 'solar', asFigure = True, title=title)
     fig.layout['legend']['orientation']='h'
@@ -227,4 +201,4 @@ if __name__ == '__main__':
         status = to_db(SpeedTest())
         logger.info(str(status))
     elif '-flask' in args:
-        app.run(debug=True, use_debugger = False, use_reloader = False, port = 8082, host = '0.0.0.0')
+        app.run(debug=True, use_debugger = True, use_reloader = True, port = 8082, host = '0.0.0.0')

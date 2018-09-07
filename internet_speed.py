@@ -159,9 +159,9 @@ def m3():
 
 @app.route("/weather")
 def weather():
-    #TODO: days from line
-    #TODO: render template
-    #TODO: pressure, wind, rain
+    #DONR: days from line
+    #DONE: render template
+    #DONE: pressure, wind, rain
     """   index bigint,
           wind_gust double precision,
           datetime timestamp without time zone,
@@ -184,33 +184,42 @@ def weather():
     	from weather where now() - datetime <= '{} days' 
         order by datetime; """.format(days)).set_index('datetime')
 
-    fig_t = df[['temp_in', 'temp_out', 'temp_today']].iplot(theme = 'solar', asFigure = True, title = 'temperature')
-    fig_t.layout['legend']['orientation']='h'
-    temperature = plotly.offline.plot(fig_t, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+    def parse_df_for_figure(df, cols, title): 
+        "splitting df for graphs. cols - array"
+        fig = df[cols].iplot(theme = 'solar', asFigure = True, title=title)
+        fig.layout['legend']['orientation']='h'
+        return plotly.offline.plot(fig, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+    
+    DIV = {'temperature' : parse_df_for_figure(df, ['temp_in', 'temp_out', 'temp_today'], 'temperature'), 
+           'light' : parse_df_for_figure(df, ['light'], 'light'), 
+           'pressure' : parse_df_for_figure(df, ['pressure'], 'pressure'), 
+           'wind' : parse_df_for_figure(df, ['wind', 'wind_gust'], 'wind'), 
+           'rain' : parse_df_for_figure(df, ['humidity', 'rain'], 'humidity and rain')           
+           }
 
-    fig_l = df[['light']].iplot(theme = 'solar', asFigure = True, title = 'light')
-    fig_l.layout['legend']['orientation']='h'   
-    light = plotly.offline.plot(fig_l, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
-
-    fig_p = df[['pressure']].iplot(theme = 'solar', asFigure = True, title = 'pressure')
-    fig_p.layout['legend']['orientation']='h'   
-    pressure = plotly.offline.plot(fig_p, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
-
-    fig_w = df[['wind', 'wind_gust']].iplot(theme = 'solar', asFigure = True, title = 'wind')
-    fig_w.layout['legend']['orientation']='h'
-    wind = plotly.offline.plot(fig_w, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
-
-    fig_r = df[['humidity', 'rain']].iplot(theme = 'solar', asFigure = True, title = 'humidity and rain')
-    fig_r.layout['legend']['orientation']='h'
-    rain = plotly.offline.plot(fig_r, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+#    fig_t = df[['temp_in', 'temp_out', 'temp_today']].iplot(theme = 'solar', asFigure = True, title = 'temperature')
+#    fig_t.layout['legend']['orientation']='h'
+#    temperature = plotly.offline.plot(fig_t, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+#
+#    fig_l = df[['light']].iplot(theme = 'solar', asFigure = True, title = 'light')
+#    fig_l.layout['legend']['orientation']='h'   
+#    light = plotly.offline.plot(fig_l, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+#
+#    fig_p = df[['pressure']].iplot(theme = 'solar', asFigure = True, title = 'pressure')
+#    fig_p.layout['legend']['orientation']='h'   
+#    pressure = plotly.offline.plot(fig_p, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+#
+#    fig_w = df[['wind', 'wind_gust']].iplot(theme = 'solar', asFigure = True, title = 'wind')
+#    fig_w.layout['legend']['orientation']='h'
+#    wind = plotly.offline.plot(fig_w, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+#
+#    fig_r = df[['humidity', 'rain']].iplot(theme = 'solar', asFigure = True, title = 'humidity and rain')
+#    fig_r.layout['legend']['orientation']='h'
+#    rain = plotly.offline.plot(fig_r, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
 
     return render_template('weather.html',
                            udpate_sec = p.weather.update,
-                           temperature = temperature,
-                           light = light,
-                           wind = wind,
-                           rain = rain, 
-                           pressure = pressure)
+                           **DIV)
 
 #%%
 if __name__ == '__main__':

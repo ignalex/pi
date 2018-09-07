@@ -184,12 +184,6 @@ def weather():
     	from weather where now() - datetime <= '{} days' 
         order by datetime; """.format(days)).set_index('datetime')
 
-    def parse_df_for_figure(df, cols, title): 
-        "splitting df for graphs. cols - array"
-        fig = df[cols].iplot(theme = 'solar', asFigure = True, title=title)
-        fig.layout['legend']['orientation']='h'
-        return plotly.offline.plot(fig, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
-    
     DIV = {'temperature' : parse_df_for_figure(df, ['temp_in', 'temp_out', 'temp_today'], 'temperature'), 
            'light' : parse_df_for_figure(df, ['light'], 'light'), 
            'pressure' : parse_df_for_figure(df, ['pressure'], 'pressure'), 
@@ -220,6 +214,11 @@ def weather():
     return render_template('weather.html',
                            udpate_sec = p.weather.update,
                            **DIV)
+def parse_df_for_figure(df, cols, title): 
+    "splitting df for graphs. cols - array"
+    fig = df[cols].iplot(theme = 'solar', asFigure = True, title=title)
+    fig.layout['legend']['orientation']='h'
+    return plotly.offline.plot(fig, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
 
 #%%
 if __name__ == '__main__':

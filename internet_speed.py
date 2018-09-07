@@ -181,7 +181,8 @@ def weather():
         pressure, light, 
         wind, wind_gust,
         humidity, rain
-    	from weather where now() - datetime <= '{} days' ; """.format(days)).set_index('datetime')
+    	from weather where now() - datetime <= '{} days' 
+        order by datetime; """.format(days)).set_index('datetime')
 
     fig_t = df[['temp_in', 'temp_out', 'temp_today']].iplot(theme = 'solar', asFigure = True, title = 'temperature')
     fig_t.layout['legend']['orientation']='h'

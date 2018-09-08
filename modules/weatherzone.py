@@ -89,10 +89,15 @@ class WEATHER(object):
         self.temp_in = Temp()
         self.call['temp_in'] = ["",""]
 
-    def LightSensor(self, sensors = {'light_1' : 'http://192.168.1.175/control/sensor',
-                                     'light_2' : 'http://192.168.1.176/control/sensor'}):
-        for light, link in sensors.items():
-            setattr(self, light, light_sensor(link))
+    def LightSensor(self, sensors = {'light_1' : {'link': 'http://192.168.1.175/control/sensor', 'calibr' : 1},
+                                     'light_2' : {'link': 'http://192.168.1.176/control/sensor/sound', 'calibr' : 1.2}}):
+        for light, params in sensors.items():
+            try:
+                if datetime.datetime.now().hour < 5 or datetime.datetime.now().hour > 20:
+                       params['link'] = params['link'].replace('/sound','')
+                setattr(self, light, int(light_sensor(params['link']) * params['calibr']))
+            except:
+                setattr(self, light, None)
             self.call[light] = ["",""]
 
     def DateTime(self):
@@ -122,7 +127,7 @@ def light_sensor(link='http://192.168.1.175/control/sensor'):
         html = urllib2.urlopen(link,timeout = 3).read()
         f1_pos = html.find('adc=')+4
         f2_pos = html.find('<br>',f1_pos)
-        light = html[f1_pos : f2_pos]
+        light = float(html[f1_pos : f2_pos])
         return light
     except:
         return None

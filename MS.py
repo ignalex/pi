@@ -112,7 +112,7 @@ GPIO.ON = GPIO.LOW
 GPIO.OFF = GPIO.HIGH
 
 GPIO.setup(p.pins.BLINK, GPIO.OUT, initial = GPIO.INIT)
-GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #DONE: UP works 
+GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #DONE: UP works
 
 #%% extra modules
 def Blink(args = [1,1,0.1]):
@@ -248,7 +248,7 @@ def main():
     while timing.GlobalStop():
         iPhone.Ping()
         if iPhone.changed != None:
-            ESP([['1' if i else '0' for i in [iPhone.changed]][0] , '5']) # ESP indicator on 5 esp
+            ESP(['6', 'color',  ['blue' if i else 'red' for i in [iPhone.changed]][0]],'0') # ESP indicator on 5 esp
             ESP(['6','rf433','13', ['1' if i else '0' for i in [iPhone.changed]][0]]) #['6','rf433','3','0'] # power #3 fire
             logger.info('iPhone status changed to ' + str(iPhone.changed))
         if iPhone.status == False:
@@ -278,7 +278,7 @@ def main():
     logger.info ('finishing '+ sys.argv[0])
 
     GPIO.cleanup(p.pins.MOVEMENT_SENSOR)
-    ESP(['0','5'])
+    ESP(['6', 'color', 'off', '0'])
     Phrase({'TYPE' : 'EXIT_MS'})
 
 #%% start

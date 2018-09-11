@@ -21,7 +21,7 @@ must:
 import sys
 import os
 import datetime
-os.path.append('/home/pi/modules') #compatibility
+sys.path.append('/home/pi/git/pi/modules') #compatibility
 from common import CONFIGURATION, LOGGER, Dirs
 from send_email import sendMail
 

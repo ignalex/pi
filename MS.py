@@ -248,7 +248,7 @@ def main():
     while timing.GlobalStop():
         iPhone.Ping()
         if iPhone.changed != None:
-            ESP(['6', 'color',  ['blue' if i else 'red' for i in [iPhone.changed]][0]],'0') # ESP indicator on 5 esp
+            ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0') # ESP indicator on 5 esp
             ESP(['6','rf433','13', ['1' if i else '0' for i in [iPhone.changed]][0]]) #['6','rf433','3','0'] # power #3 fire
             logger.info('iPhone status changed to ' + str(iPhone.changed))
         if iPhone.status == False:

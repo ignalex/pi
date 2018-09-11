@@ -61,7 +61,7 @@ BEGIN
 	NEW.geom := st_setsrid(st_makepoint(NEW.lon,NEW.lat),4326); 
 	NEW.delta_seconds :=  extract('seconds' from ( NEW.stamp - LAST_ROW.stamp)); 
 	NEW.distance := ST_Distance(NEW.geom :: geography, LAST_ROW.geom :: geography) :: int; 
-	NEW.bearing := degrees(ST_Azimuth(NEW.geom, LAST_ROW.geom)); 
+	NEW.bearing := degrees(ST_Azimuth(LAST_ROW.geom, NEW.geom)); -- need to reverse cause looks like opposite direction
 	NEW.speed := NEW.distance * 3.600 /  NEW.delta_seconds ; -- m/s 2 km/h
 
 	-- nearest cam 
@@ -97,3 +97,22 @@ CREATE TRIGGER make_calcs
 
 -- once > geom index 
 create index sidx_readings on readings using gist(geom); 
+
+-- view for last hour / last day etc 
+create or replace view vw_readings_last_hour as 
+	select * from readings where (now() - stamp) <= interval '1 hour' ; 
+
+create or replace view vw_readings_last_day as 
+	select * from readings where (now() - stamp) <= interval '1 day' ; 
+
+/*
+-- test performance 
+select *  from readings where id = (select max(id) from readings); -- 22ms 
+select *  from readings order by id desc limit 1; -- 20ms . similar... 
+*/ 
+
+-- TODO: when small GPS scattering > high speed - correct 
+
+-- status readings 
+-- select --now() :: text as stamp, 
+select extract (seconds from (now() - stamp)) as late, distance, speed, cm_type, cm_dist, cm_speed_limit, cm_direction, bearing - cm_direction as co_direction  from readings order by id desc limit 1; -- 20ms . similar... 

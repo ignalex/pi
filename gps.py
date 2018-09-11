@@ -3,14 +3,16 @@
 Created on Tue Feb 27 08:46:42 2018
 @author: Alexander Ignatov
 GPS comms module
-
 """
+#TODO: alerting module ? to be separated from main task
+
 from __future__ import print_function
 import os
 import serial
 import pynmea2
 import time, datetime
 import psycopg2
+import sys
 from modules.common import  LOGGER, CONFIGURATION, MainException
 
 def PG_Connect(connect):
@@ -28,7 +30,7 @@ def PG_Connect(connect):
     except:
         return (None,None)
 
-def gps(): 
+def gps():
     while True:
         try:
             sentence = serialStream.readline().decode("utf-8")
@@ -59,28 +61,53 @@ def wait_for_gps(device,step=2):
             time.sleep(2)
 
 if __name__ == '__main__':
-    logger = LOGGER('gps', level = 'INFO')
+    args = sys.argv[1:]
+
+    if '-report' in args:
+        task = 'report'
+    else:
+        task = 'gps'
+
+    logger = LOGGER(task, level = 'INFO')
     logger.info('starting')
     p = CONFIGURATION()
 
-    try:
-        time.sleep(int(p.GPS.wait))
-        wait_for_gps(p.GPS.device)
-        serialStream = serial.Serial(p.DEVICE, 9600, timeout=None)# float(p.GPS.timeout))
-        conn, cur = PG_Connect(p.zero1_pi_db.__dict__)
-        while True:
-            di = gps(); time.sleep(float(p.GPS.sleep))
-            if di['lat'] != 0: # no data
+    if task == 'gps':
+        try:
+            time.sleep(int(p.GPS.wait))
+            wait_for_gps(p.GPS.device)
+            serialStream = serial.Serial(p.DEVICE, 9600, timeout=None)# float(p.GPS.timeout))
+            conn, cur = PG_Connect(p.zero1_pi_db.__dict__)
+            while True:
+                di = gps(); time.sleep(float(p.GPS.sleep))
+                if di['lat'] != 0: # no data
+                    try:
+                        cur.execute("insert into readings (stamp, lon, lat) values ('{time_local}' :: timestamp without time zone,{lon},{lat})".format(**di))
+                        logger.debug( "{time}: {time_local}: {lat},{lon}".format(**di))
+                    except Exception as e:
+                        if str(e).find('Connection timed out') != -1 or str(e).find("has no attribute 'execute'") != -1:
+                            logger.error('Connection timed out, resetting')
+                            conn, cur = PG_Connect(p.zero1_pi_db.__dict__)
+                        else:
+                            logger.error(str(e))
+                else:
+                    logger.error("{time}: {time_local}: {lat},{lon} NO DATA".format(**di))
+        except:
+            MainException()
+
+    elif task == 'report':
+        try:
+            conn, cur = PG_Connect(p.zero1_pi_db.__dict__)
+            while True:
                 try:
-                    cur.execute("insert into readings (stamp, lon, lat) values ('{time_local}' :: timestamp without time zone,{lon},{lat})".format(**di))
-                    logger.debug( "{time}: {time_local}: {lat},{lon}".format(**di)) 
+                    cur.execute("select extract (seconds from (now() - stamp)) as late, distance, speed, cm_type, cm_dist, cm_speed_limit, cm_direction, bearing - cm_direction as co_direction  from readings order by id desc limit 1")
+                    logger.info(str(cur.fetchall()))
                 except Exception as e:
                     if str(e).find('Connection timed out') != -1 or str(e).find("has no attribute 'execute'") != -1:
                         logger.error('Connection timed out, resetting')
                         conn, cur = PG_Connect(p.zero1_pi_db.__dict__)
-                    else: 
+                    else:
                         logger.error(str(e))
-            else:
-                logger.error("{time}: {time_local}: {lat},{lon} NO DATA".format(**di))
-    except:
-        MainException()
+                time.sleep(1)
+        except:
+            MainException()

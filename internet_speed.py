@@ -170,7 +170,7 @@ def weather():
     df = con.read("""select datetime,
     	temp_in, temp_out, temp_today,
         pressure,
-        light_1, light_2,
+        light_1, light_2/1.2 as light_2,
         wind, wind_gust,
         humidity, rain
     	from weather where now() - datetime <= '{} days'

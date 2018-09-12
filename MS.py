@@ -17,9 +17,9 @@ v9 - migrated to git
 crontab config:
 
 #MS
-00 05 * * 1-5 sudo python /home/pi/git/pi/MS.py 11.9h a: pass once m: play + lamp ON + pa morning:time:weather:alleventstoday once + esp 1_123 once + esp 6_rf433_coffee_on once s: play pause + lamp OFF + esp 6_rf433_coffee_off once
-00 17 * * 1-5 sudo python /home/pi/git/pi/MS.py 6h a: pass m: play + lamp ON + pa welcome:temp_in once s: play pause + lamp OFF
-30 05 * * 6,7 sudo python /home/pi/git/pi/MS.py 17h a: pass m: play + lamp ON + pa morning:temp_in:weather:alleventstoday:esp_1_123 once + esp 6_rf433_coffee_on once s: play pause + lamp OFF + esp 6_rf433_coffee_off once
+00 04 * * 1-5 sudo python /home/pi/git/pi/MS.py 12.99h a:: pass once m:: lamp ON + pa morning:time:temp_in:weather:alleventstoday:spendings:protein once + esp 6_rf433_coffee_on once s:: lamp OFF + esp 6_rf433_coffee_off once
+00 17 * * 1-5 sudo python /home/pi/git/pi/MS.py 6h a:: pass m:: lamp ON + pa welcome:temp_in once s:: lamp OFF
+00 04 * * 6,7 sudo python /home/pi/git/pi/MS.py 19h a:: pass m:: lamp ON + pa morning:temp_in:weather:alleventstoday:spendings:protein once + esp 6_rf433_coffee_on once s:: lamp OFF + esp 6_rf433_coffee_off once
 
 """
 from __future__ import print_function
@@ -47,9 +47,9 @@ class ARGUMENTS(object):
     def __init__(self):
         self.raw = ' '.join(sys.argv[2:])
         self.once = {}
-        self.Process('alarm',str(self.raw[self.raw.find('a:')+3 : self.raw.find('m:')-1]).split(' + ')) # all records must start from a:
-        self.Process('move', str(self.raw[self.raw.find('m:')+3 : self.raw.find('s:')-1]).split(' + '))
-        self.Process('stb',  str(self.raw[self.raw.find('s:')+3:]).split(' + '))
+        self.Process('alarm',str(self.raw[self.raw.find('a::')+4 : self.raw.find('m::')-1]).split(' + ')) # all records must start from a:
+        self.Process('move', str(self.raw[self.raw.find('m::')+4 : self.raw.find('s::')-1]).split(' + '))
+        self.Process('stb',  str(self.raw[self.raw.find('s::')+4:]).split(' + '))
     def Process(self,act,arg):
         d = {}
         for a in arg:

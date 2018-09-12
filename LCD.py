@@ -62,18 +62,6 @@ class LCD(object):
         now = str(datetime.now()).split('.')[0].split(' ')[1][:-3]
         with Lock('serial'): self.ser.write('T'+now)
         self.last_min = datetime.now().minute
-#    def LightSensor(self,wait = 0.2): #not used
-#        count = 0
-#        while count < 10:
-#            with Lock('serial'):
-#                self.ser.write('S')
-#                sleep(wait)
-#                read =  self.ser.readline().replace('\r\n','')
-#                if len(read) > 3 or int(read) > 255 or int(read) < 50:  # > 255 - bullshit, < 100 - outlier
-#                    count +=1
-#                else:
-#                    return read
-#        return 'NaN'
 
 def PrintWeather(lcd):
     global print_weather
@@ -92,9 +80,6 @@ def PrintWeather(lcd):
 def PrintNextFerry(lcd):
     sleep(1)
     lcd.PrintPos((1,6),NextFerry()+'  ')
-
-#def LightSensor(lcd):
-#    logger.info(lcd.LightSensor())
 
 logger = LOGGER('lcd', level = 'INFO')
 

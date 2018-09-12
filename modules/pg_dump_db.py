@@ -16,7 +16,6 @@ must:
     chmod 600 pgpass.conf
     echo $PGPASSFILE
         /home/pi/pgpass.conf
-
 """
 #DONE: generic backup + crontab
 import sys

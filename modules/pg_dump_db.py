@@ -45,7 +45,6 @@ def dump_crontab(file='/var/spool/cron/crontabs/pi'):
     logger.info(cmd)
     os.system(cmd)
 
-
 if __name__ == '__main__':
     "syntax: python pd_dump_db hornet_pi_db"
     if len(sys.argv) >1 :

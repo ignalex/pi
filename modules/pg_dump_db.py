@@ -18,6 +18,7 @@ must:
         /home/pi/pgpass.conf
 
 """
+#DONE: generic backup + crontab
 import sys
 import os
 import datetime
@@ -26,8 +27,7 @@ from common import CONFIGURATION, LOGGER, Dirs
 from send_email import sendMail
 
 
-def dump(connection='hornet_pi_db'):
-
+def dump_db(connection='hornet_pi_db'):
     config = getattr(CONFIGURATION(), connection).__dict__
     config['FILENAME'] = os.path.join(Dirs()['LOG'], connection+'_dmp_' + str(datetime.datetime.now()).split(' ')[0].replace('-',''))
     cmd = "pg_dump -h {HOST} -p {PORT} -d {DB} -U {USER} -s -f {FILENAME}".format(**config)
@@ -37,18 +37,24 @@ def dump(connection='hornet_pi_db'):
     logger.info('sending email ... ' + \
                 sendMail([p.email.address], \
                          [p.email.address, p.email.login, p.email.password],\
-                         'DB backup structure', \
+                         'DB backup structure and crontab', \
                          config['FILENAME'], \
-                         [config['FILENAME']])
+                         [config['FILENAME'], os.path.join(Dirs()['LOG'],'crontab')])
                 )
+
+def dump_crontab(file='/var/spool/cron/crontabs/pi'):
+    cmd = 'sudo cat {} > {}'.format(file, os.path.join(Dirs()['LOG'],'crontab'))
+    logger.info(cmd)
+    os.system(cmd)
 
 
 if __name__ == '__main__':
     "syntax: python pd_dump_db hornet_pi_db"
-    if len(sys.argv) >=1 :
-        arg = sys.argv[0]
+    if len(sys.argv) >1 :
+        arg = sys.argv[1]
     else:
         arg = 'hornet_pi_db'
     p = CONFIGURATION()
-    logger = LOGGER('dumping db')
-    dump(arg)
+    logger = LOGGER('dumping db and crontab')
+    dump_crontab()
+    dump_db(arg)

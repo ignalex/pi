@@ -26,7 +26,6 @@ sys.path.append('/home/pi/git/pi/modules') #compatibility
 from common import CONFIGURATION, LOGGER, Dirs
 from send_email import sendMail
 
-
 def dump_db(connection='hornet_pi_db'):
     config = getattr(CONFIGURATION(), connection).__dict__
     config['FILENAME'] = os.path.join(Dirs()['LOG'], connection+'_dmp_' + str(datetime.datetime.now()).split(' ')[0].replace('-',''))

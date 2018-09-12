@@ -37,8 +37,7 @@ def dump_db(connection='hornet_pi_db'):
                          [p.email.address, p.email.login, p.email.password],\
                          'DB backup structure and crontab', \
                          config['FILENAME'], \
-                         [config['FILENAME'], os.path.join(Dirs()['LOG'],'crontab')])
-                )
+                         [config['FILENAME'], os.path.join(Dirs()['LOG'],'crontab')]))
 
 def dump_crontab(file='/var/spool/cron/crontabs/pi'):
     cmd = 'sudo cat {} > {}'.format(file, os.path.join(Dirs()['LOG'],'crontab'))

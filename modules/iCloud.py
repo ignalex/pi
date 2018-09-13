@@ -84,7 +84,7 @@ def re_authenticate():
         Speak('icloud requires authentication')
         time.sleep(5 * 60)
     os.remove(os.path.join(Dirs()['LOG'], 'icloud_authentication'))
-    m.logger('authentication (should be) passed')
+    m.logger.info('authentication (should be) passed')
     Speak('icloud authentication complete')
 
 

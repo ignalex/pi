@@ -8,15 +8,18 @@ Created on Mon Aug 04 17:32:17 2014
 
 - ESP integration (total dark trigger)  [DISABLED]
 - distance to home trigger              [DISABLED]
+- 2FA icloud > integration
 """
 
 from __future__ import print_function
 
-import  os, datetime
+#import  os
+import datetime
 from time import sleep
 
-from modules.common import  LOGGER, PID, CONFIGURATION, MainException, Dirs
-from modules.iCloud import  (iCloudConnect ,iCloudCal)
+from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
+from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate)
+from PA import REMINDER
 
 #from tracking import DistanceToPoint
 #from modules.sunrise import IsItNowTimeOfTheDay
@@ -75,18 +78,13 @@ def PA_service():
             min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
             reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
             logger.info(reminder)
-#            os.system('sudo python {} {}'.format(os.path.join(Dirs()['REPO'],'PA.py'), reminder))  #TODO: fix > why not via internal call to PA?
-            os.system('python {} {}'.format(os.path.join(Dirs()['REPO'],'PA.py'), reminder))  #TODO: fix > why not via internal call to PA?
-
-        # daytime / esp
-        # if IsItNowTimeOfTheDay('total_dark')   : esp.Go(['0','123'])
-        # esp.Decide_On_Off(thresholds = {'count' : 3, 'up' : 350,'down' : 300} )
-
+#            os.system('python {} {}'.format(os.path.join(Dirs()['REPO'],'PA.py'), reminder))  #TODO: fix > why not via internal call to PA?
+            REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
         sleep(60)
 
 if __name__ == '__main__':
     logger = LOGGER('pa_service', level = 'INFO')
-    p = CONFIGURATION() #pins
+    p = CONFIGURATION()
     p.last_scan = '' # addition
     PID()
 
@@ -96,6 +94,9 @@ if __name__ == '__main__':
     #        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
             PA_service()
         except:
-            MainException()
-            logger.info('waiting 1 min and retrying...')
-            sleep (60)
+            error = str(MainException()) # in case nothing returned
+            if error.find('Unauthorized') != -1 or error.find('PyiCloudAPIResponseError') != -1:
+                re_authenticate() # will hang here until manually fixed
+            else:
+                logger.info('waiting 1 min and retrying...')
+                sleep (60)

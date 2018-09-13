@@ -22,36 +22,12 @@ try:
     from modules.weather_yahoo import weather_yahoo
 except:
     pass
-#from heater import TranslateForHornet as HEATER
-#from modules.slang import SLANG
+
 from modules.control_esp import ESP as esp  #control_esp as ESP
-from modules.PingIPhone import AcquireResult #FIXME: this will crash octopus 
+from modules.PingIPhone import AcquireResult #FIXME: this will crash octopus
 
-#class PARAMETERS (object):
-#    def __init__(self, ID = ''):
-#        self.current_time = datetime.datetime.now()
-##        self.pause = 1
-#        self.INI = SimpleIni('PA.INI')
-#        for p in ['DAEMON', 'SIMULATE','DEBUG']: setattr(self, p, [True if i == 'YES' else False for i in [self.INI[p]]][0])
+import __main__ as m
 
-#class PLACES (object):
-#    def __init__(self):
-#        self.LOCATIONS = SimpleIni('locations.INI')
-
-
-#def ReadLastTemp(minutes):
-#    try:
-#        current = LastLine(p.INI['TEMPERATURE'])
-#    except:
-#        print 'no TEMP file available'
-#        return [False]
-#
-#    last_time = datetime.datetime.strptime(current.split('\t')[0], '%Y-%m-%d %H:%M')
-#
-#    if (p.current_time - last_time).seconds/60 <= minutes:
-#        return current.split('\t')[1:]
-#    else:
-#        return [False]
 
 def Event (args):
     module, p  = args.split('_')[0], args.split('_')[1:]
@@ -67,7 +43,7 @@ def Event (args):
             logger.info('module imported')
             globals()[module](p)
         else:
-            logger.info('to general')
+            logger.info('>>> to general')
             GENERAL([module])
     except:
         logger.error('error in module ' + module + ' ' + str(sys.exc_info()))
@@ -161,7 +137,7 @@ def REMINDER(arg):
         else:
             Phrase({'TYPE' : 'REMINDER', 'ACTION' : arg[0].replace('-',' '),'LEFT' : arg[1]})
     else:
-        logger.debug('reminder NOT spoken > iPhone not around')
+        m.logger.debug('reminder NOT spoken > iPhone not around')
 
 def ESP(arg):
     arg = [i.lower() for i in arg]

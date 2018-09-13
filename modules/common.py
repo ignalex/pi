@@ -161,18 +161,23 @@ def LOGGER(filename = r'log_filename.txt', level = 'INFO', verbose = False) :
 
 def MainException():
     "logger must be created in the main module"
+    ERRORS = []
     exc_type, exc_value, exc_traceback = sys.exc_info()
     try:
         m.logger.error(sys.argv[0].split('\\')[-1] + ' ['+ m.__doc__.split('\n')[-2].split(' ')[0] + ']')
+        ERRORS.append(sys.argv[0].split('\\')[-1] + ' ['+ m.__doc__.split('\n')[-2].split(' ')[0] + ']')
     except:
         pass
     m.logger.error('ERROR REPORTED:'  )
-    m.logger.error('TYPE: '+str(exc_type)+ ' : ' )
-    m.logger.error("MESSAGE: "+ str(exc_value) )
+    m.logger.error('TYPE: '+str(exc_type)+ ' : ' )  ; ERRORS.append(str(exc_type))
+    m.logger.error("MESSAGE: "+ str(exc_value) )    ; ERRORS.append(str(exc_value))
     m.logger.error("TRACEBACK:")
     for frame in traceback.extract_tb(sys.exc_info()[2]):
         fname,lineno,fn,text = frame
         m.logger.error( "in line " + str(lineno) + " :  " + text)
+        ERRORS.append("in line " + str(lineno) + " :  " + text)
+    return '\n'.join(ERRORS)
+
 
 def PID(onoff = '+' ,message = ''):
     """logging the system PID into HOME directory"""

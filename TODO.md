@@ -23,6 +23,7 @@
 - [ ] logger > to HORNET db
 - [ ] play / music ? __maybe via ESP + IR__
 - [ ] **BASH takes 100% CPU > why?**
+- [ ] iCloud 2FA >> need to incorporate
 
 ##octopus / parents
 - [x] PA

@@ -31,7 +31,7 @@ except:
     pass
 import os, datetime, sys
 sys.path.append('/home/pi/git/pi') # for running from command line.
-from modules.common import Dirs, CONFIGURATION
+from modules.common import Dirs, CONFIGURATION, LOGGER
 p = CONFIGURATION()
 
 
@@ -146,10 +146,12 @@ def to_db(w):
 
 if __name__ == '__main__':
     args = sys.argv[1:]
+    logger = LOGGER('weather')
     w = WEATHER()
     if not w.timeout: w.Report()
 
     if '-DB' in args:
+        logger.info(str(w.readings))
         w.readings['datetime'] = datetime.datetime.now()
         status = to_db(w.readings)
         print('to DB ' + str(status))

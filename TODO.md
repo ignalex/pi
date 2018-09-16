@@ -23,7 +23,7 @@
 - [ ] logger > to HORNET db
 - [ ] play / music ? __maybe via ESP + IR__
 - [ ] **BASH takes 100% CPU > why?**
-- [ ] iCloud 2FA >> need to incorporate
+- [ ] iCloud 2FA >> DONE. but requires manual authentication every time on restart / gunicorn
 
 ##octopus / parents
 - [x] PA

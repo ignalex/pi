@@ -96,7 +96,9 @@ if __name__ == '__main__':
         except:
             error = str(MainException()) # in case nothing returned
             if error.find('Unauthorized') != -1 or error.find('PyiCloudAPIResponseError') != -1:
-                re_authenticate() # will hang here until manually fixed
+                while True:
+                    if re_authenticate(p.iCloudApi): break # passing existing api / not authenticated
+                    sleep(30) # time between attempts
             else:
                 logger.info('waiting 1 min and retrying...')
                 sleep (60)

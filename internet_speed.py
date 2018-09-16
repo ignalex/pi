@@ -7,11 +7,10 @@ Created on Fri Feb  9 07:38:54 2018
 #TODO: split internet speed and server
 
 from __future__ import print_function
-import sys
+import sys, os
 
-from modules.common import  LOGGER
+from modules.common import  LOGGER, CONFIGURATION, Dirs
 logger = LOGGER('internet_speed', level = 'INFO')
-from modules.common import CONFIGURATION
 from modules.postgres import PANDAS2POSTGRES
 from flask import Flask, render_template, Response, request
 from functools import wraps
@@ -196,6 +195,20 @@ def parse_df_for_figure(df, cols, title):
     fig = df[cols].iplot(theme = 'solar', asFigure = True, title=title)
     fig.layout['legend']['orientation']='h'
     return plotly.offline.plot(fig, output_type='div', include_plotlyjs = False, show_link = False, config={'displayModeBar': False})
+
+@app.route("/2fa")
+def icloud_authentication():
+    """get the code and place it into specific location
+    syntax: /2fa?code=XXXXXX"""
+    #TODO: form instead of only API
+    try:
+        code = request.args.get('code')
+        logger.info('iCloud authentication, code = {}'.format(code))
+        print (code, file=open(os.path.join(Dirs()['LOG'], 'icloud_authentication'), 'w'))
+        return '<html>'+'file created'+'</html>'
+    except Exception as e:
+        return '<html>'+str(e)+'</html>'
+
 
 #%%
 if __name__ == '__main__':

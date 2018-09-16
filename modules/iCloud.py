@@ -49,49 +49,91 @@ def AllEvents():
     return ', '.join([(k + ' at ' + ' '.join([str(i) if i != 0 else '' for i in v['startDate'][4:6]])) for (k,v) in ev.items() if v['startDate'][3] == datetime.date.today().day])
 
 #%% 2FA
-def get2FA(api):
+def request_2FA(api):
+    "returns device OR false if cant sent code"
     if api.requires_2fa:
-        import click
-        print ("Two-step authentication required. Your trusted devices are:")
+   #     import click
+        m.logger.info ("Two-step authentication required. Your trusted devices are:")
 
         devices = api.trusted_devices
         for i, device in enumerate(devices):
-            print ("  %s: %s" % (i, device.get('deviceName',
-                "SMS to %s" % device.get('phoneNumber'))))
+            m.logger.info ("  %s: %s" % (i, device.get('deviceName', "SMS to %s" % device.get('phoneNumber'))))
 
-        device = click.prompt('Which device would you like to use?', default=0)
-        device = devices[device]
+        # device = 0# click.prompt('Which device would you like to use?', default=0)
+        if devices is None:
+            m.logger.error('None devices'); return False
+        if len(devices) == 0:
+            m.logger.error('Len(devices) == 0'); return False
+
+        device = devices[0]
         if not api.send_verification_code(device):
-            print ("Failed to send verification code")
-            sys.exit(1)
+            m.logger.error ("Failed to send verification code")
+            return False
+        else:
+            m.logger.info('verification code sent')
+            Speak('verification code sent')
+        return device
+    else:
+        m.logger.info('api.requires_2fa is {} ? authentication not required?'.format(str(api.requires_2fa)))
+        return True
 
-        code = click.prompt('Please enter validation code')
-        if not api.validate_verification_code(device, code):
-            print ("Failed to verify verification code")
-            sys.exit(1)
-        # adding mark (file) that authentication passed
-        print ('authenticated', file=open(os.path.join(Dirs()['LOG'], 'icloud_authentication'), 'w'))
+#def process_2FA(api, code):
+#        #code = click.prompt('Please enter validation code')
+#        if not api.validate_verification_code(device, code):
+#            print ("Failed to verify verification code")
+#            sys.exit(1)
+#        # adding mark (file) that authentication passed
+#        print ('authenticated', file=open(os.path.join(Dirs()['LOG'], 'icloud_authentication'), 'w'))
 
 #%% authentication manual > for pa_service
-def re_authenticate():
+def re_authenticate(api): # api must already exists
     """request re-authentication
     # 1. stop attempts
     # 2. speak (with interval)
-    # 3. check externally if manual update done
-    # 4. proceed
+    # 3. check file with auth code in LOG (created by gunicorn's method)
+    # 4. delete file and proceed
     """
+    Speak('icloud requires authentication')
+    device = request_2FA(api)
+    if device == False: # code not sent
+        Speak('error sending authentication code request')
+        return False
+    elif device == True:
+        Speak('Authentication is not required')
+        return True
+    time.sleep(10)
+
+    # checking every 3 sec / speaking every 3 min
     while not os.path.exists(os.path.join(Dirs()['LOG'], 'icloud_authentication')):
-        Speak('icloud requires authentication')
-        time.sleep(5 * 60)
-    os.remove(os.path.join(Dirs()['LOG'], 'icloud_authentication'))
-    m.logger.info('authentication (should be) passed')
-    Speak('icloud authentication complete')
+        Speak('waiting for icloud code')
+        for check in range(0, 3*60):
+            if os.path.exists(os.path.join(Dirs()['LOG'], 'icloud_authentication')):
+                break
+            time.sleep(3)
+
+    code = open(os.path.join(Dirs()['LOG'], 'icloud_authentication'),'r').read()
+    m.logger.info('authentication recieved. code {}'.format(code))
+    Speak('authentication recieved. code {}'.format(code))
+
+    if not api.validate_verification_code(device, code):
+        m.logger.error('Failed to verify verification code')
+        Speak('Failed to verify verification code')
+        return False
+    else:
+        # passed
+        m.logger.info('authentication (should be) passed')
+        Speak('icloud authentication complete')
+        os.remove(os.path.join(Dirs()['LOG'], 'icloud_authentication'))
+        return True
 
 
 if __name__ == '__main__':
     logger = LOGGER('icloud')
     if len(sys.argv) > 1:
-        if '2fa' in sys.argv:
+        if '2fa' in sys.argv or '2FA' in sys.argv or '-2fa' in sys.argv or '-2FA' in sys.argv:
             logger.info ('requesting authentication')
             api = iCloudConnect()
-            get2FA(api)
+            if re_authenticate(api):
+                logger.info ('authentication complete'); Speak('authentication complete')
+            else:
+                logger.fatal('authentication failed'); Speak('authentication failed')

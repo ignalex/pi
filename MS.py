@@ -20,8 +20,10 @@ crontab config:
 00 04 * * 1-5 sudo python /home/pi/git/pi/MS.py 12.99h a:: pass once m:: lamp ON + pa morning:time:temp_in:weather:alleventstoday:spendings:protein once + esp 6_rf433_coffee_on once s:: lamp OFF + esp 6_rf433_coffee_off once
 00 17 * * 1-5 sudo python /home/pi/git/pi/MS.py 6h a:: pass m:: lamp ON + pa welcome:temp_in once s:: lamp OFF
 00 04 * * 6,7 sudo python /home/pi/git/pi/MS.py 19h a:: pass m:: lamp ON + pa morning:temp_in:weather:alleventstoday:spendings:protein once + esp 6_rf433_coffee_on once s:: lamp OFF + esp 6_rf433_coffee_off once
-
 """
+#TODO: on start first check status Iphone
+#TODO: on start delay actions? why trigger...?
+
 from __future__ import print_function
 import __main__ as m
 

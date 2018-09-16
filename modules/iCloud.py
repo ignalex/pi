@@ -119,6 +119,8 @@ def re_authenticate(api): # api must already exists
             time.sleep(3)
 
     code = open(os.path.join(Dirs()['LOG'], 'icloud_authentication'),'r').read()[:6] # removeing /n
+    os.remove(os.path.join(Dirs()['LOG'], 'icloud_authentication'))
+
     m.logger.info('authentication recieved. code {}'.format(code))
     Speak('authentication recieved. code {}'.format(code))
 
@@ -130,7 +132,6 @@ def re_authenticate(api): # api must already exists
         # passed
         m.logger.info('authentication (should be) passed')
         Speak('icloud authentication complete')
-        os.remove(os.path.join(Dirs()['LOG'], 'icloud_authentication'))
         return True
 
 

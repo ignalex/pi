@@ -41,6 +41,7 @@ from modules.sunrise import Sun
 #from modules.wol import wol
 from modules.talk import Phrase
 from modules.pa import pa
+from modules.pa import pa as pa1 #!!!: quick fix
 from modules.PingIPhone import PING
 from modules.control_esp import ESP
 

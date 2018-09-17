@@ -22,8 +22,9 @@
 - [ ] blinds > 1 and 3 (2 is ok) / new ESP mod?
 - [ ] logger > to HORNET db
 - [ ] play / music ? __maybe via ESP + IR__
-- [ ] **BASH takes 100% CPU > why?**
-- [ ] iCloud 2FA >> DONE. but requires manual authentication every time on restart / gunicorn
+- [ ] BASH takes 100% CPU > why?
+- [x] iCloud 2FA >> DONE. but requires manual authentication every time on restart / gunicorn
+- [ ] HomeKit integration
 
 ##octopus / parents
 - [x] PA
@@ -41,7 +42,8 @@
 - [x] python
 - [x] speed function
 - [x] direction function
-- [ ] GPS signal strength? -- loosing connectivity to DB
+- [x] GPS signal strength? -- loosing connectivity to DB :)
+- [ ] logic for signals
 
 ##srimp
 - [x] ssh + putty
@@ -49,13 +51,12 @@
 - [x] pa
 - [x] picture frame slides - show slides [integrate with python]
 - [x] keyboard
-- [ ] **google assist**
+- [ ] __google assist - on hold__
     > autostart
     > modules / how to start
     > recognise word > trigger event
     > private events: calendar / email etc
 - [x] old crontabs
-- [ ] M2 -> M3
 - [x] git hook to shrimp
 - [ ] reboot on router lost
 - [ ] dashboard web based + flask

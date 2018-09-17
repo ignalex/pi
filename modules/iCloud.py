@@ -84,14 +84,6 @@ def request_2FA(api):
         m.logger.info('api.requires_2fa is {} ? authentication not required?'.format(str(api.requires_2fa)))
         return True
 
-#def process_2FA(api, code):
-#        #code = click.prompt('Please enter validation code')
-#        if not api.validate_verification_code(device, code):
-#            print ("Failed to verify verification code")
-#            sys.exit(1)
-#        # adding mark (file) that authentication passed
-#        print ('authenticated', file=open(os.path.join(Dirs()['LOG'], 'icloud_authentication'), 'w'))
-
 #%% authentication manual > for pa_service
 def re_authenticate(api): # api must already exists
     """request re-authentication

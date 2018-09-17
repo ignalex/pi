@@ -28,12 +28,16 @@ sudo apt-get install python-dev python3-dev ipython ipython3
 sudo apt-get install mpg123
 sudo apt-get install fbi
 
+#for homeKit
+sudo apt-get install libavahi-compat-libdnssd-dev
+sudo pip3 install HAP-python[QRCode]
+
 # pandas + plotly
 sudo apt-get install python-pandas python3-pandas
 sudo pip install plotly cufflinks psycopg2 python-daemon pyicloud speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
 sudo pip3 install plotly cufflinks psycopg2 python-daemon pyicloud speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
 
-# flask server 
+# flask server
 sudo pip install flask-compress
 sudo pip3 install flask-compress
 

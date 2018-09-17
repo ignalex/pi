@@ -221,7 +221,7 @@ def Movement_by_category(category = 'move', mod_stat = False):
     if 'pass' not in getattr(control, category).keys():
         if category == 'move' and items.GLOBAL.status != False: return # only for move early exit
 
-        for mod,arg in getattr(control, category).items():
+        for mod,arg in sorted(getattr(control, category).items()): #added sorted here
             if mod in items.available:
                 if getattr(getattr(items,mod),'status') == mod_stat:
                     th.append( Thread(target = ThreadedEvent, args = [' '.join([mod,arg]).rstrip()]))

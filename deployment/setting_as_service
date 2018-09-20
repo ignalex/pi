@@ -1,0 +1,22 @@
+#/etc/systemd/system/HAP-python.service
+[Unit]
+Description = test daemon
+#Wants = pigpiod.service  # Remove this if you don't depend on pigpiod
+After = local-fs.target network-online.target
+
+[Service]
+User = root  # It's a good idea to use some unprivileged system user
+# Script starting HAP-python, e.g. main.py
+# Be careful to set any paths you use, e.g. for persisting the state.
+ExecStart = /usr/bin/python3 /home/pi/git/pi/modules/test_service.py
+
+[Install]
+WantedBy = multi-user.target
+
+# commands:
+# sudo systemctl start test_service
+# systemctl status test_service
+# sudo journalctl -u test_service
+# sudo systemctl stop test_service
+
+# sudo systemctl enable test_service

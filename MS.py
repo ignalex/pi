@@ -191,6 +191,7 @@ def esp(TASK):
 def Event(channel):
     if timing.Proceed(): Movement()
 
+#TODO: maybe treaded out?
 def ThreadedEvent (args): # args is module +' ' + param OR module
     module = args.split(' ')[0]
     if args in control.once.keys():

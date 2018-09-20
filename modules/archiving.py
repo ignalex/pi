@@ -17,32 +17,45 @@ must:
     echo $PGPASSFILE
         /home/pi/pgpass.conf
 """
-#DONE: generic backup + crontab
+#DONE: generic backup + crontab + profiles
 import sys
 import os
 import datetime
+import socket
 sys.path.append('/home/pi/git/pi/modules') #compatibility
 from common import CONFIGURATION, LOGGER, Dirs
 from send_email import sendMail
 
 def dump_db(connection='hornet_pi_db'):
     config = getattr(CONFIGURATION(), connection).__dict__
-    config['FILENAME'] = os.path.join(Dirs()['LOG'], connection+'_dmp_' + str(datetime.datetime.now()).split(' ')[0].replace('-',''))
+    config['FILENAME'] = os.path.join(Dirs()['LOG'], connection+'_dmp_' + str(datetime.datetime.now()).split(' ')[0].replace('-','')+'.txt')
     cmd = "pg_dump -h {HOST} -p {PORT} -d {DB} -U {USER} -s -f {FILENAME}".format(**config)
 
     logger.info(cmd)
     os.system(cmd)
+    logger.info('attaching files:\n' + '\n'.join(files_to_backup(config)))
     logger.info('sending email ... ' + \
                 sendMail([p.email.address], \
                          [p.email.address, p.email.login, p.email.password],\
-                         'DB backup structure and crontab', \
-                         config['FILENAME'], \
-                         [config['FILENAME'], os.path.join(Dirs()['LOG'],'crontab')]))
+                         'archive from ' + socket.gethostname(), \
+                         str(files_to_backup(config)), \
+                         files_to_backup(config)))
 
 def dump_crontab(file='/var/spool/cron/crontabs/pi'):
-    cmd = 'sudo cat {} > {}'.format(file, os.path.join(Dirs()['LOG'],'crontab'))
+    cmd = 'sudo cat {} > {}'.format(file, os.path.join(Dirs()['LOG'],'crontab.txt'))
     logger.info(cmd)
     os.system(cmd)
+
+def files_to_backup(config):
+    files = [i for i in [config['FILENAME'],
+                        os.path.join(Dirs()['LOG'],'crontab.txt'),
+                        '/home/pi/.bash_aliases',
+                        '/home/pi/.bashrc',
+                        '/home/pi/.profile',
+                        '/home/pi/git/config.ini',
+                        '/home/pi/pgpass.conf'] if os.path.exists(i)]
+    return files
+
 
 if __name__ == '__main__':
     "syntax: python pd_dump_db hornet_pi_db"

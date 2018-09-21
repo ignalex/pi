@@ -25,6 +25,8 @@ from accessories_ai.switches import AllSwitches
 from common import LOGGER
 logger = LOGGER('HAP_server', 'INFO')
 
+from talk import Speak
+Speak('starting HAP server')
 
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""

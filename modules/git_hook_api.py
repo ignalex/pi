@@ -47,10 +47,11 @@ def git_pull():
         process = Popen('git pull'.split(' '), stdout=PIPE, stderr=PIPE, cwd=Dirs()['REPO'])
         reply  = ' : '.join([str(i) for i in process.communicate() ])
         logger.info(reply)
-        if p.GIT_CI.report_pull_email:
-            logger.info(sendMail([p.email.address], [p.email.address, p.email.login, p.email.password], 'CI - git pull from ' + socket.gethostname(), reply ,[]))
         if p.GIT_CI.report_speak:
-            Speak('git pull with the message {} done on the machine {}'.format(', '.join([i['message'] for i in j['commits']]), socket.gethostname()))
+            Speak('git pull done on the machine {}'.format(socket.gethostname()))
+        if p.GIT_CI.report_pull_email:
+            sent = sendMail([p.email.address], [p.email.address, p.email.login, p.email.password], 'CI - git pull from ' + socket.gethostname(), reply ,[])
+            logger.info(str(sent))
         return reply
     except Exception as e:
         logger.error(e)

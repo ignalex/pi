@@ -114,7 +114,7 @@ def re_authenticate(api): # api must already exists
     os.remove(os.path.join(Dirs()['LOG'], 'icloud_authentication'))
 
     m.logger.info('authentication recieved. code {}'.format(code))
-    Speak('authentication recieved. code {}'.format(code))
+    Speak('authentication code recieved')
 
     if not api.validate_verification_code(device, code):
         m.logger.error('Failed to verify verification code')

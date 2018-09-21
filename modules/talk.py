@@ -52,6 +52,8 @@ def Phrase(about):
 
 def Speak(text, store=True):
     #DONE: if p has attr talk > pass it via ssh
+    #TODO: avoid errors
+    # AttributeError: 'NoneType' object has no attribute 'group'
     if not hasattr(m,'p'):      m.p = CONFIGURATION()
     if not hasattr(m,'logger'): m.logger = LOGGER('TALK', 'INFO')
     for k,v in Substitutons(): text = text.replace('%'+k,v)
@@ -75,6 +77,11 @@ class Google_speak(object):
     def __init__(self, text, lang = 'en', store = True):
         self.text, self.lang, self.store = text, lang, store
         self.mp3 = os.path.join(Dirs()['SPEAK'],name_from_text(self.text) + '.mp3')
+        #testing for zero file size
+        if os.path.exists(self.mp3):
+            if os.path.getsize(self.mp3) == 0:
+                m.logger.info('file {} has ZERO size >> deleting'.format(self.mp3))
+                self.Del()
         if not os.path.exists(self.mp3): # no file > need to TRANSLATE and DOWNLOAD
             m.logger.debug('no file stored > need to download')
             if self.lang != 'en' and not self.Detect_Russian(): # translate if need RU and text not RU
@@ -95,8 +102,11 @@ class Google_speak(object):
             m.logger.error(str(e))
     def Get_GTTS(self):
         m.logger.debug('gTTS >> ' + self.mp3)
-        self.tts = gTTS(text=self.text, lang = self.lang, slow=False)
-        self.tts.save(self.mp3)
+        try:
+            self.tts = gTTS(text=self.text, lang = self.lang, slow=False)
+            self.tts.save(self.mp3)
+        except Exception as e:
+            m.logger.error(' GTTS failed. error {}'.format(str(e)))
     def Speak(self):
         cmd = ['afplay ' if sys.platform == 'darwin' else 'mpg123 '][0] + self.mp3 # mac vs linux
         subprocess.call(cmd.split(' '), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

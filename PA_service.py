@@ -82,16 +82,11 @@ def PA_service():
             REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
         sleep(60)
 
-if __name__ == '__main__':
-    logger = LOGGER('pa_service', level = 'INFO')
-    p = CONFIGURATION()
-    p.last_scan = '' # addition
-    PID()
-
+def pa_service_under_daemon():
     while True:
         try:
-    #        import daemon
-    #        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+            #import daemon
+            #with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
             PA_service()
         except:
             error = str(MainException()) # in case nothing returned
@@ -102,3 +97,25 @@ if __name__ == '__main__':
             else:
                 logger.info('waiting 1 min and retrying...')
                 sleep (60)
+
+
+if __name__ == '__main__':
+    logger = LOGGER('pa_service', level = 'INFO')
+    p = CONFIGURATION()
+    p.last_scan = '' # addition
+    PID()
+
+#    while True:
+    try:
+        import daemon
+        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+            pa_service_under_daemon()
+    except:
+        MainException()
+#            if error.find('Unauthorized') != -1 or error.find('PyiCloudAPIResponseError') != -1:
+#                while True:
+#                    if re_authenticate(p.iCloudApi): break # passing existing api / not authenticated
+#                    sleep(30) # time between attempts
+#            else:
+#                logger.info('waiting 1 min and retrying...')
+#                sleep (60)

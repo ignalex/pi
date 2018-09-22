@@ -9,12 +9,12 @@ Created on Wed Sep 19 19:15:48 2018
 import requests
 import sys
 sys.path.append('/home/pi/git/pi/modules')
-from common import LOGGER
+import logging
+logger = logging.getLogger(__name__)
 
 from pyhap.accessory import Accessory
-from pyhap.const import CATEGORY_LIGHTBULB, CATEGORY_SWITCH, CATEGORY_THERMOSTAT
+from pyhap.const import CATEGORY_LIGHTBULB, CATEGORY_SWITCH
 
-logger = LOGGER('HAP_switch', 'INFO')
 
 class AllSwitches(Accessory):
     category = CATEGORY_LIGHTBULB
@@ -34,9 +34,7 @@ class AllSwitches(Accessory):
 
     def set_switch(self, value):
         com = 'http://192.168.1.176/control/rf433/{}/{}'.format(self.service[1], value)
-        resp = requests.request('GET', com, timeout = 5).content.replace(b'<!DOCTYPE html>\n<html>\n    <head> <title>ESP</title> </head>\n    <body>control function<br><br>', b'').\
-                                replace(b'<br><br><br><br><br></body>\n',b'').\
-                                replace(b'<br>',b' - ')
+        resp = requests.request('GET', com, timeout = 5).json()['data']
         logger.info(str(resp))
 
     def stop(self):

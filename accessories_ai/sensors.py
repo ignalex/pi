@@ -11,8 +11,8 @@ import sys
 import requests
 sys.path.append('/home/pi/git/pi/modules')
 from temperature import Temp
-from common import LOGGER
-logger = LOGGER('HAP_sensors', 'INFO')
+import logging
+logger = logging.getLogger(__name__)
 
 
 class TemperatureSensor(Accessory):
@@ -58,10 +58,7 @@ class LightSensor(Accessory):
     def getreadings(self):
         com = 'http://192.168.1.{}/control/sensor'.format(self.ip)
         try:
-            html = requests.request('GET', com, timeout = 5).text
-            f1_pos = html.find('adc=')+4
-            f2_pos = html.find('<br>',f1_pos)
-            light = int(html[f1_pos : f2_pos])
+            light = int(requests.request('GET', com, timeout = 5).json()['data']['sensor'])
         except:
             light = 0 # if none > returns error 'non numeric'
         logger.info('light on {} = {}'.format(self.ip, str(light)))

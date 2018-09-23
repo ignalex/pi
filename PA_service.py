@@ -57,7 +57,7 @@ def PA_service():
     p.last_scan = datetime.datetime.now()
     while True:
         now = datetime.datetime.now()
-        if now - datetime.timedelta(minutes = 10) > p.last_scan:
+        if now - datetime.timedelta(minutes = 5) > p.last_scan:
             logger.info('re-scanning >> ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
             try:
                 EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))

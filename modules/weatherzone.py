@@ -6,29 +6,27 @@ WEATHER module
 
 returned results shape:
 
-humidity 44.0
-pressure 1020.4
+humidity 55.0
+light_1 1001
+light_2 1038
+pressure 1025.7
 rain 0.0
-temp_in 21.5
-temp_out 17.3
-temp_today 18.0
-wind 17.0
-wind_gust 22.0
+temp_in 23.56
+temp_out 19.6
+temp_today 20.0
+wind 26.0
+wind_gust 35.0
 
 have to provide the link to BOM > for Sydney / Kurraba Point :
 http://rss.weatherzone.com.au/?u=12994-1285&lt=aploc&lc=624&obs=1&fc=1&warn=1
-
 
 Created on Tue Jan 27 10:58:24 2015
 
 @author: aignatov
 """
 from __future__ import print_function
+import requests
 
-try:
-    import urllib2 #TODO: replace for PY3 compatibility
-except:
-    pass
 import os, datetime, sys
 sys.path.append('/home/pi/git/pi') # for running from command line.
 from modules.common import Dirs, CONFIGURATION, LOGGER
@@ -54,7 +52,7 @@ class WEATHER(object):
                      'temp_today' : ['C - ','&#176;']}
         self.readings = {}
         try:
-            self.html = urllib2.urlopen(self.link,timeout = 10).read()
+            self.html = requests.request('GET',self.link,timeout = 10).text
             self.timeout = False
         except:
             self.timeout = True
@@ -124,14 +122,10 @@ class WEATHER(object):
 
 def light_sensor(link='http://192.168.1.175/control/sensor'):
     try:
-        html = urllib2.urlopen(link,timeout = 3).read()
-        f1_pos = html.find('adc=')+4
-        f2_pos = html.find('<br>',f1_pos)
-        light = float(html[f1_pos : f2_pos])
+        light = int(requests.request('GET', link, timeout = 5).json()['data']['sensor'])
         return light
     except:
         return None
-
 
 def to_db(w):
     print ('adding to db')

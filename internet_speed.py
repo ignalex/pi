@@ -97,7 +97,9 @@ def to_db(df):
 
 def read_data_from_db(days=5):
     con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
-    df = con.read("""select timestamp, extract(hour from timestamp) as hour,
+    df = con.read("""select timestamp,
+    extract(hour from timestamp) as hour,
+    extract(minute from timestamp) as minute,
 	round (upload :: numeric / (1024 * 1024), 2)  as upload,
 	round ( download :: numeric  / (1024 * 1024), 2)  as download,
 	ping :: numeric
@@ -136,6 +138,13 @@ def internet_speed_fast():
                            last_min=last['minutes'],
                            udpate_sec = p.internet_speed.update,
                            **DIVS)
+
+#simple internet speed
+@app.route("/internet_speed_simple")
+def speed_fast():
+    "returns only values"
+    df = read_data_from_db(days=0.3).iloc[-1]# last 3 h > selecting last readings within 2 h
+    return df.to_json()
 
 @app.route("/m3")
 @requires_auth

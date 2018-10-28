@@ -43,7 +43,7 @@ from modules.talk import Phrase
 from modules.pa import pa
 from modules.pa import pa as pa1 #!!!: quick fix
 from modules.PingIPhone import PING
-from modules.control_esp import ESP
+from modules.control_esp import ESP #TODO: replace logic
 
 #%% def
 class ARGUMENTS(object):
@@ -253,7 +253,8 @@ def main():
         iPhone.Ping()
         if iPhone.changed != None:
             ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0') # ESP indicator on 5 esp
-            ESP(['6','rf433','13', ['1' if i else '0' for i in [iPhone.changed]][0]]) #['6','rf433','3','0'] # power #3 fire
+            #!!!: not used but can
+            #ESP(['6','rf433','14', ['1' if i else '0' for i in [iPhone.changed]][0]]) #['6','rf433','3','0'] # power #3 fire
             logger.info('iPhone status changed to ' + str(iPhone.changed))
         if iPhone.status == False:
             ThreadedEvent('Blink 1 1 0.3')
@@ -282,6 +283,7 @@ def main():
     logger.info ('finishing '+ sys.argv[0])
 
     GPIO.cleanup(p.pins.MOVEMENT_SENSOR)
+    #!!!: not used but can
     ESP(['6', 'color', 'off', '0'])
     Phrase({'TYPE' : 'EXIT_MS'})
 

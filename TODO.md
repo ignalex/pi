@@ -17,14 +17,14 @@
 - [x] fix pa / not from ssh + speak over ssh
 - [x] fix temperature report
 - [x] fix internet speed
-- [ ] lirc
-- [ ] MS > email + camera
-- [ ] blinds > 1 and 3 (2 is ok) / new ESP mod?
+- [-] lirc
+- [-] MS > email + camera
+- [x] blinds > 1 and 3 (2 is ok) / new ESP mod? > Siri
 - [ ] logger > to HORNET db
-- [ ] play / music ? __maybe via ESP + IR__
-- [ ] BASH takes 100% CPU > why?
+- [x] play / music ? __maybe via ESP + IR__ > Siri :)
+- [-] BASH takes 100% CPU > why?
 - [x] iCloud 2FA >> DONE. but requires manual authentication every time on restart / gunicorn
-- [ ] HomeKit integration
+- [x] HomeKit integration
 
 ##octopus / parents
 - [x] PA
@@ -61,3 +61,4 @@
 - [ ] reboot on router lost
 - [ ] dashboard web based + flask
 - [ ] video / mirror
+- [ ] HAP-python + server (for cam)

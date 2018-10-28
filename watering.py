@@ -3,7 +3,7 @@
 
 import sys
 from modules.relay import cascade
-from modules.speak_over_ssh import Speak
+from modules.talk import Speak
 from modules.weatherzone import WEATHER
 from modules.common import LOGGER, CONFIGURATION
 

@@ -17,3 +17,6 @@
 * temperature
 - [ ] TV > + integrate to PI control
 - [x] power outlet x 6
+
+### window
+- [ ] logic converter 3.3 > 5 doesn't work?

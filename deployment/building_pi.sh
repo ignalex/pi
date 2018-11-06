@@ -52,3 +52,11 @@ sudo cp ~/git/pi/data/lircd.conf /etc/lirc/lircd.conf
 
 # installying ffmpeg on RPi3
 https://github.com/tgogos/rpi_ffmpeg
+
+# transmission
+# from here https://linuxconfig.org/how-to-set-up-transmission-daemon-on-a-raspberry-pi-and-control-it-via-web-interface
+sudo apt-get update && sudo apt-get install transmission-daemon
+
+# samba share
+# from https://www.raspberrypi.org/magpi/samba-file-server/
+sudo apt-get install samba samba-common-bin

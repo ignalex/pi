@@ -11,7 +11,7 @@ import signal
 from pyhap.accessory_driver import AccessoryDriver
 from pyhap import camera
 
-logging.basicConfig(level=logging.INFO, format="[%(module)s] %(message)s")
+logging.basicConfig(level=logging.DEBUG, format="[%(module)s] %(message)s")
 
 
 # Specify the audio and video configuration that your device can support
@@ -55,15 +55,15 @@ options = {
         ],
     },
     "srtp": True,
-    "address": "shrimp.local",
+    "address": "192.168.1.18",
     "start_stream_cmd" : ('ffmpeg -f video4linux2 -input_format h264 -video_size {width}x{height} '
         '-framerate 20 -i /dev/video0 '
         '-vcodec copy -an -payload_type 99 -ssrc 1 -f rtsp '
-        '-b:v {bitrate}k -bufsize {bitrate}k '
+        '-b:v {v_max_bitrate}k -bufsize {v_max_bitrate}k '
         '-payload_type 99 -f rtp '
-        '-srtp_out_suite AES_CM_128_HMAC_SHA1_80 -srtp_out_params {video_srtp_key} '
-        'srtp://{address}:{video_port}?rtcpport={video_port}&'
-        'localrtcpport={local_video_port}&pkt_size=1378')
+        '-srtp_out_suite AES_CM_128_HMAC_SHA1_80 -srtp_out_params {v_srtp_key} '
+        'srtp://{address}:{v_port}?rtcpport={v_port}&'
+        'localrtcpport={v_port}&pkt_size=1378')
 }
 
 

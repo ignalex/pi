@@ -20,7 +20,7 @@ def Dirs():
             'DATA': [i for i in ['/home/pi/git/pi/data', '../data/', '/Users/s84004/Dropbox/GIT/ignalex/pi/data/', '/home/pi/temp/',  r'C:\Users\Alexander Ignatov\Dropbox\GIT\ignalex\pi\data', os.getcwd()] if os.path.exists(i)][0],
             'REPO': [i for i in ['/home/pi/git/pi', '../../'] if os.path.exists(i)][0],
             'SPEAK':[i for i in ['/home/pi/speak','/Users/s84004/temp', os.getcwd()] if os.path.exists(i)][0],
-            'SPENDINGS' : [i for i in ['/home/pi/LOG/next_days', r'C:\Users\Alexander Ignatov\Dropbox\next_days','/Users/s84004/Dropbox/next_days'] if os.path.exists(i)][0]
+            'SPENDINGS' : [i for i in ['/home/pi/LOG/next_days', r'C:\Users\Alexander Ignatov\Dropbox\next_days','/Users/s84004/Dropbox/next_days'] if os.path.exists(i) ][0]
             }
 
 class CONFIGURATION(object):

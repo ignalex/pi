@@ -19,6 +19,7 @@ from pyhap.accessory import Accessory
 from pyhap.const import CATEGORY_LIGHTBULB, CATEGORY_SWITCH, CATEGORY_PROGRAMMABLE_SWITCH
 from time import sleep
 import os
+import datetime
 
 class AllSwitches(Accessory):
     category = CATEGORY_LIGHTBULB #???: how affects?
@@ -70,6 +71,8 @@ class AllSwitches(Accessory):
         self.char_on.notify()
 
     def hippopotamus(self, value):
+        #need a safety switch > not to turn off by mistake.
+        if not hasattr(self, '__last_call__'): self.__last_call__ = [datetime.datetime.now() - datetime.timedelta(hours=1)]
         logger.info('hippo on / off: {}'.format(value))
         if value: #on
             os.system('python /home/pi/git/pi/modules/wol.py HIPPO')
@@ -77,10 +80,15 @@ class AllSwitches(Accessory):
             self.char_on.value = 1
             self.char_on.notify()
         else:
-            os.system('/usr/bin/ssh -i /home/pi/.ssh/hippo ai@hippo.local sudo poweroff')
-            logger.info('turned OFF')
-            self.char_on.value = 0
-            self.char_on.notify()
+            # off only if 2 calls to off within 10 sec
+            if (datetime.datetime.now() - self.__last_call__[-1]).seconds < 10:
+                os.system('/usr/bin/ssh -i /home/pi/.ssh/hippo ai@hippo.local sudo poweroff')
+                logger.info('turned OFF')
+                self.char_on.value = 0
+                self.char_on.notify()
+            else:
+                logger.debug('more than 10 sec from last call > need second command')
+                self.__last_call__.append(datetime.datetime.now())
 
 
     @Accessory.run_at_interval(30) #!!!: errors but work with naming 'run'

@@ -8,6 +8,9 @@ This is:
 import logging
 import signal
 
+import os
+os.chdir('/home/pi/git/pi/accessories_ai')
+
 from pyhap.accessory_driver import AccessoryDriver
 from pyhap import camera
 

@@ -81,7 +81,7 @@ class AllSwitches(Accessory):
             self.char_on.notify()
         else:
             # off only if 2 calls to off within 10 sec
-            if (datetime.datetime.now() - self.__last_call__[-1]).seconds < 10:
+            if (datetime.datetime.now() - self.__last_call__[-1]).seconds < 60:
                 os.system('/usr/bin/ssh -i /home/pi/.ssh/hippo ai@hippo.local sudo poweroff')
                 logger.info('turned OFF')
                 self.char_on.value = 0

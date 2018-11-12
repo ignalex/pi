@@ -28,7 +28,7 @@ class SYSTEM(Accessory):
 
         serv = self.add_preload_service('Switch', chars=['On','Name'])
         self.char_on = serv.configure_char(
-            'On', setter_callback=getattr(self, self.OnOff))
+            'On', setter_callback=self.OnOff)
         self.char_name = serv.configure_char('Name')
         self.char_name.value = args[1]
         self.id = args[1]

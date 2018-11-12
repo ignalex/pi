@@ -29,7 +29,8 @@ def PingIPhoneOnce(source = 'BT', log = True):
 def PingIP(IP = '155'):
     "ping device via wifi by IP. not stable for dynamic IPs, but still usefull"
     IP = str(IP)
-    cmd = ["ping","-c","1","192.168.1."+IP]
+    if IP.isdecimal : IP = "192.168.1."+IP # fof consistency
+    cmd = ["ping","-c","1", IP]
     if Platform()[0]: cmd = ['sudo'] + cmd # "sudo", - FOR RASPBIAN
 
     process = Popen(cmd, stdout=PIPE, stderr=PIPE)

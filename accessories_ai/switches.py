@@ -91,10 +91,10 @@ class AllSwitches(Accessory):
                 self.__last_call__.append(datetime.datetime.now())
 
 
-    @Accessory.run_at_interval(30) #!!!: errors but work with naming 'run'
+    @Accessory.run_at_interval(60)
     def run(self):
         "scanning and propogating state"
-        if self.id not in ['light', 'coffee', 'heater']: return #TODO: make sure it is not pinging watering or beep
+        if self.id not in ['light', 'coffee', 'heater']: return
         logger.debug('requesting status for {}'.format(self.id))
         com = 'http://192.168.1.176/control/rf_states'
         for attempt in range(0,2):

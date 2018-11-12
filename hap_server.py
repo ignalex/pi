@@ -18,6 +18,7 @@ from pyhap.accessory_driver import AccessoryDriver
 from accessories_ai.sensors import TemperatureSensor, LightSensor#, InternetSpeed
 from accessories_ai.switches import AllSwitches, ProgramableSwitch
 from accessories_ai.windows import WindowCovering
+from accessories_ai.computers import SYSTEM
 
 from common import LOGGER
 logger = LOGGER('HAP_server', 'DEBUG')
@@ -40,7 +41,9 @@ def get_bridge(driver):
     beep = AllSwitches(driver, 'beep')
     program1 = ProgramableSwitch(driver,'program 1')
     watering = AllSwitches(driver, 'watering')
-    hippo = AllSwitches(driver, 'hippopotamus')
+#    hippo = AllSwitches(driver, 'hippopotamus')
+    hippo = SYSTEM(driver, 'hippopotamus')
+    raid = SYSTEM(driver, 'raid')
 
    # internet_speed = InternetSpeed(driver,'internet speed', task='download') #!!!: will wait till right type of sensor
 
@@ -56,21 +59,14 @@ def get_bridge(driver):
     bridge.add_accessory(watering)
     bridge.add_accessory(light_ambient)
     bridge.add_accessory(hippo)
+    bridge.add_accessory(raid)
+
   #  bridge.add_accessory(internet_speed)
 
     return bridge
 
-# Start the accessory on port 51826
 driver = AccessoryDriver(port=51826)
-
-# Change `get_accessory` to `get_bridge` if you want to run a Bridge.
 driver.add_accessory(accessory=get_bridge(driver))
-#driver.add_accessory(accessory=get_accessoryLight(driver))
-
-# We want SIGTERM (kill) to be handled by the driver itself,
-# so that it can gracefully stop the accessory, server and advertising.
 signal.signal(signal.SIGTERM, driver.signal_handler)
-
-# Start it!
 driver.start()
 Speak('stopping HAP server')

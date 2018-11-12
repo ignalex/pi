@@ -77,7 +77,7 @@ class SYSTEM(Accessory):
     def _raid_on(self):
         return requests.request('GET', 'http://192.168.1.175/control/pin/14/1', timeout = 1).ok
 
-    def _raid_ff(self):
+    def _raid_off(self):
         return requests.request('GET', 'http://192.168.1.175/control/pin/14/0', timeout = 1).ok
 
     def _run_at_interval_raid(self):

@@ -18,13 +18,15 @@ from pyhap.accessory_driver import AccessoryDriver
 from accessories_ai.sensors import TemperatureSensor, LightSensor#, InternetSpeed
 from accessories_ai.switches import AllSwitches, ProgramableSwitch
 from accessories_ai.windows import WindowCovering
-from accessories_ai.computers import SYSTEM
+from accessories_ai.computers import SYSTEM, EspStatusCollector
 
 from common import LOGGER
 logger = LOGGER('HAP_server', 'DEBUG')
 
 from talk import Speak
 Speak('starting HAP server')
+
+st = EspStatusCollector() # starting threaded status collector, must have name 'st'
 
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""
@@ -70,3 +72,4 @@ driver.add_accessory(accessory=get_bridge(driver))
 signal.signal(signal.SIGTERM, driver.signal_handler)
 driver.start()
 Speak('stopping HAP server')
+st.Stop()

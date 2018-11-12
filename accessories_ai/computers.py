@@ -11,7 +11,7 @@ sys.path.append('/home/pi/git/pi/modules') #!!!: out
 import logging
 logger = logging.getLogger(__name__)
 from talk import Speak
-from PingIphone import PingIP #can ping names
+from PingIPhone import PingIP #can ping names
 
 
 from pyhap.accessory import Accessory
@@ -40,14 +40,16 @@ class SYSTEM(Accessory):
     def OnOff(self, value):
         logger.info('{} on / off: {}'.format(self.id, value))
         if value:
-            globals()['_' + self.id + '_on']
+#            globals()['_' + self.id + '_on']
+            getattr(self,'_' + self.id + '_on')()
             self.char_on.value = 1
             self.char_on.notify()
             logger.info(self.id + ' turned ON')
 
         else:
             if (datetime.datetime.now() - self.__last_call__[-1]).seconds < 60:
-                globals()['_' + self.id + '_off']
+#                globals()['_' + self.id + '_off']
+                getattr(self,'_' + self.id + '_off')()
                 self.char_on.value = 0
                 self.char_on.notify()
                 logger.info(self.id + ' turned OFF')
@@ -57,26 +59,28 @@ class SYSTEM(Accessory):
 
     @Accessory.run_at_interval(60)
     def run(self):
-        globals()['_run_at_interval_' + self.id](self)
+#        globals()['_run_at_interval_' + self.id](self)
+        if hasattr(self,  '_run_at_interval_' + self.id):
+            getattr(self, '_run_at_interval_' + self.id)()
 
     def stop(self):
         super().stop()
 
 
     #%% specific
-    def _hippopotamus_on():
+    def _hippopotamus_on(self):
         os.system('python /home/pi/git/pi/modules/wol.py hippo')
 
-    def _hippopotamus_off():
+    def _hippopotamus_off(self):
         os.system('/usr/bin/ssh -i /home/pi/.ssh/hippopotamus ai@hippo.local sudo poweroff')
 
-    def _raid_on():
+    def _raid_on(self):
         return requests.request('GET', 'http://192.168.1.175/control/pin/14/1', timeout = 1).ok
 
-    def _raid_ff():
+    def _raid_ff(self):
         return requests.request('GET', 'http://192.168.1.175/control/pin/14/0', timeout = 1).ok
 
-    def _run_at_interval_raid(obj):
+    def _run_at_interval_raid(self):
         "scanning and propogating state"
 
         logger.debug('requesting raid status')
@@ -86,25 +90,25 @@ class SYSTEM(Accessory):
                 resp = requests.request('GET', com, timeout = 1)#.json()['data']['rf_states']
                 if resp.ok:
                     j = resp.json()['data']['rf_states']
-                    if obj.id in j.keys():
-                        if obj.char_on.value != int(j[obj.id]): #status changed outside
-                            logger.info('state for {} changed to {}'.format(obj.id, int(j[obj.id])))
-                            Speak('state for {} changed to {}'.format(obj.id, int(j[obj.id]))) #!!!: remove later
-                            obj.char_on.value = int(j[obj.id])
-                            obj.char_on.notify()
+                    if self.id in j.keys():
+                        if self.char_on.value != int(j[self.id]): #status changed outside
+                            logger.info('state for {} changed to {}'.format(self.id, int(j[self.id])))
+                            Speak('state for {} changed to {}'.format(self.id, int(j[self.id]))) #!!!: remove later
+                            self.char_on.value = int(j[self.id])
+                            self.char_on.notify()
                     else:
-                        logger.debug('no rf_state for {} returned'.format(obj.id))
+                        logger.debug('no rf_state for {} returned'.format(self.id))
                     return
                 else:
                     sleep(0.2)
             except Exception as e:
-                logger.error('cant get meaningful response from ESP {} - attempt {}: {}'.format(obj.id, attempt, str(e)))
+                logger.error('cant get meaningful response from ESP {} - attempt {}: {}'.format(self.id, attempt, str(e)))
 
-    def _run_at_interval_hippopotamus(obj):
+    def _run_at_interval_hippopotamus(self):
         logger.debug('requesting hippo status')
         status = int(PingIP('hippo.local')[0])
-        if obj.char_on.value != int(status): #status changed outside
-            logger.info('state for {} changed to {}'.format(obj.id, status))
-            Speak('state for {} changed to {}'.format(obj.id, status))
-            obj.char_on.value = status
-            obj.char_on.notify()
+        if self.char_on.value != int(status): #status changed outside
+            logger.info('state for {} changed to {}'.format(self.id, status))
+            Speak('state for {} changed to {}'.format(self.id, status))
+            self.char_on.value = status
+            self.char_on.notify()

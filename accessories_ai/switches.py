@@ -83,13 +83,13 @@ class AllSwitches(Accessory):
     def run(self):
         "!! status collector must be called from main module first with name st"
         logger.debug('requesting status for {}'.format(self.id))
-        if self.id not in m.st.keys():
+        if self.id not in m.st.status.keys():
             logger.debug('status for {} is not set'.format(self.id))
             return
-        if self.char_on.value != int(m.st[self.id]): #status changed outside
-            logger.info('state for {} changed to {}'.format(self.id, m.st[self.id]))
-            Speak('state for {} changed to {}'.format(self.id, int(m.st[self.id])))
-            self.char_on.value = int(m.st[self.id])
+        if self.char_on.value != int(m.st.status[self.id]): #status changed outside
+            logger.info('state for {} changed to {}'.format(self.id, m.st.status[self.id]))
+            Speak('state for {} changed to {}'.format(self.id, int(m.st.status[self.id])))
+            self.char_on.value = int(m.st.status[self.id])
             self.char_on.notify()
         #TODO: implement delta time check
 
@@ -168,10 +168,14 @@ class EspStatusCollector():
 
     def Update(self):
         "for all IPs "
-        while self.DO: #!!!: here potentially can stuck on stop
+        while True:
+            last = datetime.datetime.now()
             for ip in self.ips: self.Check(ip)
-            sleep(self.sleep)
-        logger.info('Status collector finished')
+            while datetime.datetime.now() < last + datetime.timedelta(seconds = self.sleep):
+                sleep(1)
+                if not self.DO:
+                    logger.info('Status collector finished')
+                    return
 
     def Check(self, ip=176):
         "checking status per IP and setting json element of status all"

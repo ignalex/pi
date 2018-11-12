@@ -75,10 +75,10 @@ class SYSTEM(Accessory):
         os.system('/usr/bin/ssh -i /home/pi/.ssh/hippopotamus ai@hippo.local sudo poweroff')
 
     def _raid_on(self):
-        return requests.request('GET', 'http://192.168.1.175/control/pin/14/1', timeout = 1).ok
+        return requests.request('GET', 'http://192.168.1.175/control/pin/14/1', timeout = 2).ok
 
     def _raid_off(self):
-        return requests.request('GET', 'http://192.168.1.175/control/pin/14/0', timeout = 1).ok
+        return requests.request('GET', 'http://192.168.1.175/control/pin/14/0', timeout = 2).ok
 
     def _run_at_interval_raid(self):
         "scanning and propogating state"
@@ -87,7 +87,7 @@ class SYSTEM(Accessory):
         com = 'http://192.168.1.175/control/rf_states'
         for attempt in range(0,2):
             try:
-                resp = requests.request('GET', com, timeout = 1)#.json()['data']['rf_states']
+                resp = requests.request('GET', com, timeout = 2)#.json()['data']['rf_states']
                 if resp.ok:
                     j = resp.json()['data']['rf_states']
                     if self.id in j.keys():

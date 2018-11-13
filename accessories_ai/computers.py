@@ -72,7 +72,7 @@ class SYSTEM(Accessory):
         os.system('python /home/pi/git/pi/modules/wol.py hippo')
 
     def _hippopotamus_off(self):
-        os.system('/usr/bin/ssh -i /home/pi/.ssh/hippopotamus ai@hippo.local sudo poweroff')
+        os.system('/usr/bin/ssh -i /home/pi/.ssh/hippo ai@hippo.local sudo poweroff')
 
 #    def _raid_on(self):
 #        return requests.request('GET', 'http://192.168.1.175/control/pin/14/1', timeout = 2).ok

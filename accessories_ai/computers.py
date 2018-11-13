@@ -5,7 +5,7 @@ Created on Wed Sep 19 19:15:48 2018
 @author: Alexander Ignatov
 """
 
-import requests
+#import requests
 import sys
 sys.path.append('/home/pi/git/pi/modules') #!!!: out
 import logging

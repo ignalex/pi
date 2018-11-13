@@ -16,7 +16,7 @@ from pyhap.accessory_driver import AccessoryDriver
 # The below package can be found in the HAP-python github repo under accessories/
 
 from accessories_ai.sensors import TemperatureSensor, LightSensor#, InternetSpeed
-from accessories_ai.switches import AllSwitches, ProgramableSwitch, EspStatusCollector
+from accessories_ai.switches import AllSwitches, EspStatusCollector #, ProgramableSwitch
 from accessories_ai.windows import WindowCovering
 from accessories_ai.computers import SYSTEM
 
@@ -41,11 +41,11 @@ def get_bridge(driver):
     lightSenor2 = LightSensor(driver, 'light sensor 2', ip=176)
     window = WindowCovering(driver, 'window', ip=175, calibrate=True, speak=True, minStep=10)
     beep = AllSwitches(driver, 'beep')
-    program1 = ProgramableSwitch(driver,'program 1')
+#    program1 = ProgramableSwitch(driver,'program 1')
     watering = AllSwitches(driver, 'watering')
 #    hippo = AllSwitches(driver, 'hippopotamus')
     hippo = SYSTEM(driver, 'hippopotamus')
-    raid = SYSTEM(driver, 'raid')
+#    raid = SYSTEM(driver, 'raid')
 
    # internet_speed = InternetSpeed(driver,'internet speed', task='download') #!!!: will wait till right type of sensor
 
@@ -57,11 +57,11 @@ def get_bridge(driver):
     bridge.add_accessory(lightSenor2)
     bridge.add_accessory(window)
     bridge.add_accessory(beep)
-    bridge.add_accessory(program1)
+#    bridge.add_accessory(program1)
     bridge.add_accessory(watering)
     bridge.add_accessory(light_ambient)
     bridge.add_accessory(hippo)
-    bridge.add_accessory(raid)
+#    bridge.add_accessory(raid)
 
   #  bridge.add_accessory(internet_speed)
 

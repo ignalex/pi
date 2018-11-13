@@ -16,7 +16,7 @@ from PingIPhone import PingIP #can ping names
 
 from pyhap.accessory import Accessory
 from pyhap.const import CATEGORY_SWITCH
-from time import sleep
+#from time import sleep
 import os
 import datetime
 
@@ -74,35 +74,35 @@ class SYSTEM(Accessory):
     def _hippopotamus_off(self):
         os.system('/usr/bin/ssh -i /home/pi/.ssh/hippopotamus ai@hippo.local sudo poweroff')
 
-    def _raid_on(self):
-        return requests.request('GET', 'http://192.168.1.175/control/pin/14/1', timeout = 2).ok
+#    def _raid_on(self):
+#        return requests.request('GET', 'http://192.168.1.175/control/pin/14/1', timeout = 2).ok
 
-    def _raid_off(self):
-        return requests.request('GET', 'http://192.168.1.175/control/pin/14/0', timeout = 2).ok
-
-    def _run_at_interval_raid(self):
-        "scanning and propogating state"
-
-        logger.debug('requesting raid status')
-        com = 'http://192.168.1.175/control/rf_states'
-        for attempt in range(0,2):
-            try:
-                resp = requests.request('GET', com, timeout = 2)#.json()['data']['rf_states']
-                if resp.ok:
-                    j = resp.json()['data']['rf_states']
-                    if self.id in j.keys():
-                        if self.char_on.value != int(j[self.id]): #status changed outside
-                            logger.info('state for {} changed to {}'.format(self.id, int(j[self.id])))
-                            Speak('state for {} changed to {}'.format(self.id, int(j[self.id]))) #!!!: remove later
-                            self.char_on.value = int(j[self.id])
-                            self.char_on.notify()
-                    else:
-                        logger.debug('no rf_state for {} returned'.format(self.id))
-                    return
-                else:
-                    sleep(0.2)
-            except Exception as e:
-                logger.error('cant get meaningful response from ESP {} - attempt {}: {}'.format(self.id, attempt, str(e)))
+#    def _raid_off(self):
+#        return requests.request('GET', 'http://192.168.1.175/control/pin/14/0', timeout = 2).ok
+##
+#    def _run_at_interval_raid(self):
+#        "scanning and propogating state"
+#
+#        logger.debug('requesting raid status')
+#        com = 'http://192.168.1.175/control/rf_states'
+#        for attempt in range(0,2):
+#            try:
+#                resp = requests.request('GET', com, timeout = 2)#.json()['data']['rf_states']
+#                if resp.ok:
+#                    j = resp.json()['data']['rf_states']
+#                    if self.id in j.keys():
+#                        if self.char_on.value != int(j[self.id]): #status changed outside
+#                            logger.info('state for {} changed to {}'.format(self.id, int(j[self.id])))
+#                            Speak('state for {} changed to {}'.format(self.id, int(j[self.id]))) #!!!: remove later
+#                            self.char_on.value = int(j[self.id])
+#                            self.char_on.notify()
+#                    else:
+#                        logger.debug('no rf_state for {} returned'.format(self.id))
+#                    return
+#                else:
+#                    sleep(0.2)
+#            except Exception as e:
+#                logger.error('cant get meaningful response from ESP {} - attempt {}: {}'.format(self.id, attempt, str(e)))
 
     def _run_at_interval_hippopotamus(self):
         logger.debug('requesting hippo status')

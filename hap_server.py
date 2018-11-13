@@ -16,7 +16,7 @@ from pyhap.accessory_driver import AccessoryDriver
 # The below package can be found in the HAP-python github repo under accessories/
 
 from accessories_ai.sensors import TemperatureSensor, LightSensor#, InternetSpeed
-from accessories_ai.switches import AllSwitches, EspStatusCollector #, ProgramableSwitch
+from accessories_ai.switches import AllSwitches, EspStatusCollector, ProgramableSwitch
 from accessories_ai.windows import WindowCovering
 from accessories_ai.computers import SYSTEM
 

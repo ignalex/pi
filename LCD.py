@@ -70,12 +70,13 @@ def PrintWeather(lcd):
         if not w.timeout:
             lcd.PrintPos((1,0),str(int(w.temp_out)).zfill(2) + '/'+  str(int(w.temp_today)).zfill(2))
             sleep(1)
-            lcd.Print(w.forecast[:14].ljust(14)+str(w.temp_in).ljust(2))
+            lcd.Print(str(w.forecast)[:14].ljust(14)+str(w.temp_in).ljust(2))
         else:
             logger.error('timeout reading weather')
         print_weather = datetime.now()
     except Exception as e:
         logger.error('error in weather module : ' + str(e))
+        MainException()
 
 def PrintNextFerry(lcd):
     sleep(1)

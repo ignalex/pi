@@ -74,8 +74,8 @@ def PrintWeather(lcd):
         else:
             logger.error('timeout reading weather')
         print_weather = datetime.now()
-    except:
-        logger.error('error in weather module')
+    except Exception as e:
+        logger.error('error in weather module : ' + str(e))
 
 def PrintNextFerry(lcd):
     sleep(1)
@@ -125,8 +125,11 @@ def Start():
 #        sys.exit()
 
 if __name__ == '__main__':
-    with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-        try:
-            Start()
-        except:
-            MainException()
+    if '-nodaemon' in sys.argv:
+        Start()
+    else:
+        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+            try:
+                Start()
+            except:
+                MainException()

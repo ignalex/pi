@@ -8,10 +8,10 @@ from __future__ import print_function
 import __main__ as m
 
 try:
-    from .common import  LOGGER, Dirs, CONFIGURATION
+    from .common import  LOGGER, Dirs, CONFIGURATION,MainException
     from .lock import LockArd as Lock # it has nothing to do with Ard, but still works
 except:
-    from common import  LOGGER, Dirs, CONFIGURATION
+    from common import  LOGGER, Dirs, CONFIGURATION,MainException
     from lock import LockArd as Lock # it has nothing to do with Ard, but still works
 
 import subprocess, sys, random, os, datetime, string, re
@@ -107,6 +107,7 @@ class Google_speak(object):
             self.tts.save(self.mp3)
         except Exception as e:
             m.logger.error(' GTTS failed. error {}'.format(str(e)))
+            MainException()
     def Speak(self):
         cmd = ['afplay ' if sys.platform == 'darwin' else 'mpg123 '][0] + self.mp3 # mac vs linux
         subprocess.call(cmd.split(' '), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

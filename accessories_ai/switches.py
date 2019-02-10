@@ -88,7 +88,7 @@ class AllSwitches(Accessory):
             return
         if self.char_on.value != int(m.st.status[self.id]): #status changed outside
             logger.info('state for {} changed to {}'.format(self.id, m.st.status[self.id]))
-            Speak('state for {} changed to {}'.format(self.id, int(m.st.status[self.id])))
+           # Speak('state for {} changed to {}'.format(self.id, int(m.st.status[self.id])))
             self.char_on.value = int(m.st.status[self.id])
             self.char_on.notify()
         #TODO: implement delta time check

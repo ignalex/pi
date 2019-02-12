@@ -34,7 +34,7 @@ def get_bridge(driver):
 
     temp_sensor = TemperatureSensor(driver, 'temperature')
     light = AllSwitches(driver, 'light')
-    light_ambient = AllSwitches(driver, '13')
+    light_ambient = AllSwitches(driver, '14')
     heater = AllSwitches(driver, 'heater')
     coffee = AllSwitches(driver, 'coffee')
     lightSenor1 = LightSensor(driver, 'light sensor 1', ip=175)

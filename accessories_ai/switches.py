@@ -39,7 +39,7 @@ class AllSwitches(Accessory):
         self.service = {'light' : ['Lightbulb', 'set_switch'],
                         'heater': ['Switch', 'set_switch'],
                         'coffee': ['Switch', 'set_switch'],
-                        '13':     ['Switch', 'set_switch'],
+                        '14':     ['Switch', 'set_switch'],
                         'beep' :  ['Switch', 'beep'],
                         'watering' : ['Switch', 'watering']
                         }[args[1]]

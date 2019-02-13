@@ -57,7 +57,12 @@ class WEATHER(object):
         except:
             self.timeout = True
             return
-
+        if self.html == '': # error on remote side
+            self.rain_at_all = False
+            self.rain = 0
+            self.temp_out = 20
+            self.temp_today = 20
+            return
         for k,v in self.call.items(): self.Process(k,v)
         self.rain_at_all = [True if float(i) > 0 else False for i in [self.rain]][0]
         self.DateTime()

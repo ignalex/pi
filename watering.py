@@ -9,7 +9,10 @@ from modules.common import LOGGER, CONFIGURATION
 
 def extra_for_weather(threshhold=20, extra=2, was_raining=5,min_temp=0):
     w = WEATHER(False)
-    w.ToInt()
+    try:
+        w.ToInt()
+    except:
+        pass
 
     # if min_temp > 0 - checking if actual temp > min_temp and watering only if yes
     if min_temp > 0 and w.temp_out <= min_temp:

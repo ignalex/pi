@@ -36,6 +36,7 @@ def iCloudCal(api,date):
     for e in events:
         if e['title'] not in parsed_events.keys(): parsed_events[e['title']] = {}
         for a in attribs: parsed_events[e['title']][a] = e[a]
+    m.logger.debug('EVENTS FOR DEBUG' + str(events)) #!!!: for testing > preserve all
     return parsed_events
 
 def iCloudLocation(api):

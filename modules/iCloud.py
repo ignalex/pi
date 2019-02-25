@@ -31,7 +31,7 @@ def FilterDict(the_dict, keys):
 
 def iCloudCal(api,date):
     events = api.calendar.events(date, date + datetime.timedelta(days = 1))
-    attribs = ['startDate', 'endDate', 'duration', 'alarms']
+    attribs = ['localStartDate', 'localEndDate', 'duration', 'alarms'] #changed to local > otherwise UTC for recurret events - wrong
     parsed_events = {}
     for e in events:
         if e['title'] not in parsed_events.keys(): parsed_events[e['title']] = {}

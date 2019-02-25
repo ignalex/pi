@@ -54,7 +54,7 @@ def AllEvents():
     'returns the string of all todays events'
     ev = iCloudCal(iCloudConnect(), datetime.datetime.today())
     m.logger.debug('read from iCloud > \n' + str(ev))
-    return ', '.join([(k + ' at ' + ' '.join([str(i) if i != 0 else '' for i in v['startDate'][4:6]])) for (k,v) in ev.items() if v['startDate'][3] == datetime.date.today().day])
+    return ', '.join([(k + ' at ' + ' '.join([str(i) if i != 0 else '' for i in v['localStartDate'][4:6]])) for (k,v) in ev.items() if v['localStartDate'][3] == datetime.date.today().day])
 
 #%% 2FA
 def request_2FA(api):

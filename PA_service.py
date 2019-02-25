@@ -41,11 +41,11 @@ class Events(object):
         for name,details in Events.items():
             self.events[name] = details
             self.names.append(name)
-            startDateTime = datetime.datetime(details['startDate'][1],details['startDate'][2],details['startDate'][3],details['startDate'][4],details['startDate'][5])
-            self.times.append(startDateTime)
-            self.starts[startDateTime] = name
+            localStartDateTime = datetime.datetime(details['localStartDate'][1],details['localStartDate'][2],details['localStartDate'][3],details['localStartDate'][4],details['localStartDate'][5])
+            self.times.append(localStartDateTime)
+            self.starts[localStartDateTime] = name
             for delta in [float(i)/60 for i in p.REMINDERS.split(',')]:
-                self.reminders[startDateTime - datetime.timedelta(hours = delta)] = name
+                self.reminders[localStartDateTime - datetime.timedelta(hours = delta)] = name
 
 def PA_service():
     logger.info('PA service started')

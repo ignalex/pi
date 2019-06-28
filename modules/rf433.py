@@ -15,7 +15,7 @@ Created on Fri Jun 28 09:07:04 2019
 from __future__ import print_function
 from time import  sleep
 
-RF433 = 16 # pin 16 (board) = GPIO23
+RF433 = 18 # pin 16 (board) = GPIO23
 
 #%% GPIO
 import RPi.GPIO as GPIO # if there is error on import not found RPI - need to enable device tree from raspi-config

@@ -32,7 +32,7 @@ GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
 RF_positions = {} #global > will be updated on 1st request
 
 
-def rf433(value, td = 200 / 1000000):
+def rf433(value, td = 200 / 1000000, pos=1):
     """wrapper for _rf433
     [group,what]
     returns [{type:[status::bool, message::str}]
@@ -41,23 +41,23 @@ def rf433(value, td = 200 / 1000000):
     print ('rf warapper: value: ' + str(value))
     com = [1 if value[1] in [1, '1','on','ON','True','true'] else 0][0]
     if value[0] == 'light':
-        res = [_rf433([5,com], td) ]
+        res = [_rf433([5,com], td, pos) ]
     elif value[0] == 'heater':
-        res = [_rf433([12,com], td)]
+        res = [_rf433([12,com], td, pos)]
     elif value[0] == 'coffee':
-        res = [_rf433([11,com], td)]
+        res = [_rf433([11,com], td, pos)]
     elif value[0] == 'all':
-        res = [_rf433([v,com], td) for v in [5,11,12,21]]
+        res = [_rf433([v,com], td, pos) for v in [5,11,12,21]]
     else:
-        res = [_rf433([value[0],com], td)]
+        res = [_rf433([value[0],com], td, pos)]
     RF_positions[value[0]] = com
 #    ret= str(value[0]) +'<br>' + '<br>'.join(res)
     return [RF_positions, res] # updating current state > will be [1/0,'string message']
 
-def _rf433(value, td=200 / 1000000):
+def _rf433(value, td=200 / 1000000, pos=1):
     """[signal, OnOff]
     : 150 - 300 delay good, pin 14 (D5), 5V """
-    print ('_rf433' + str(value))
+    print ('_rf433' + str(value), td, pos)
     signal = value[0]
     OnOff  = int(value[1])
     signals= {'1' : [
@@ -117,11 +117,11 @@ def _rf433(value, td=200 / 1000000):
         for n in range(0,8):
             for i in signals[str(signal)][OnOff]:
 #                p.high()
-                GPIO.output(RF433, GPIO.HIGH)
+                GPIO.output(RF433, pos)
                 #led.high()
                 sleep((mapping[i][0] * td))
 #                p.low()
-                GPIO.output(RF433, GPIO.LOW)
+                GPIO.output(RF433, int(not pos))
                 #led.low()
                 sleep((mapping[i][1] * td))
         #led.high()

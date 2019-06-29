@@ -51,7 +51,7 @@ def color(value):
     pins = {0:RED, 1:BLUE, 2:GREEN}
     try:
         for col, setting in enumerate(colors[requested]):
-            GPIO.output([pins[col], int(setting)])
+            GPIO.output(pins[col], int(setting))
         previous_color = requested
         return 'color set to ' + requested
     except Exception as e:

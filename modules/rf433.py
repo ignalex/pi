@@ -33,7 +33,7 @@ GREEN =     15 # GPIO 22
 import RPi.GPIO as GPIO # if there is error on import not found RPI - need to enable device tree from raspi-config
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
-GPIO.INIT = GPIO.LOW
+GPIO.INIT = GPIO.HIGH
 #GPIO.ON = GPIO.LOW
 #GPIO.OFF = GPIO.HIGH
 

@@ -20,7 +20,7 @@ from __future__ import print_function
 from time import  sleep
 
 RF433 =     18 # pin 18 (board) = GPIO23
-DHT11 =     12 # GPIO 18
+DHT11 =     18 # pin 12 = GPIO 18 !!! not a pin > GPIO
 # LED
 RED =       11 # GPIO 17
 BLUE =      13 # GPIO 27
@@ -60,6 +60,15 @@ def color(value):
 
 GPIO.setup((RED,GREEN,BLUE), GPIO.OUT, initial = GPIO.INIT) # works when here
 
+#%% temp and humidity
+import Adafruit_DHT
+
+def dht11():
+    "returns (temperature, humidity)"
+    humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, DHT11)
+    while temperature is None:
+        sleep (0.05)
+    return (temperature, humidity)
 
 #%%
 

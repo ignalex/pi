@@ -37,7 +37,7 @@ GPIO.INIT = GPIO.HIGH
 #GPIO.ON = GPIO.LOW
 #GPIO.OFF = GPIO.HIGH
 
-#GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
+GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
 
 #%%
 
@@ -122,7 +122,7 @@ def _rf433(value, td=150 / 1000000, pos=1):
     mapping = {1 : (3,3), 2 : (3,7), 3: (3,92), 4: (7,3), 5 : (7,7), 6 : (7,92)}
 
 #    p = Pin(pin , Pin.OUT)
-    GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
+#    GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
 
     try:
         for n in range(0,8):
@@ -137,7 +137,7 @@ def _rf433(value, td=150 / 1000000, pos=1):
                 sleep((mapping[i][1] * td))
         #led.high()
         sleep(0.2)
-        GPIO.cleanup(RF433)
+        #GPIO.cleanup(RF433)
         return str('signal {} sent to {}'.format(OnOff,signal))
     except Exception as e:
         print (str(e))

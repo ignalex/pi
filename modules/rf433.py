@@ -27,8 +27,6 @@ BLUE =      13 # GPIO 27
 GREEN =     15 # GPIO 22
 
 
-
-
 #%% GPIO
 import RPi.GPIO as GPIO # if there is error on import not found RPI - need to enable device tree from raspi-config
 GPIO.setmode(GPIO.BOARD)
@@ -37,7 +35,31 @@ GPIO.INIT = GPIO.HIGH
 #GPIO.ON = GPIO.LOW
 #GPIO.OFF = GPIO.HIGH
 
-GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
+GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT) # works when here
+
+#%% color
+previous_color = 'off'
+def color(value):
+    "pins defined in file pins"
+    "color(['yellow',''])"
+    global previous_color
+    requested = value[0].lower() #syntax /control/color/red
+    colors = {'off'    : [0,0,0],   'white' : [1,1,1],
+              'red'    : [1,0,0],   'green' : [0,1,0], 'blue' :     [0,0,1],
+              'yellow' :[1,1,0],    'cyan'  : [0,1,1], 'magneta' :  [1,0,1]
+              }
+    pins = {0:RED, 1:BLUE, 2:GREEN}
+    try:
+        for col, setting in enumerate(colors[requested]):
+            GPIO.putput([pins[col], int(setting)])
+        previous_color = requested
+        return 'color set to ' + requested
+    except Exception as e:
+        print (e)
+        return str(e)
+
+GPIO.setup((RED,GREEN,BLUE), GPIO.OUT, initial = GPIO.INIT) # works when here
+
 
 #%%
 
@@ -137,7 +159,7 @@ def _rf433(value, td=150 / 1000000, pos=1):
                 sleep((mapping[i][1] * td))
         #led.high()
         sleep(0.2)
-        #GPIO.cleanup(RF433)
+        #GPIO.cleanup(RF433) # no cleanup > otherwise jamming 433
         return str('signal {} sent to {}'.format(OnOff,signal))
     except Exception as e:
         print (str(e))

@@ -12,27 +12,39 @@ Created on Fri Jun 28 09:07:04 2019
 # PI pinout
 # https://learn.sparkfun.com/tutorials/raspberry-gpio/all
 
+# temp and humidity
+# https://tutorials-raspberrypi.com/raspberry-pi-measure-humidity-temperature-dht11-dht22/
+# https://www.raspberrypi-spy.co.uk/2017/09/dht11-temperature-and-humidity-sensor-raspberry-pi/
+
 from __future__ import print_function
 from time import  sleep
 
-RF433 = 18 # pin 16 (board) = GPIO23
+RF433 =     18 # pin 18 (board) = GPIO23
+DHT11 =     12 # GPIO 18
+# LED
+RED =       11 # GPIO 17
+BLUE =      13 # GPIO 27
+GREEN =     15 # GPIO 22
+
+
+
 
 #%% GPIO
 import RPi.GPIO as GPIO # if there is error on import not found RPI - need to enable device tree from raspi-config
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
-GPIO.INIT = GPIO.HIGH
-GPIO.ON = GPIO.LOW
-GPIO.OFF = GPIO.HIGH
+GPIO.INIT = GPIO.LOW
+#GPIO.ON = GPIO.LOW
+#GPIO.OFF = GPIO.HIGH
 
-GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
+#GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
 
 #%%
 
 RF_positions = {} #global > will be updated on 1st request
 
 
-def rf433(value, td = 200 / 1000000, pos=1):
+def rf433(value, td = 150 / 1000000, pos=1):
     """wrapper for _rf433
     [group,what]
     returns [{type:[status::bool, message::str}]
@@ -54,7 +66,7 @@ def rf433(value, td = 200 / 1000000, pos=1):
 #    ret= str(value[0]) +'<br>' + '<br>'.join(res)
     return [RF_positions, res] # updating current state > will be [1/0,'string message']
 
-def _rf433(value, td=200 / 1000000, pos=1):
+def _rf433(value, td=150 / 1000000, pos=1):
     """[signal, OnOff]
     : 150 - 300 delay good, pin 14 (D5), 5V """
     print ('_rf433' + str(value), td, pos)
@@ -112,7 +124,6 @@ def _rf433(value, td=200 / 1000000, pos=1):
 #    p = Pin(pin , Pin.OUT)
     GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
 
-
     try:
         for n in range(0,8):
             for i in signals[str(signal)][OnOff]:
@@ -126,6 +137,7 @@ def _rf433(value, td=200 / 1000000, pos=1):
                 sleep((mapping[i][1] * td))
         #led.high()
         sleep(0.2)
+        GPIO.cleanup(RF433)
         return str('signal {} sent to {}'.format(OnOff,signal))
     except Exception as e:
         print (str(e))

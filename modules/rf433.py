@@ -3,28 +3,21 @@
 """
 Created on Fri Jun 28 09:07:04 2019
 
+converter pinout
+ https://learn.sparkfun.com/tutorials/retired---using-the-logic-level-converter
+
+PI pinout
+ https://learn.sparkfun.com/tutorials/raspberry-gpio/all
+
+
 @author: alexander
 """
 
-# converter pinout
-# https://learn.sparkfun.com/tutorials/retired---using-the-logic-level-converter
-
-# PI pinout
-# https://learn.sparkfun.com/tutorials/raspberry-gpio/all
-
-# temp and humidity
-# https://tutorials-raspberrypi.com/raspberry-pi-measure-humidity-temperature-dht11-dht22/
-# https://www.raspberrypi-spy.co.uk/2017/09/dht11-temperature-and-humidity-sensor-raspberry-pi/
-
 from __future__ import print_function
 from time import  sleep
-
-RF433 =     18 # pin 18 (board) = GPIO23
-DHT11 =     18 # pin 12 = GPIO 18 !!! not a pin > GPIO
-# LED
-RED =       11 # GPIO 17
-BLUE =      13 # GPIO 27
-GREEN =     15 # GPIO 22
+import sys 
+from common import CONFIGURATION
+p = CONFIGURATION()
 
 
 #%% GPIO
@@ -32,45 +25,9 @@ import RPi.GPIO as GPIO # if there is error on import not found RPI - need to en
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 GPIO.INIT = GPIO.HIGH
-#GPIO.ON = GPIO.LOW
-#GPIO.OFF = GPIO.HIGH
 
-GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT) # works when here
+GPIO.setup(p.pins.RF433, GPIO.OUT, initial = GPIO.INIT) # works when here
 
-#%% color
-previous_color = 'off'
-def color(value):
-    "pins defined in file pins"
-    "color(['yellow',''])"
-    global previous_color
-    requested = value[0].lower() #syntax /control/color/red
-    colors = {'off'    : [0,0,0],   'white' : [1,1,1],
-              'red'    : [1,0,0],   'green' : [0,1,0], 'blue' :     [0,0,1],
-              'yellow' :[1,1,0],    'cyan'  : [0,1,1], 'magneta' :  [1,0,1]
-              }
-    pins = {0:RED, 1:BLUE, 2:GREEN}
-    try:
-        for col, setting in enumerate(colors[requested]):
-            GPIO.output(pins[col], int(setting))
-        previous_color = requested
-        return 'color set to ' + requested
-    except Exception as e:
-        print (e)
-        return str(e)
-
-GPIO.setup((RED,GREEN,BLUE), GPIO.OUT, initial = GPIO.INIT) # works when here
-
-#%% temp and humidity
-import Adafruit_DHT
-
-def dht11():
-    "returns (temperature, humidity)"
-    humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, DHT11)
-    while temperature is None:
-        sleep (0.05)
-    return (temperature, humidity)
-
-#%%
 
 RF_positions = {} #global > will be updated on 1st request
 
@@ -94,7 +51,6 @@ def rf433(value, td = 150 / 1000000, pos=1):
     else:
         res = [_rf433([value[0],com], td, pos)]
     RF_positions[value[0]] = com
-#    ret= str(value[0]) +'<br>' + '<br>'.join(res)
     return [RF_positions, res] # updating current state > will be [1/0,'string message']
 
 def _rf433(value, td=150 / 1000000, pos=1):
@@ -150,26 +106,28 @@ def _rf433(value, td=150 / 1000000, pos=1):
                   [1,4,1,4,1,4,1,4,1,1,1,1,1,1,1,1,1,1,1,4,4,4,1,1,4,1,1,4,1,1,4,4,4,4,4,1,1,1,1,4,4,4,4,4,4,4,4,6]
                   ]
               }
+    # mapping (decoding) values: 1st is delay ON,  2nd delay OFF
     mapping = {1 : (3,3), 2 : (3,7), 3: (3,92), 4: (7,3), 5 : (7,7), 6 : (7,92)}
-
-#    p = Pin(pin , Pin.OUT)
-#    GPIO.setup(RF433, GPIO.OUT, initial = GPIO.INIT)
 
     try:
         for n in range(0,8):
             for i in signals[str(signal)][OnOff]:
-#                p.high()
-                GPIO.output(RF433, pos)
-                #led.high()
+                GPIO.output(p.pins.RF433, pos)
                 sleep((mapping[i][0] * td))
-#                p.low()
-                GPIO.output(RF433, int(not pos))
-                #led.low()
+                GPIO.output(p.pins.RF433, int(not pos))
                 sleep((mapping[i][1] * td))
-        #led.high()
         sleep(0.2)
+        
         #GPIO.cleanup(RF433) # no cleanup > otherwise jamming 433
         return str('signal {} sent to {}'.format(OnOff,signal))
     except Exception as e:
         print (str(e))
         return str(e)
+
+#%%
+if __name__ == '__main__': 
+    
+#  "example  : python rf433 light on"
+  if len(sys.argv)>1: 
+      print (rf433([sys.argv[1], sys.argv[2]]))
+

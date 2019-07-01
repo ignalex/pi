@@ -60,3 +60,11 @@ sudo apt-get update && sudo apt-get install transmission-daemon
 # samba share
 # from https://www.raspberrypi.org/magpi/samba-file-server/
 sudo apt-get install samba samba-common-bin
+
+#SPI
+https://www.raspberrypi-spy.co.uk/2016/03/7-segment-display-modules-and-the-raspberry-pi/
+sudo apt-get install libjpeg-dev
+sudo pip3 install pillow==4.0.0
+git clone https://github.com/rm-hull/max7219.git
+cd max7219
+sudo python3 setup.py install

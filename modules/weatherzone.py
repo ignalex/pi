@@ -20,8 +20,10 @@ wind_gust 35.0
 have to provide the link to BOM > for Sydney / Kurraba Point :
 http://rss.weatherzone.com.au/?u=12994-1285&lt=aploc&lc=624&obs=1&fc=1&warn=1
 
-Created on Tue Jan 27 10:58:24 2015
+#TODO: solar envoy scan 
+#TODO: internal temp / humidity scan 
 
+Created on Tue Jan 27 10:58:24 2015
 @author: aignatov
 """
 from __future__ import print_function
@@ -37,10 +39,15 @@ if os.name == 'posix':
     try:
         from temperature import Temp
     except:
-        pass
+        print ('no temperature imported')
+    try: 
+        from dht11 import dht11
+    except: 
+        print ('no dht11 imported')
+        
 
 class WEATHER(object):
-    def __init__(self,TempIn = True, LightSensor=True):
+    def __init__(self,TempIn = True, LightSensor=True,  dht=False, solarEnvoy=False):
         self.link = p.WEATHER_LINK
         self.Log = os.path.join(Dirs()['LOG'],'sensors.log')
         self.call = {'rain' : ["<b>Rain:</b> ","mm since"],
@@ -68,6 +75,8 @@ class WEATHER(object):
         self.DateTime()
         if os.name == 'posix' and TempIn: self.TempIn()
         if LightSensor: self.LightSensor()
+        if dht: self.DHT11()
+        if solarEnvoy: self.SolarEnvoy()
         self.Forecast()
     def Process(self,name,f):
         f1_pos = self.html.find(f[0])+len(f[0])
@@ -102,7 +111,18 @@ class WEATHER(object):
             except:
                 setattr(self, light, None)
             self.call[light] = ["",""]
+    def DHT11(self):  
+        "scan DHT11 sensor"
+        temp_in, humid_in = dht11()
+        setattr(self,'temp_in',float(temp_in))
+        setattr(self,'humid_in',float(humid_in))
+        self.call['temp_in'] = ["",""]
+        self.call['humid_in'] = ["",""]
 
+    def SolarEnvoy(self): 
+        print  ('not implemented yet')
+        #TODO: make 
+        
     def DateTime(self):
         f = ["<pubDate>"," +"]
         f1_pos = self.html.find(f[0])+len(f[0])+5

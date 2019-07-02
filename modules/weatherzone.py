@@ -38,8 +38,13 @@ p = CONFIGURATION()
 
 if os.name == 'posix':
     try:
-        from temperature import Temp
-        print('Temp from Temp (1 wire)')
+        if  hasattr(p,'temperature'):
+            if p.temperature.source == '1wire':
+                from temperature import Temp
+            elif p.temperature.source == 'dht11':
+                from dht11 import Temp
+        else:
+            from temperature import Temp
     except:
         try:
             from dht11 import Temp

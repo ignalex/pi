@@ -12,7 +12,7 @@ Created on Mon Jul  1 11:18:29 2019
 """
 from __future__ import print_function
 
-from time import sleep 
+from time import sleep
 import Adafruit_DHT
 from common import CONFIGURATION
 p = CONFIGURATION()
@@ -27,6 +27,14 @@ def dht11(correct=(0,0)):
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, p.pins.DHT11)
     return (temperature + correct[0], humidity + correct[1])
 
+def Temp():
+    "compatibility"
+    return dht11()[0]
+
+def Humidity():
+    "compatibility"
+    return dht11()[1]
+
 #%%
-if __name__ == '__main__': 
+if __name__ == '__main__':
     print (dht11())

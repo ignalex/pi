@@ -20,8 +20,8 @@ wind_gust 35.0
 have to provide the link to BOM > for Sydney / Kurraba Point :
 http://rss.weatherzone.com.au/?u=12994-1285&lt=aploc&lc=624&obs=1&fc=1&warn=1
 
-#TODO: solar envoy scan 
-#TODO: internal temp / humidity scan 
+#TODO: solar envoy scan
+#TODO: internal temp / humidity scan
 
 Created on Tue Jan 27 10:58:24 2015
 @author: aignatov
@@ -31,6 +31,7 @@ import requests
 
 import os, datetime, sys
 sys.path.append('/home/pi/git/pi') # for running from command line.
+sys.path.append('/home/pi/git/pi/modules') # for compat
 from modules.common import Dirs, CONFIGURATION, LOGGER
 p = CONFIGURATION()
 
@@ -38,13 +39,18 @@ p = CONFIGURATION()
 if os.name == 'posix':
     try:
         from temperature import Temp
+        print('Temp from Temp (1 wire)')
     except:
-        print ('no temperature imported')
-    try: 
+        try:
+            from dht11 import Temp
+            print('Temp from dht11')
+        except:
+            print ('no temperature imported')
+    try:
         from dht11 import dht11
-    except: 
+    except:
         print ('no dht11 imported')
-        
+
 
 class WEATHER(object):
     def __init__(self,TempIn = True, LightSensor=True,  dht=False, solarEnvoy=False):
@@ -111,7 +117,7 @@ class WEATHER(object):
             except:
                 setattr(self, light, None)
             self.call[light] = ["",""]
-    def DHT11(self):  
+    def DHT11(self):
         "scan DHT11 sensor"
         temp_in, humid_in = dht11()
         setattr(self,'temp_in',float(temp_in))
@@ -119,10 +125,10 @@ class WEATHER(object):
         self.call['temp_in'] = ["",""]
         self.call['humid_in'] = ["",""]
 
-    def SolarEnvoy(self): 
+    def SolarEnvoy(self):
         print  ('not implemented yet')
-        #TODO: make 
-        
+        #TODO: make
+
     def DateTime(self):
         f = ["<pubDate>"," +"]
         f1_pos = self.html.find(f[0])+len(f[0])+5

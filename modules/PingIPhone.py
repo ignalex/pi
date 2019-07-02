@@ -13,7 +13,11 @@ from time import sleep
 from datetime import datetime, timedelta
 from subprocess import Popen, PIPE
 
-from common import CONFIGURATION, Dirs, Platform
+try:
+    from common import CONFIGURATION, Dirs, Platform
+except:
+    from .common import CONFIGURATION, Dirs, Platform
+
 #TODO: config MAC to outside func
 #TODO: esp signal on ON / OFF
 

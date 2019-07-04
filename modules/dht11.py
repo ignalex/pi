@@ -25,6 +25,15 @@ def dht11(correct=(0,0)):
     while temperature is None:
         sleep (0.05)
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, p.pins.DHT11)
+
+    # overriting correct for temp / hum 
+    if hasattr(p,'temperature'): 
+        if hasattr(p.temperature,'adjustment_temp'): 
+            correct[0] = int(p.temperature.adjustment_temp)
+    if hasattr(p,'temperature'): 
+        if hasattr(p.temperature,'adjustment_hum'): 
+            correct[1] = int(p.temperature.adjustment_hum)
+                
     return (temperature + correct[0], humidity + correct[1])
 
 def Temp():

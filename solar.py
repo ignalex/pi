@@ -16,11 +16,15 @@ from modules.common import  LOGGER, CONFIGURATION, MainException#, Dirs
 from modules.rf433 import rf433
 from modules.dht11 import dht11
 from modules.rgb_led import color
-from modules.sevensegments import sevensegments 
+from modules.sevensegments import SevenSegments 
 
 
 def solar_logic():
     "main module"
+    #TODO: - solar production 
+    #TODO: - time based 
+    #TODO: - temperature input
+    #TODO: - ping BT? 
 
 
 if __name__ == '__main__':

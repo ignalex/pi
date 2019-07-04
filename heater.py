@@ -46,15 +46,11 @@ class ONOFF(object):
         self.status = 'off'
     def OnOff(self,com):
         if com != self.status: # changed
-            ESP(['6','rf433','heater',str(com)])
+            ESP(['6','rf433','heater',str(com)]) #TODO: ESP or RF433
             logger.info ( ' > ' + com)
             self.status = com
             if speak and datetime.datetime.now().hour >= 6:
                 Speak("heater " + ['ON' if self.status == 'on' else 'OFF'][0] )
-#                Phrase({'TYPE' : 'HEATER_' + ['ON' if self.status == 'on' else 'OFF'][0]})
-
-#def TranslateForHornet(agr):
-#    Start(temp = {'min' : 20, 'max' : 21} ,armed_time = 1,check_ping = 0, speak = True )
 
 def Start(temp, armed_time, check_ping):
     global log, logger
@@ -63,8 +59,8 @@ def Start(temp, armed_time, check_ping):
     s = SPEAK_TEMP(w.temp_in) # initiating
     logger.debug('starting cycle')
     while t.CheckTimeToStop():
-        ping = [AcquireResult() if check_ping else True][0]
-        w.TempIn()
+        ping = [AcquireResult() if check_ping else True][0] #TODO: extra similar for solar 
+        w.TempIn() #TODO: temp or dht11
         if speak and s.Check(w.temp_in): Speak('temperature reached {} degrees'.format(str(int(w.temp_in)))) #Phrase({'TYPE' : 'HEATER_TEMP', 'TMP' : str(int(w.temp_in))})
         logger.info(str(w.temp_in) + str(['\t ping phone: ' + str(ping) if check_ping else ''][0]))
         if w.temp_in <= temp['min'] and ping: # temp less lower lever and PING

@@ -18,21 +18,19 @@ from common import CONFIGURATION
 p = CONFIGURATION()
 
 #%% temp and humidity
-def dht11(correct=(0,0)):
+def dht11(correct=[0,0]):
     "returns (temperature, humidity)"
     "correct is (0,0) - for adjusting TEMP and HUMIDITY"
+    
     humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, p.pins.DHT11)
     while temperature is None:
         sleep (0.05)
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, p.pins.DHT11)
 
-    # overriting correct for temp / hum 
+    # overwriting correct for temp / hum 
     if hasattr(p,'temperature'): 
-        if hasattr(p.temperature,'adjustment_temp'): 
-            correct[0] = int(p.temperature.adjustment_temp)
-    if hasattr(p,'temperature'): 
-        if hasattr(p.temperature,'adjustment_hum'): 
-            correct[1] = int(p.temperature.adjustment_hum)
+        correct[0] = int(p.temperature.adjustment_temp) if hasattr(p.temperature,'adjustment_temp') else correct[0]
+        correct[1] = int(p.temperature.adjustment_hum) if hasattr(p.temperature,'adjustment_hum') else correct[1]
                 
     return (temperature + correct[0], humidity + correct[1])
 

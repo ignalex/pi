@@ -29,8 +29,8 @@ def dht11(correct=[0,0]):
 
     # overwriting correct for temp / hum 
     if hasattr(p,'temperature'): 
-        correct[0] = int(p.temperature.adjustment_temp) if hasattr(p.temperature,'adjustment_temp') else correct[0]
-        correct[1] = int(p.temperature.adjustment_hum) if hasattr(p.temperature,'adjustment_hum') else correct[1]
+        correct = [int(p.temperature.adjustment_temp) if hasattr(p.temperature,'adjustment_temp') else correct[0], 
+                   int(p.temperature.adjustment_hum) if hasattr(p.temperature,'adjustment_hum') else correct[1]]
                 
     return (temperature + correct[0], humidity + correct[1])
 

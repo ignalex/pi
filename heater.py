@@ -34,12 +34,12 @@ from modules.talk import  Speak
 try: 
     from modules.control_esp import ESP
 except: 
-    print ('ESP not imported')    
+    print ('no ESP imported')    
 
 try: 
     from modules.rf433 import rf433
 except: 
-    print ('rf433 not imported')
+    print ('no rf433 imported')
 
 class TIMING(object):
     def __init__(self, stop = 1):
@@ -93,7 +93,7 @@ def Start(temp, armed_time, check_ping):
     w.TempIn()
     s = SPEAK_TEMP(w.temp_in) # initiating
     logger.debug('starting cycle')
-    logger.info(+ 'temp_out_required : '+str(temp['t_out_required']) + '\t  temp_out_forecasted' + str(w.temp_today))
+    logger.info('temp_out_required : '+str(temp['t_out_required']) + '\t  temp_out_forecasted' + str(w.temp_today))
     while t.CheckTimeToStop():
         ping = [AcquireResult() if check_ping else True][0] #TODO: extra similar for solar 
         w.TempIn() #DONE: temp or dht11

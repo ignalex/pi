@@ -1,0 +1,17 @@
+# sudo nano /etc/systemd/system/HEATER.service
+# when  done 
+#    sudo systemctl start HEATER
+#    sudo systemctl enable HEATER
+#    sudo journalctl -u HEATER
+
+[Unit]
+Description = HEATER daemon
+After = local-fs.target network-online.target
+
+[Service]
+User = pi  # It's a good idea to use some unprivileged system user
+# Be careful to set any paths you use, e.g. for persisting the state.
+ExecStart = /usr/bin/python3 /home/pi/git/pi/heater.py -d
+
+[Install]
+WantedBy = multi-user.target

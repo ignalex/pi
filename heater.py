@@ -34,23 +34,27 @@ from time import sleep
 
 from modules.common import   MainException, LOGGER, CONFIGURATION
 from modules.weatherzone import WEATHER as WEATHER_class
-from modules.PingIPhone import AcquireResult
-from modules.talk import  Speak
+
+try: 
+    from modules.PingIPhone import AcquireResult
+except: 
+    print('no PingIPhone imported')
+
+try: 
+    from modules.talk import  Speak
+except: 
+    print('no speak imported')
+    
 try: 
     from modules.control_esp import ESP
 except: 
     print('no esp imported')
+
 try: 
     from modules.rf433 import rf433
 except: 
     print('no rf433 imported')
 
-#class TIMING(object): #TODO: not  needed if  used as as service 
-#    def __init__(self, stop = 1):
-#        self.start = datetime.datetime.now()
-#        self.stop = self.start + datetime.timedelta(hours = stop)
-#    def CheckTimeToStop(self):
-#        return [False if datetime.datetime.now() > self.stop else True for i in [1]][0]
 
 class SPEAK_TEMP(object):  #TODO: extend to solar 
     def __init__(self,temp):
@@ -88,7 +92,7 @@ class HEATER(object):
         "decision to speak or not"
         return self.conf.speak \
             and datetime.datetime.now().hour >= self.conf.speak_between_hours[0]\
-            and datetime.datetime.now().hour < self.conf.speak_between_hours[1]
+            and datetime.datetime.now().hour <= self.conf.speak_between_hours[1]
             
     def OnOff(self,com):
         "main trigger"
@@ -140,7 +144,7 @@ class HEATER(object):
             
             logger.info(str('armed'  if self.Armed() else 'disarmed') +\
                         '\tTin ' + str(self.weather.temp_in) +\
-                        '\ttoday ' + str(self.weather.temp_today) + ', (required '+ str(self.conf.minTout_required) + ')' + \
+                        '\ttoday ' + str(self.weather.temp_today) + ', (<= '+ str(self.conf.minTout_required) + ')' + \
                         str('\tBT: ' + str(ping) if self.conf.pingBT else '')
                         ) 
             

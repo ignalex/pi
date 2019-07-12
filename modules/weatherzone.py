@@ -50,11 +50,11 @@ if os.name == 'posix':
             from dht11 import Temp
             print('Temp from dht11')
         except:
-            print ('no temperature imported')
+            pass #print ('no temperature imported')
     try:
         from dht11 import dht11
     except:
-        print ('no dht11 imported')
+        pass #print ('no dht11 imported')
 
 
 class WEATHER(object):

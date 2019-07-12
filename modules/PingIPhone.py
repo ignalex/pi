@@ -159,7 +159,7 @@ def AcquireResult(allowed_delay_min = 5):
     process = Popen(com.split(' '), stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
 
-    if ((datetime.now() + timedelta(seconds = 120)) - datetime.strptime(stdout.split('\t')[0],'%Y-%m-%d %H:%M:%S')).seconds < allowed_delay_min * 60 + 120 :
+    if ((datetime.now() + timedelta(seconds = 120)) - datetime.strptime(str(stdout.split('\t')[0]),'%Y-%m-%d %H:%M:%S')).seconds < allowed_delay_min * 60 + 120 :
         return stdout.replace('\n','').split('\t')[-1] == 'True'
     else:
         print ((datetime.now() - datetime.strptime(stdout.split('\t')[0],'%Y-%m-%d %H:%M:%S')).seconds)

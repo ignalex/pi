@@ -139,8 +139,10 @@ class HEATER(object):
                 Speak('temperature reached {} degrees'.format(str(int(self.weather.temp_in))))
             
             logger.info(str('armed'  if self.Armed() else 'disarmed') +\
-                        '\tTin ' + str(self.weather.temp_in) + str('\tBT: ' + str(ping) if self.conf.pingBT else '') +\
-                        '\ttoday ' + str(self.weather.temp_today) + ', required ('+ str(self.conf.minTout_required) + ')') 
+                        '\tTin ' + str(self.weather.temp_in) +\
+                        '\ttoday ' + str(self.weather.temp_today) + ', (required '+ str(self.conf.minTout_required) + ')' + \
+                        str('\tBT: ' + str(ping) if self.conf.pingBT else '')
+                        ) 
             
             if self.weather.temp_in <= self.conf.Tmin and self.weather.temp_today <= self.conf.minTout_required and ping: # temp less lower lever and PING
                 if self.Armed(): 

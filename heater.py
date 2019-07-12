@@ -36,9 +36,14 @@ from modules.common import   MainException, LOGGER, CONFIGURATION
 from modules.weatherzone import WEATHER as WEATHER_class
 from modules.PingIPhone import AcquireResult
 from modules.talk import  Speak
-from modules.control_esp import ESP
-from modules.rf433 import rf433
-
+try: 
+    from modules.control_esp import ESP
+except: 
+    print('no esp imported')
+try: 
+    from modules.rf433 import rf433
+except: 
+    print('no rf433 imported')
 
 #class TIMING(object): #TODO: not  needed if  used as as service 
 #    def __init__(self, stop = 1):

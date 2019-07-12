@@ -10,8 +10,30 @@ After = local-fs.target network-online.target
 
 [Service]
 User = pi  # It's a good idea to use some unprivileged system user
-# Be careful to set any paths you use, e.g. for persisting the state.
 ExecStart = /usr/bin/python3 /home/pi/git/pi/heater.py -d
 
 [Install]
 WantedBy = multi-user.target
+
+
+
+
+-------
+example: 
+from https://www.raspberrypi.org/documentation/linux/usage/systemd.md
+
+
+[Unit]
+Description=My service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u main.py
+WorkingDirectory=/home/pi/myscript
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target

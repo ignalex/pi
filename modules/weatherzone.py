@@ -56,11 +56,24 @@ if os.name == 'posix':
     except:
         pass #print ('no dht11 imported')
 
-
+#DONE: separeate creating and reading
 class WEATHER(object):
-    def __init__(self,TempIn = True, LightSensor=True,  dht=False, solarEnvoy=False):
+    def __init__(self,TempIn = True, LightSensor=True,  dht=False, solar=False):
+        """if p.weather.{element} exists, it will overwrite DEFAULT (p configuration for host)
+        """
         self.link = p.WEATHER_LINK
         self.Log = os.path.join(Dirs()['LOG'],'sensors.log')
+        self.config = {}
+        #logic : if no P elements, use the defaults
+        for name, default in {'TempIn' : TempIn,
+                              'LightSensor' : LightSensor,
+                              'dht' : dht,
+                              'solar': solar}.items():
+            self.config[name] = (getattr(p.weather,name) if hasattr(p.weather, name) else default) \
+                                if hasattr(p,'weather') else default
+
+        self.Update()
+    def Update(self):
         self.call = {'rain' : ["<b>Rain:</b> ","mm since"],
                      'temp_out' : ["<b>Temperature:</b> ","&#"],
                      'humidity' : ["<b>Relative humidity:</b> ","%<br"],
@@ -84,11 +97,13 @@ class WEATHER(object):
         for k,v in self.call.items(): self.Process(k,v)
         self.rain_at_all = [True if float(i) > 0 else False for i in [self.rain]][0]
         self.DateTime()
-        if os.name == 'posix' and TempIn: self.TempIn()
-        if LightSensor: self.LightSensor()
-        if dht: self.DHT11()
-        if solarEnvoy: self.SolarEnvoy()
+        if self.config['TempIn']: self.TempIn()
+        if self.config['LightSensor']: self.LightSensor()
+        if self.config['dht']: self.DHT11()
+        if self.config['solar']: self.SolarEnvoy()
         self.Forecast()
+        self.Report(False, False)
+
     def Process(self,name,f):
         f1_pos = self.html.find(f[0])+len(f[0])
         f2_pos = self.html.find(f[1],f1_pos)
@@ -143,12 +158,13 @@ class WEATHER(object):
         for r in self.call.keys():
             if getattr(self,r) is not None:
                 setattr(self,r,int(getattr(self,r)))
-    def Report(self, LOG = True):
+    def Report(self, LOG = True, PRINT = True):
         for r in sorted(self.call.keys()):
-            print (r, getattr(self,r))
+            if PRINT: print (r, getattr(self,r))
             self.readings[r] = getattr(self,r)
             if LOG:
                 print (str(self.now)[:-3] + '\t' +r + '\t' + str(getattr(self,r)), file= open(self.Log, 'a'))
+        self.readings['datetime'] = datetime.datetime.now()
 
     def WasRaining(self,mm=3):
         if self.rain >= mm:
@@ -163,12 +179,12 @@ def light_sensor(link='http://192.168.1.175/control/sensor'):
     except:
         return None
 
-def to_db(w):
+def to_db(w): #TODO: into class > to be able to write from inside
     print ('adding to db')
     from modules.postgres import PANDAS2POSTGRES
     import pandas as pd
     try:
-        con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
+        con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__) #FIXME: connection into P
         con.write(pd.DataFrame.from_dict(w, orient='index').T, 'weather')
         return True
     except Exception as e:
@@ -182,7 +198,7 @@ if __name__ == '__main__':
 
     if '-DB' in args:
         logger.info(str(w.readings))
-        w.readings['datetime'] = datetime.datetime.now()
+#        w.readings['datetime'] = datetime.datetime.now()
         status = to_db(w.readings)
         print('to DB ' + str(status))
 

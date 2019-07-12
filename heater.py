@@ -75,7 +75,7 @@ class HEATER(object):
         self.weather_last_scanned = None
         self.RescanWeather()
         self.speak_temp = SPEAK_TEMP(self.weather.temp_in)
-        logger.info(str(self.conf))
+        logger.info(str(self.conf.__dict__))
 
     def esp(self,com):  
         "using ESP contorol"
@@ -131,13 +131,17 @@ class HEATER(object):
 
     def Start(self):
 
-        logger.debug('starting cycle')
+        logger.info('starting cycle')
         while True: #infinite loop 
             ping = AcquireResult() if self.conf.pingBT else True 
             self.weather.TempIn() #rescanning temp inside (gpio or esp method) #TODO: extra similar for solar 
             if self._speak() and self.speak_temp.Check(self.weather.temp_in): 
                 Speak('temperature reached {} degrees'.format(str(int(self.weather.temp_in))))
-            logger.debug(str(self.weather.temp_in) + str('\t ping phone: ' + str(ping) if self.conf.pingBT else '') )
+            
+            logger.info(str('armed'  if self.Armed() else 'disarmed') +\
+                        str(self.weather.temp_in) + str('\tBTping: ' + str(ping) if self.conf.pingBT else '') +\
+                        '\ttoday ' + str(self.weather.temp_today) + '/\treauired ' + str(self.conf.minTout_required))
+            
             if self.weather.temp_in <= self.conf.Tmin and self.weather.temp_today <= self.conf.minTout_required and ping: # temp less lower lever and PING
                 if self.Armed(): 
                     self.OnOff('on')

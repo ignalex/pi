@@ -123,11 +123,11 @@ class HEATER(object):
 
     def RescanParams(self): 
         p = CONFIGURATION()
-        if p.heater != self.conf: 
+        if p.heater.__dict__ != self.conf.__dict__ : 
             self.conf = p.heater
             if self._speak(): Speak('heater configuration paramaters have been changed')
             logger.info('heater configuration paramaters have been changed')
-            logger.info(str(self.conf))
+            logger.info(str(self.conf.__dict__))
 
     def Start(self):
 

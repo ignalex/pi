@@ -81,6 +81,7 @@ class WEATHER(object):
                      'wind'     : ["<b>Wind:</b> "," km/h"," at "],
                      'wind_gust': ["gusting to "," km/h"],
                      'temp_today' : ['C - ','&#176;']}
+
         self.readings = {}
         try:
             self.html = requests.request('GET',self.link,timeout = 10).text
@@ -94,27 +95,28 @@ class WEATHER(object):
             self.temp_out = 20
             self.temp_today = 20
             return
-        for k,v in self.call.items(): self.Process(k,v)
+        for k,v in self.call.items(): self.Process(k,v, self.html) # weather html
+
         self.rain_at_all = [True if float(i) > 0 else False for i in [self.rain]][0]
         self.DateTime()
         if self.config['TempIn']: self.TempIn()
         if self.config['LightSensor']: self.LightSensor()
         if self.config['dht']: self.DHT11()
-        if self.config['solar']: self.SolarEnvoy()
+        if self.config['solar']: self.Solar()
         self.Forecast()
         self.Report(False, False)
 
-    def Process(self,name,f):
-        f1_pos = self.html.find(f[0])+len(f[0])
-        f2_pos = self.html.find(f[1],f1_pos)
-        found = self.html[f1_pos:f2_pos]
+    def Process(self, name, f, html):
+        f1_pos = html.find(f[0])+len(f[0])
+        f2_pos = html.find(f[1],f1_pos)
+        found = html[f1_pos:f2_pos]
         if len(f) == 3:
             found = found.split(f[2])[-1]
         try:
             setattr(self,name,float(found))
         except:
             setattr(self,name,None)
-    def Forecast(self):
+    def Forecast(self): #TODO: logic same > integrate better
         name,f =  'forecast', ['<img src="http://www.weatherzone.com.au/images/icons/fcast_30/','.gif']
         f1_pos = self.html.find(f[0])+len(f[0])
         f2_pos = self.html.find(f[1],f1_pos)
@@ -145,9 +147,20 @@ class WEATHER(object):
         self.call['temp_in'] = ["",""]
         self.call['humid_in'] = ["",""]
 
-    def SolarEnvoy(self):
-        print  ('not implemented yet')
-        #TODO: make
+    def Solar(self):
+        "scan solar html for current production"
+        logger.debug('scanning solar')
+#        self.solar = p.solar # config params
+        try:
+            self.link_solar = p.SOLAR_LINK
+            self.html_solar = requests.request('GET',self.link_solar,timeout = 10).text
+        except Exception as e:
+            logger.error('cant scan solar URL\n' + str(e))
+            return
+        for k,v in {'solar' : ["<td>Currently</td>    <td>    "," W</td></tr>"]}.items(): #!!!: here could be extra spaces
+            self.Process(k,v, self.html_solar) # solar html
+        self.call['solar'] = ["",""] #compatibility
+        self.debug('solar scanned : {} kW'.format(str(self.solar)))
 
     def DateTime(self):
         f = ["<pubDate>"," +"]

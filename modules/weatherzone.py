@@ -20,8 +20,8 @@ wind_gust 35.0
 have to provide the link to BOM > for Sydney / Kurraba Point :
 http://rss.weatherzone.com.au/?u=12994-1285&lt=aploc&lc=624&obs=1&fc=1&warn=1
 
-#TODO: solar envoy scan
-#TODO: internal temp / humidity scan
+#DONE: solar envoy scan
+#DONE: internal temp / humidity scan
 
 Created on Tue Jan 27 10:58:24 2015
 @author: aignatov

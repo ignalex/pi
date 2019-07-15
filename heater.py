@@ -14,14 +14,14 @@ Created on Mon Jun 01 21:18:58 2015
 
 #DONE: params to ini BUT from cmd possible to overwrite
 #DONE: esp or rf433
-#TODO: allow for solar > LOGIC PRIORITY : solar production or room TEMPERATURE
+#DONE: allow for solar > LOGIC PRIORITY : solar production or room TEMPERATURE
 #NO: in this or separate? > no
 #DONE: temp OUT integration > if Tout < X
 #DONE: integration with 'p' > inside or pass params?
 
 #TODO: speak solar
-#TODO: allow for indicators
-#TODO: allow for 7segments
+#DONE: allow for indicators
+#DONE: allow for 7segments
 #DONE: time constraints / from - to (off for night)
 #DONE: re-scan temp every (hour?)
 #TODO: on fail - restart?
@@ -164,6 +164,7 @@ class HEATER(object):
 
     def Start(self):
         logger.info('starting cycle')
+        if self.conf.dash: self.dash.message('READY',0.5)
         while True: #infinite loop
             ping = AcquireResult() if self.conf.pingBT else True
             self.weather.TempIn() #rescanning temp inside (gpio or esp method) 
@@ -176,10 +177,11 @@ class HEATER(object):
                         '\tIN ' + str(self.weather.temp_in) +\
                         '\tOUT ' + str(self.weather.temp_today) + ' (@ '+ str(self.conf.minTout_required) + ')' + \
                         str('\tBT: ' + str(ping) if self.conf.pingBT else '') + \
-                        str('\tSLR: ' + str(self.weather.solar) if self.conf.solar else '')
+                        str('\tSLR: ' + str(self.weather.solar if hasattr(self.weather, 'solar') else '' ))
                         )
             if self.conf.dash: #!!!: here need to adjust spaces
-                self.dash.seg.text = str(self.weather.temp_in) + ' ' + str(self.weather.solar if hasattr(self.weather, 'solar') else '' )
+                self.dash.seg.text = str(self.weather.temp_in) + ' ' + \
+                                     str(self.weather.solar if hasattr(self.weather, 'solar') else '' )
                 
             # normal > ON
             if self.weather.temp_in <= self.conf.Tmin and self.weather.temp_today <= self.conf.minTout_required \

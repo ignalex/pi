@@ -129,6 +129,7 @@ class HEATER(object):
         if not self.running  and \
                  self.conf.run_between_hours[0] <= datetime.datetime.now().hour <  self.conf.run_between_hours[1]: # within hours:
             self.running = True
+            if self.conf.led: color('blue' if self.running else 'off') 
             if self._speak(): Speak('I am starting monitoring temperature inside')
             logger.info('I am starting monitoring temperature inside')
             
@@ -138,10 +139,9 @@ class HEATER(object):
                 not (self.conf.run_between_hours[0] <= datetime.datetime.now().hour <  self.conf.run_between_hours[1]): # outside hours:
             self.running = False
             self.OnOff('off')
+            if self.conf.led: color('blue' if self.running else 'off') 
             if self._speak(): Speak('I am no longer monitoring temperature inside')
             logger.info('I am no longer monitoring temperature inside')
-
-        if self.conf.led: color('blue' if self.running else 'off') 
 
         return  self.running
 
@@ -181,7 +181,7 @@ class HEATER(object):
                         )
             if self.conf.dash: #!!!: here need to adjust spaces
                 self.dash.seg.text = str(self.weather.temp_in) + ' ' + \
-                                     str(self.weather.solar if hasattr(self.weather, 'solar') else '' )
+                                     str(self.weather.solar if hasattr(self.weather, 'solar') else '----' )
                 
             # normal > ON
             if self.weather.temp_in <= self.conf.Tmin and self.weather.temp_today <= self.conf.minTout_required \

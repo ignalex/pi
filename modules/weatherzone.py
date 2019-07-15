@@ -161,6 +161,9 @@ class WEATHER(object):
             self.debug('solar scanned : {} kW'.format(str(self.solar)))
         except Exception as e:
             m.logger.error('cant scan solar URL\n' + str(e))
+            #test 
+            self.call['solar'] = ["",""]
+            self.solar = 1000
             return
 
     def DateTime(self):

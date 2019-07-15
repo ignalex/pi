@@ -219,6 +219,7 @@ class HEATER(object):
         if self._speak(): Speak('I am no longer monitoring temperature inside')
         logger.info('STOPPING')
         if self.conf.dash: self.dash.message('DISARMED',0.5)
+        if self.conf.led: color('blue' if self.running else 'off') 
 
 if __name__ == '__main__':
 

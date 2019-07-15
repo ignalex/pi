@@ -71,8 +71,8 @@ class WEATHER(object):
                               'solar': solar}.items():
             self.config[name] = (getattr(p.weather,name) if hasattr(p.weather, name) else default) \
                                 if hasattr(p,'weather') else default
-
         self.Update()
+        
     def Update(self):
         self.call = {'rain' : ["<b>Rain:</b> ","mm since"],
                      'temp_out' : ["<b>Temperature:</b> ","&#"],
@@ -99,10 +99,10 @@ class WEATHER(object):
 
         self.rain_at_all = [True if float(i) > 0 else False for i in [self.rain]][0]
         self.DateTime()
-        if self.config['TempIn']: self.TempIn()
-        if self.config['LightSensor']: self.LightSensor()
-        if self.config['dht']: self.DHT11()
-        if self.config['solar']: self.Solar()
+        if self.config['TempIn']:       self.TempIn()
+        if self.config['LightSensor']:  self.LightSensor()
+        if self.config['dht']:          self.DHT11()
+        if self.config['solar']:        self.Solar()
         self.Forecast()
         self.Report(False, False)
 
@@ -153,24 +153,26 @@ class WEATHER(object):
 #        self.solar = p.solar # config params
         try:
             self.link_solar = p.SOLAR_LINK
-            self.html_solar = requests.request('GET',self.link_solar,timeout = 10).text
+            self.html_solar = requests.request('GET',self.link_solar,timeout = 5).text
+            for k,v in {'solar' : ["<td>Currently</td>    <td>    "," W</td></tr>"]}.items(): #!!!: here could be extra spaces
+                self.Process(k,v, self.html_solar) # solar html
+            self.call['solar'] = ["",""] #compatibility
+            self.debug('solar scanned : {} kW'.format(str(self.solar)))
         except Exception as e:
             logger.error('cant scan solar URL\n' + str(e))
             return
-        for k,v in {'solar' : ["<td>Currently</td>    <td>    "," W</td></tr>"]}.items(): #!!!: here could be extra spaces
-            self.Process(k,v, self.html_solar) # solar html
-        self.call['solar'] = ["",""] #compatibility
-        self.debug('solar scanned : {} kW'.format(str(self.solar)))
 
     def DateTime(self):
         f = ["<pubDate>"," +"]
         f1_pos = self.html.find(f[0])+len(f[0])+5
         f2_pos = self.html.find(f[1],f1_pos)
         self.now = datetime.datetime.strptime(self.html[f1_pos:f2_pos],'%d %b %Y %H:%M:%S')
+
     def ToInt(self):
         for r in self.call.keys():
             if getattr(self,r) is not None:
                 setattr(self,r,int(getattr(self,r)))
+
     def Report(self, LOG = True, PRINT = True):
         for r in sorted(self.call.keys()):
             if PRINT: print (r, getattr(self,r))

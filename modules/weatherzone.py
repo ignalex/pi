@@ -28,8 +28,8 @@ Created on Tue Jan 27 10:58:24 2015
 """
 from __future__ import print_function
 import __main__ as m
-import 
-from random import random
+import requests
+from random import random 
 
 import os, datetime, sys
 sys.path.append('/home/pi/git/pi') # for running from command line.
@@ -164,7 +164,7 @@ class WEATHER(object):
             m.logger.error('cant scan solar URL\n' + str(e))
             #test 
             self.call['solar'] = ["",""]
-            self.solar = int(1000 * random())
+            self.solar = int(random() * 1000)
             return
 
     def DateTime(self):

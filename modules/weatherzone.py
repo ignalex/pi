@@ -27,6 +27,7 @@ Created on Tue Jan 27 10:58:24 2015
 @author: aignatov
 """
 from __future__ import print_function
+import __main__ as m
 import requests
 
 import os, datetime, sys
@@ -149,7 +150,7 @@ class WEATHER(object):
 
     def Solar(self):
         "scan solar html for current production"
-        logger.debug('scanning solar')
+        m.logger.debug('scanning solar')
 #        self.solar = p.solar # config params
         try:
             self.link_solar = p.SOLAR_LINK
@@ -159,7 +160,7 @@ class WEATHER(object):
             self.call['solar'] = ["",""] #compatibility
             self.debug('solar scanned : {} kW'.format(str(self.solar)))
         except Exception as e:
-            logger.error('cant scan solar URL\n' + str(e))
+            m.logger.error('cant scan solar URL\n' + str(e))
             return
 
     def DateTime(self):

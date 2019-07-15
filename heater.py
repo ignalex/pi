@@ -55,6 +55,16 @@ try:
 except:
     print('no rf433 imported')
 
+try:
+    from modules.rgb_led import color
+except:
+    print('no rgb.led imported')
+
+try: 
+    from modules.sevensegments import SevenSegments
+except:
+    print('no SevenSegments imported')
+
 
 class SPEAK_TEMP(object):  #TODO: extend to solar
     def __init__(self,temp):
@@ -71,19 +81,28 @@ class SPEAK_TEMP(object):  #TODO: extend to solar
 class HEATER(object):
     def __init__(self, p):
         "config params from p: "
-        "heater = target|esp,ip|6,command|heater,run_between_hours|5;23,Tmin|19,Tmax|21,minTout_required|25,speak|YES,speak_between_hours|6;22,pingBT|YES,solar|NO,sec_between_update|30"
+        """heater = target|esp,ip|6,command|heater,run_between_hours|5;23,Tmin|19,Tmax|21,minTout_required|25,speak|YES,speak_between_hours|6;22,
+            pingBT|YES,solar|NO,sec_between_update|30,dash|NO,
+            segments|NO,
+        ... kW_need|123 -  extra for if solar|YES
+        colors LED >    red if ON, 
+                        blue if OFF. 
+                        off if disable 
+        """
         self.conf = p.heater
         self.running = False # status of service
         self.status = 'off'
         self.target = self.conf.target # esp or rf433
-#        self.weather_last_scanned = None # > not used
         self.RescanWeather()
         self.speak_temp = SPEAK_TEMP(self.weather.temp_in)
+        if self.conf.segments: 
+            self.dash = SevenSegments() #self.segments.seg.text = ...
         logger.info(str(self.conf.__dict__))
 
     def esp(self,com):
         "using ESP contorol"
         ESP([str(self.conf.ip),'rf433',self.conf.command,str(com)])
+
     def rf433(self,com):
         "using rf433  control"
         rf433([self.conf.command, str(com)])
@@ -98,6 +117,8 @@ class HEATER(object):
         "main trigger"
         if com != self.status: # changed
             getattr(self, self.target)(com) # running  either esp or rf433
+            # report > led 
+            if self.conf.led: color('red' if com  == 'on' else 'blue') 
             logger.info ( ' > ' + com)
             self.status = com
             if self._speak(): Speak("heater " + ['ON' if self.status == 'on' else 'OFF'][0] )
@@ -110,6 +131,7 @@ class HEATER(object):
             self.running = True
             if self._speak(): Speak('I am starting monitoring temperature inside')
             logger.info('I am starting monitoring temperature inside')
+            
 
         # stop time
         if self.running  and  \
@@ -118,6 +140,9 @@ class HEATER(object):
             self.OnOff('off')
             if self._speak(): Speak('I am no longer monitoring temperature inside')
             logger.info('I am no longer monitoring temperature inside')
+
+        if self.conf.led: color('blue' if self.running else 'off') 
+
         return  self.running
 
     def RescanWeather(self):
@@ -138,29 +163,48 @@ class HEATER(object):
             logger.info(str(self.conf.__dict__))
 
     def Start(self):
-
         logger.info('starting cycle')
         while True: #infinite loop
             ping = AcquireResult() if self.conf.pingBT else True
-            self.weather.TempIn() #rescanning temp inside (gpio or esp method) #TODO: extra similar for solar
+            self.weather.TempIn() #rescanning temp inside (gpio or esp method) 
+            if self.conf.solar: self.weather.Solar()
+                
             if self._speak() and self.speak_temp.Check(self.weather.temp_in):
                 Speak('temperature reached {} degrees'.format(str(int(self.weather.temp_in))))
 
             logger.info(str('armed'  if self.Armed() else 'disarmed') +\
-                        '\tTin ' + str(self.weather.temp_in) +\
-                        '\ttoday ' + str(self.weather.temp_today) + ', (<= '+ str(self.conf.minTout_required) + ')' + \
-                        str('\tBT: ' + str(ping) if self.conf.pingBT else '')
+                        '\tIN ' + str(self.weather.temp_in) +\
+                        '\tOUT ' + str(self.weather.temp_today) + ' (@ '+ str(self.conf.minTout_required) + ')' + \
+                        str('\tBT: ' + str(ping) if self.conf.pingBT else '') + \
+                        str('\tSLR: ' + str(self.weather.solar) if self.conf.solar else '')
                         )
-
-            if self.weather.temp_in <= self.conf.Tmin and self.weather.temp_today <= self.conf.minTout_required and ping: # temp less lower lever and PING
+            if self.conf.dash: #!!!: here need to adjust spaces
+                self.dash.seg.text = str(self.weather.temp_in) + ' ' + str(self.weather.solar if hasattr(self.weather, 'solar') else '' )
+                
+            # normal > ON
+            if self.weather.temp_in <= self.conf.Tmin and self.weather.temp_today <= self.conf.minTout_required \
+                and ping \
+                and ((self.weather.solar >= self.conf.kW_need) if self.conf.solar else True): # temp less lower lever and PING
                 if self.Armed():
                     self.OnOff('on')
-            elif  ping == False: # lost contact
+                    
+            # lost contact
+            elif  ping == False: 
                 #if self.Armed(): # turning off on lost BT contact possible even after hours
                 self.OnOff('off')
+                
+            # temp inside too hot: (turning off no matter if phone pinged)
             elif self.weather.temp_in >= self.conf.Tmax: # turning off no matter if phone pinged
                 if self.Armed():
                     self.OnOff('off')
+                    
+            #solar doesnt produce enough or lost contact to solar system 
+            elif  self.conf.solar \
+                and ((self.weather.solar <  self.conf.kW_need) \
+                     or self.weather.solar is None): # can't read solar
+                if self.Armed(): 
+                    self.OnOff('off')
+            
             sleep(self.conf.sec_between_update)
 
             if self.weather_last_scanned != datetime.datetime.now().hour:
@@ -172,6 +216,7 @@ class HEATER(object):
         self.OnOff('off')
         if self._speak(): Speak('I am no longer monitoring temperature inside')
         logger.info('STOPPING')
+        if self.conf.dash: self.dash.message('DISARMED',0.5)
 
 if __name__ == '__main__':
 

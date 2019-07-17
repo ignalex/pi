@@ -1,5 +1,6 @@
 sudo apt-get install postgresql-9.6 postgis postgresql-plpython3-9.6 postgresql-server-dev-9.6 -y
 
+
 # sudo su postgres
 # createuser pi -P
 # pi

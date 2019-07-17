@@ -58,10 +58,15 @@ def AllEvents():
 
 #%% 2FA
 def request_2FA(api):
-    "returns device OR false if cant sent code"
-    if api.requires_2fa:
-   #     import click
-        m.logger.info ("Two-step authentication required. Your trusted devices are:")
+    """returns device OR false if cant sent code"
+    https://github.com/picklepete/pyicloud/issues/206
+    only from python3
+        pip3 uninstall pyicloud
+        pip3 install git+https://github.com/danielfmolnar/pyicloud
+    """
+    auth_type = [i for i in ['requires_2sa', 'requires_2fa'] if hasattr(api, i)][0]
+    if getattr(api, auth_type): # or 2sa? 
+        m.logger.info ("Two-step authentication required {}. Your trusted devices are:".format(auth_type))
 
         devices = api.trusted_devices
         for i, device in enumerate(devices):
@@ -82,7 +87,7 @@ def request_2FA(api):
             Speak('verification code sent')
         return device
     else:
-        m.logger.info('api.requires_2fa is {} ? authentication not required?'.format(str(api.requires_2fa)))
+        m.logger.info('api.requires_2fa / 2sais {} ? authentication not required?'.format(str(getattr(api, auth_type))))
         return True
 
 #%% authentication manual > for pa_service

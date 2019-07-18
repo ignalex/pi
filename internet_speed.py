@@ -83,7 +83,7 @@ def SpeedTest():
 
 def to_db(df):
     try:
-        con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
+        con = PANDAS2POSTGRES(p.local_pi_db.__dict__)
         con.write(df, 'internet_speed')
         logger.info('df added to DB')
 
@@ -96,7 +96,7 @@ def to_db(df):
         logger.error(str(e))
 
 def read_data_from_db(days=5):
-    con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
+    con = PANDAS2POSTGRES(p.local_pi_db.__dict__)
     df = con.read("""select timestamp,
     extract(hour from timestamp) as hour,
     extract(minute from timestamp) as minute,
@@ -108,7 +108,7 @@ def read_data_from_db(days=5):
     return df
 
 def read_div_from_db():
-    con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
+    con = PANDAS2POSTGRES(p.local_pi_db.__dict__)
     df = con.read("""select current from internet_speed_current""")['current']#[0]
     last_scan = con.read("""select split_part(timestamp :: text, '.', 1) as datetime, extract('minutes' from now() - timestamp) :: int as minutes,  share from internet_speed where timestamp = (select max(timestamp) from internet_speed) """).T.to_dict()[0]
     return (df, last_scan)
@@ -157,6 +157,7 @@ def weather():
     #DONE: render template
     #DONE: pressure, wind, rain
     #DONE: interpolate on request
+    #TODO: non fixed columns 
     """   index bigint,
           wind_gust double precision,
           datetime timestamp without time zone,
@@ -173,12 +174,22 @@ def weather():
     start = datetime.datetime.now()
     days = [i if i is not None else 7 for i in [request.args.get('days')]][0]
     resample = [i if i is not None else False for i in [request.args.get('resample')]][0]
-    con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__)
+    con = PANDAS2POSTGRES(p.local_pi_db.__dict__)
 
+    #TODO: commmon used + special 
+    # spacial :  [values MUST be array - even if one]
+    # weather_sensors = name_div|light,name_cols|light_1;light_2,select|light_1;light_2/1.2 as ligth_2
+    # weather_sensors = name_div|solar,name_cols|solar;,select|solar;
+    
+    # collecting extra: 
+    sel = ', '.join(p.weather_sensors.select) + ', ' if hasattr(p,'weather_sensors') else ''
+    
     df = con.read("""select datetime,
+        --light_1, 
+        --light_2/1.2 as light_2,  
+        """ + sel + """        
     	temp_in, temp_out, temp_today,
         pressure,
-        light_1, light_2/1.2 as light_2,
         wind, wind_gust,
         humidity, rain
     	from weather where now() - datetime <= '{} days'
@@ -188,7 +199,10 @@ def weather():
         df = df.resample(resample).bfill(limit=1).interpolate('pchip')
 
     DIV = {'temperature' : parse_df_for_figure(df, ['temp_in', 'temp_out', 'temp_today'], 'temperature'),
-           'light' : parse_df_for_figure(df, ['light_1', 'light_2'], 'light'),
+           #'light' : parse_df_for_figure(df, ['light_1', 'light_2'], 'light'),
+           
+           'extra' : parse_df_for_figure(df, p.weather_sensors.name_cols, p.weather_sensors.name_div)  if hasattr(p,'weather_sensors') else '',
+           
            'pressure' : parse_df_for_figure(df, ['pressure'], 'pressure'),
            'wind' : parse_df_for_figure(df, ['wind', 'wind_gust'], 'wind'),
            'rain' : parse_df_for_figure(df, ['humidity', 'rain'], 'humidity and rain')

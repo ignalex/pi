@@ -83,7 +83,7 @@ class CONFIGURATION(object):
 
     def FixValues(self,v): # in calibrating - fixing strings into lists of int/floats
         if v.find(';') != -1:
-            return [TryToInt(i) for i in v.split(';')]
+            return [TryToInt(i) for i in v.split(';') if i != '']
         else:
             return  TryToInt(v)
 #    def ReplaceKeys(self): # LOOKS UPUSED > for keys as DICTS, but now use attributes

@@ -178,7 +178,7 @@ def weather():
 
     #TODO: commmon used + special 
     # spacial :  [values MUST be array - even if one]
-    # weather_sensors = name_div|light,name_cols|light_1;light_2,select|light_1;light_2/1.2 as ligth_2
+    # weather_sensors = name_div|light,name_cols|light_1;light_2,select|light_1;light_2/1.2 as light_2
     # weather_sensors = name_div|solar,name_cols|solar;,select|solar;
     
     # collecting extra: 

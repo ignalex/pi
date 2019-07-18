@@ -1,4 +1,9 @@
-sudo apt-get install postgresql-9.6 postgis postgresql-plpython3-9.6 postgresql-server-dev-9.6 -y
+
+#headless setup
+#https://desertbot.io/blog/headless-raspberry-pi-3-bplus-ssh-wifi-setup
+
+# POSTGRES
+sudo apt-get install postgresql postgis postgresql-server-dev-11 #postgresql-9.6 postgresql-plpython3-9.6 postgresql-server-dev-9.6 -y
 
 
 # sudo su postgres
@@ -35,8 +40,13 @@ sudo pip3 install HAP-python[QRCode]
 
 # pandas + plotly
 sudo apt-get install python-pandas python3-pandas
-sudo pip install plotly cufflinks psycopg2 python-daemon pyicloud speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
-sudo pip3 install plotly cufflinks psycopg2 python-daemon pyicloud speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
+sudo pip install plotly cufflinks psycopg2 python-daemon  speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
+sudo pip3 install plotly cufflinks psycopg2 python-daemon  speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
+
+#pyicloud
+#NEED TO  install from GIT > 
+pip3 uninstall pyicloud
+pip3 install git+https://github.com/danielfmolnar/pyicloud
 
 # flask server
 sudo pip install flask-compress
@@ -69,3 +79,7 @@ sudo pip3 install pillow==4.0.0
 git clone https://github.com/rm-hull/max7219.git
 cd max7219
 sudo python3 setup.py install
+
+
+# KODI 
+sudo apt-get install kodi 

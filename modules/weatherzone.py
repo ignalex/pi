@@ -199,12 +199,14 @@ def light_sensor(link='http://192.168.1.175/control/sensor'):
     except:
         return None
 
-def to_db(w): #TODO: into class > to be able to write from inside
+def to_db(w, con = 'local_pi_db'): 
+    "con to be set in one of the INI files, default to localhost"
+    #TODO: into class > to be able to write from inside
     print ('adding to db')
     from modules.postgres import PANDAS2POSTGRES
     import pandas as pd
     try:
-        con = PANDAS2POSTGRES(p.hornet_pi_db.__dict__) #FIXME: connection into P
+        con = PANDAS2POSTGRES(getattr(p,con).__dict__)
         con.write(pd.DataFrame.from_dict(w, orient='index').T, 'weather')
         return True
     except Exception as e:

@@ -182,7 +182,7 @@ def weather():
     # weather_sensors = name_div|solar,name_cols|solar;,select|solar;
     
     # collecting extra: 
-    sel = ', '.join(p.weather_sensors.select) + ', ' if hasattr(p,'weather_sensors') else ''
+    sel = (','.join(p.weather_sensors.select) + ',' if hasattr(p,'weather_sensors') else '').replace(',,',',')
     
     df = con.read("""select datetime,
         --light_1, 

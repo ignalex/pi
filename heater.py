@@ -72,10 +72,10 @@ class SPEAK_TEMP(object):  #TODO: extend to solar
         self.temp_spoken = temp
     def Check(self,temp):
         logger.debug('temp speaking conditions: ' + \
-                     [str(temp), str(temp % 1 < 0.1), 
+                     ' : '.join([str(temp), str(temp % 1 < 0.1), 
                       str(abs(temp - self.temp_spoken) >= 0.5), 
                       str((datetime.datetime.now() - self.time_spoken).seconds >= 300), 
-                      str(datetime.datetime.now().hour >= 6)].join(' : '))
+                      str(datetime.datetime.now().hour >= 6)]))
         if temp % 1 < 0.1 and abs(temp - self.temp_spoken) >= 0.5 and (datetime.datetime.now() - self.time_spoken).seconds >= 300 and datetime.datetime.now().hour >= 6:
             self.time_spoken = datetime.datetime.now()
             self.temp_spoken = temp

@@ -53,7 +53,7 @@ sudo pip install flask-compress
 sudo pip3 install flask-compress
 
 # guni
-sudo  apt-get install gunicorn
+sudo  apt-get install gunicorn3 gunicorn
 
 # issues with pynmea2 installing together.
 sudo pip install pynmea2

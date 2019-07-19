@@ -9,7 +9,8 @@ Description = HEATER daemon
 After = local-fs.target network-online.target
 
 [Service]
-User = pi  # It's a good idea to use some unprivileged system user
+User=pi
+# It's a good idea to use some unprivileged system user
 ExecStart = /usr/bin/python3 /home/pi/git/pi/heater.py -d
 
 [Install]

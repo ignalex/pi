@@ -24,7 +24,7 @@ def dht11(correct=[0,0]):
     
     humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, p.pins.DHT11)
     while temperature is None:
-        sleep (0.05)
+        sleep (0.02)
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, p.pins.DHT11)
 
     # overwriting correct for temp / hum 

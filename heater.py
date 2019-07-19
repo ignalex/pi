@@ -94,7 +94,8 @@ class HEATER(object):
         self.status = 'off'
         self.target = self.conf.target # esp or rf433
         self.RescanWeather()
-        self.speak_temp = SPEAK_TEMP(self.weather.temp_in)
+        # in some cases temp still unnavailable on start 
+        self.speak_temp = SPEAK_TEMP(self.weather.temp_in if hasattr(self.weather, 'temp_in') else 0)
         if self.conf.dash: 
             self.dash = SevenSegments() #self.segments.seg.text = ...
         logger.info(str(self.conf.__dict__))

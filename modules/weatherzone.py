@@ -131,8 +131,8 @@ class WEATHER(object):
     def TempIn(self, N=5):
         "average over N readings"
         temp_in = Temp()
-        if not hasattr(self,'temp_in_hist') : self.temp_in_hist = []
-        self.temp_in_hist = (self.temp_in_hist + [float(temp_in)])[-N:]        
+        self.temp_in_hist = ((self.temp_in_hist if hasattr(self,'temp_in_hist') else []) + \
+                             [float(temp_in)])[-N:]        
         self.temp_in = round(mean(self.temp_in_hist),1)
         self.call['temp_in'] = ["",""]
 

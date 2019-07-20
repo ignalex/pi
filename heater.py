@@ -86,7 +86,7 @@ class SPEAK_TEMP(object):  #TODO: extend to solar
 class HEATER(object):
     def __init__(self, p):
         "config params from p: "
-        """heater = target|esp,ip|6,command|heater,run_between_hours|5;23,Tmin|19,Tmax|21,minTout_required|25,speak|YES,speak_between_hours|6;22,
+        """heater = target|esp,ip|6,command|heater,run_between_hours|5;23,Tmin|19,Tmax|21,T_n_ave|5,minTout_required|25,speak|YES,speak_between_hours|6;22,
             pingBT|YES,solar|NO,sec_between_update|30,dash|NO,
             segments|NO,
         ... kW_need|123 -  extra for if solar|YES
@@ -173,7 +173,7 @@ class HEATER(object):
         if self.conf.dash: self.dash.message('READY',0.5)
         while True: #infinite loop
             ping = AcquireResult() if self.conf.pingBT else True
-            self.weather.TempIn() #rescanning temp inside (gpio or esp method) 
+            self.weather.TempIn(int(p.heater.T_n_ave) if hasattr(p.heater,'T_n_ave') else 1) #rescanning temp inside (gpio or esp method) 
             if self.conf.solar: self.weather.Solar()
                 
             if self._speak() and self.speak_temp.Check(self.weather.temp_in):

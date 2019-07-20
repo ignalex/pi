@@ -30,6 +30,7 @@ from __future__ import print_function
 import __main__ as m
 import requests
 from random import random 
+from statistics import mean
 
 import os, datetime, sys
 sys.path.append('/home/pi/git/pi') # for running from command line.
@@ -127,9 +128,14 @@ class WEATHER(object):
             found = found.split(f[2])[-1]
         setattr(self,name,found.replace('_',' '))
 
-    def TempIn(self):
-        self.temp_in = Temp()
+    def TempIn(self, N=5):
+        "average over N readings"
+        temp_in = Temp()
+        if not hasattr(self,'temp_in_hist') : self.temp_in_hist = []
+        self.temp_in_hist = (self.temp_in_hist + [float(temp_in)])[-N:]        
+        self.temp_in = round(mean(self.temp_in_hist),1)
         self.call['temp_in'] = ["",""]
+
 
     def LightSensor(self, sensors = {'light_1' : {'link': 'http://192.168.1.175/control/sensor', 'calibr' : 1},
                                      'light_2' : {'link': 'http://192.168.1.176/control/sensor/sound', 'calibr' : 1.2}}):
@@ -144,7 +150,8 @@ class WEATHER(object):
     def DHT11(self):
         "scan DHT11 sensor"
         temp_in, humid_in = dht11()
-        setattr(self,'temp_in',float(temp_in))
+        
+        setattr(self,'temp_in',float(humid_in))
         setattr(self,'humid_in',float(humid_in))
         self.call['temp_in'] = ["",""]
         self.call['humid_in'] = ["",""]

@@ -32,7 +32,7 @@ def dht11(correct=[0,0]):
         correct = [int(p.temperature.adjustment_temp) if hasattr(p.temperature,'adjustment_temp') else correct[0], 
                    int(p.temperature.adjustment_hum) if hasattr(p.temperature,'adjustment_hum') else correct[1]]
                 
-    return (temperature + correct[0], humidity + correct[1])
+    return (int(temperature + correct[0]), int(humidity + correct[1])) # dht is accurate to 1
 
 def Temp():
     "compatibility"

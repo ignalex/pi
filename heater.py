@@ -187,7 +187,7 @@ class HEATER(object):
                         )
             if self.conf.dash: #!!!: here need to adjust spaces
                 self.dash.seg.text = str(self.weather.temp_in) + ' ' + \
-                                     (str(self.weather.solar).rjust(5) if hasattr(self.weather, 'solar') else '----' )
+                                     (str(self.weather.solar).rjust(4) if hasattr(self.weather, 'solar') else '----' )
                 
             # normal > ON
             if self.weather.temp_in <= self.conf.Tmin and self.weather.temp_today <= self.conf.minTout_required \

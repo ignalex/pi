@@ -102,7 +102,7 @@ class HEATER(object):
         # in some cases temp still unnavailable on start 
         self.speak_temp = SPEAK_TEMP(self.weather.temp_in if hasattr(self.weather, 'temp_in') else 0)
         if self.conf.dash: self.dash = SevenSegments() #self.segments.seg.text = ...
-        logger.info('config parameters:\n' + '\n'.join([k + '\t:\t' + str(v) for  k,v in self.conf.__dict__]))
+        logger.info('config parameters:\n' + '\n'.join([k + '\t:\t' + str(v) for  k,v in self.conf.__dict__.items()]))
 
     def esp(self,com):
         "using ESP contorol"

@@ -234,8 +234,17 @@ if __name__ == '__main__':
     p = CONFIGURATION()
 
     try:
-        heater = HEATER(p)
-        heater.Start()
+        for attempt in range(1,4): 
+            try: 
+                #TODO: 3 attempts 
+                heater = HEATER(p)
+                heater.Start()
+            except: 
+                MainException()
+                if heater._speak(): 
+                    Speak('error on loading attempt {}, trying again in 5 sec'.format(attempt))
     except:
         heater.Stop()
         MainException()
+        if heater._speak(): 
+            Speak('cant start from {} attempts, check the logs. exiting.'.format(attempt))

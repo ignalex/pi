@@ -57,7 +57,7 @@ def Speak(text, store=True):
     if not hasattr(m,'p'):      m.p = CONFIGURATION()
     if not hasattr(m,'logger'): m.logger = LOGGER('TALK', 'INFO')
     for k,v in Substitutons(): text = text.replace('%'+k,v)
-    m.logger.info('SPEAKING ' + text)
+    m.logger.debug('SPEAKING ' + text)
     if hasattr(m.p,'talk'): # talk over ssh
         m.logger.debug('passing to ' + str(m.p.talk.ip))
         config = m.p.talk.__dict__

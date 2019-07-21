@@ -101,9 +101,8 @@ class HEATER(object):
         self.RescanWeather()
         # in some cases temp still unnavailable on start 
         self.speak_temp = SPEAK_TEMP(self.weather.temp_in if hasattr(self.weather, 'temp_in') else 0)
-        if self.conf.dash: 
-            self.dash = SevenSegments() #self.segments.seg.text = ...
-        logger.info(str(self.conf.__dict__))
+        if self.conf.dash: self.dash = SevenSegments() #self.segments.seg.text = ...
+        logger.info('config parameters:\n' + '\n'.join([k + '\t:\t' + str(v) for  k,v in self.conf.__dict__]))
 
     def esp(self,com):
         "using ESP contorol"
@@ -170,7 +169,7 @@ class HEATER(object):
 
     def Start(self):
         logger.info('starting cycle')
-        if self.conf.dash: self.dash.message('READY',0.5)
+        if self.conf.dash: self.dash.message('STARTING',0.5)
         while True: #infinite loop
             ping = AcquireResult() if self.conf.pingBT else True
             self.weather.TempIn(int(p.heater.T_n_ave) if hasattr(p.heater,'T_n_ave') else 1) #rescanning temp inside (gpio or esp method) 
@@ -179,13 +178,15 @@ class HEATER(object):
             if self._speak() and self.speak_temp.Check(self.weather.temp_in):
                 Speak('temperature reached {} degrees'.format(str(int(self.weather.temp_in))))
 
-            logger.info(str('armed'  if self.Armed() else 'disarmed') +\
+            logger.info(str('RUNNING'  if self.Armed() else 'STOPPED') +\
+                        '\tHEATER ' + str(self.status).upper() +\
                         '\tIN ' + str(self.weather.temp_in) +\
-                        '\tOUT ' + str(self.weather.temp_today) + ' (@ '+ str(self.conf.minTout_required) + ')' + \
-                        str('\tBT: ' + str(ping) if self.conf.pingBT else '') + \
-                        str('\tSLR: ' + str(self.weather.solar if hasattr(self.weather, 'solar') else '' ))
+                        '\tOUT ' + str(self.weather.temp_today) +\
+                        ' (@ '+ str(self.conf.minTout_required) + ')' + \
+                        str('\tBT ' + str(ping) if self.conf.pingBT else '') + \
+                        str('\tSLR ' + str(self.weather.solar if hasattr(self.weather, 'solar') else '' ))
                         )
-            if self.conf.dash: #!!!: here need to adjust spaces
+            if self.conf.dash:
                 self.dash.seg.text = str(self.weather.temp_in) + ' ' + \
                                      (str(self.weather.solar).rjust(4) if hasattr(self.weather, 'solar') else '----' )
                 
@@ -224,7 +225,7 @@ class HEATER(object):
         self.OnOff('off')
         if self._speak(): Speak('I am no longer monitoring temperature inside')
         logger.info('STOPPING')
-        if self.conf.dash: self.dash.message('DISARMED',0.5)
+        if self.conf.dash: self.dash.message('STOPPED',0.5)
         if self.conf.led: color('blue' if self.running else 'off') 
 
 if __name__ == '__main__':

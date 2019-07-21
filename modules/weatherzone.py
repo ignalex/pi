@@ -168,10 +168,10 @@ class WEATHER(object):
             self.call['solar'] = ["",""] #compatibility
             self.debug('solar scanned : {} kW'.format(str(self.solar)))
         except Exception as e:
-            m.logger.error('cant scan solar URL\n' + str(e))
+            m.logger.debug('cant scan solar URL\n' + str(e))
             #test 
             self.call['solar'] = ["",""]
-            self.solar = int(random() * 1000)
+            self.solar = 500 + int(random() * 500) #!!!: turn off later
             return
 
     def DateTime(self):

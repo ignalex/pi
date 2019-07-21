@@ -87,9 +87,10 @@ class HEATER(object):
     def __init__(self, p):
         "config params from p: "
         """heater = target|esp,ip|6,command|heater,run_between_hours|5;23,Tmin|19,Tmax|21,T_n_ave|5,minTout_required|25,speak|YES,speak_between_hours|6;22,
-            pingBT|YES,solar|NO,sec_between_update|30,dash|NO,
+            pingBT|YES,solar|NO,sec_between_update|30,dash|NO,kW_need_minus|100
             segments|NO,
         ... kW_need|123 -  extra for if solar|YES
+        ... kW_need_minus - turn off when (kW_need - kW_need_minus) reached
         colors LED >    red if ON, 
                         blue if OFF. 
                         off if disable 
@@ -207,9 +208,10 @@ class HEATER(object):
                 if self.Armed():
                     self.OnOff('off')
                     
-            #solar doesnt produce enough or lost contact to solar system 
+            #solar doesnt produce enough  or lost contact to solar system 
+            # (considering delta kW_need_minus) - otherwise will be on/off all time when near kW_need
             elif  self.conf.solar \
-                and ((self.weather.solar <  self.conf.kW_need) \
+                and ((self.weather.solar <  (self.conf.kW_need) - self.conf.kW_need_minus) \
                      or self.weather.solar is None): # can't read solar
                 if self.Armed(): 
                     self.OnOff('off')

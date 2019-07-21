@@ -136,8 +136,8 @@ class HEATER(object):
                  self.conf.run_between_hours[0] <= datetime.datetime.now().hour <  self.conf.run_between_hours[1]: # within hours:
             self.running = True
             if self.conf.led: color('blue' if self.running else 'off') 
-            if self._speak(): Speak('I am starting monitoring temperature inside')
-            logger.info('I am starting monitoring temperature inside')
+            if self._speak(): Speak('I am starting monitoring temperature ' + (' and solar production ' if self.conf.solar else ''))
+            logger.info('I am starting monitoring temperature ' + (' and solar production ' if self.conf.solar else ''))
             
 
         # stop time
@@ -146,8 +146,8 @@ class HEATER(object):
             self.running = False
             self.OnOff('off')
             if self.conf.led: color('blue' if self.running else 'off') 
-            if self._speak(): Speak('I am no longer monitoring temperature inside')
-            logger.info('I am no longer monitoring temperature inside')
+            if self._speak(): Speak('I am no longer monitoring temperature ' + (' and solar production ' if self.conf.solar else ''))
+            logger.info('I am no longer monitoring temperature ' + (' and solar production ' if self.conf.solar else ''))
 
         return  self.running
 

@@ -5,16 +5,23 @@ This is:
 2. Add it to an AccessoryDriver, which will advertise it on the local network,
     setup a server to answer client queries, etc.
 """
-import logging
+#import logging
 import signal
-
+import socket 
 import os
 os.chdir('/home/pi/git/pi/accessories_ai')
+
+import sys 
+sys.path.append('/home/pi/git/pi') # for running from command line.
+from modules.common import   MainException, LOGGER, CONFIGURATION
+
+logger = LOGGER('camera', 'DEBUG', True)
+
 
 from pyhap.accessory_driver import AccessoryDriver
 from pyhap import camera
 
-logging.basicConfig(level=logging.DEBUG, format="[%(module)s] %(message)s")
+#logging.basicConfig(level=logging.DEBUG, format="[%(module)s] %(message)s")
 
 
 # Specify the audio and video configuration that your device can support
@@ -58,7 +65,7 @@ options = {
         ],
     },
     "srtp": True,
-    "address": "192.168.1.7",
+    "address": socket.gethostbyname(socket.gethostname()), #"192.168.1.7", 
     "start_stream_cmd" : ('ffmpeg -f video4linux2 -input_format h264 -video_size {width}x{height} '
         '-framerate 20 -i /dev/video0 '
         '-vcodec copy -an -payload_type 99 -ssrc 1 -f rtsp '
@@ -69,7 +76,7 @@ options = {
         'localrtcpport={v_port}&pkt_size=1378')
 }
 
-
+logger.debug('options: '+ str(options))
 # Start the accessory on port 51826
 driver = AccessoryDriver(port=51826)
 acc = camera.Camera(options, driver, "Camera")

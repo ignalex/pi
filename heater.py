@@ -24,7 +24,7 @@ Created on Mon Jun 01 21:18:58 2015
 #DONE: allow for 7segments
 #DONE: time constraints / from - to (off for night)
 #DONE: re-scan temp every (hour?)
-#TODO: on fail - restart?
+#DONE: on fail - restart?
 #DONE: rescan params
 """
 
@@ -103,7 +103,7 @@ class HEATER(object):
         # in some cases temp still unnavailable on start 
         self.speak_temp = SPEAK_TEMP(self.weather.temp_in if hasattr(self.weather, 'temp_in') else 0)
         if self.conf.dash: self.dash = SevenSegments() #self.segments.seg.text = ...
-        logger.info('config parameters:\n' + '\n'.join([k + '\t:\t' + str(v) for  k,v in self.conf.__dict__.items()]))
+        logger.info('config parameters:\n' + '\n'.join([k.ljust(15) + '\t:\t' + str(v) for  k,v in self.conf.__dict__.items()]))
 
     def esp(self,com):
         "using ESP contorol"
@@ -166,7 +166,7 @@ class HEATER(object):
             self.conf = p.heater
             if self._speak(): Speak('heater configuration paramaters have been changed')
             logger.info('heater configuration paramaters have been changed')
-            logger.info(str(self.conf.__dict__))
+            logger.info('config parameters:\n' + '\n'.join([k.ljust(15) + '\t:\t' + str(v) for  k,v in self.conf.__dict__.items()]))
 
     def Start(self):
         logger.info('starting cycle')
@@ -185,7 +185,7 @@ class HEATER(object):
                         '\tOUT ' + str(self.weather.temp_today) +\
                         ' (@ '+ str(self.conf.minTout_required) + ')' + \
                         str('\tBT ' + str(ping) if self.conf.pingBT else '') + \
-                        str('\tSLR ' + str(self.weather.solar if hasattr(self.weather, 'solar') else '' ))
+                        (str('\tSLR ' + str(self.weather.solar)) if  self.conf.solar else '' )
                         )
             if self.conf.dash:
                 self.dash.seg.text = str(self.weather.temp_in) + ' ' + \
@@ -238,7 +238,6 @@ if __name__ == '__main__':
     try:
         for attempt in range(1,4): 
             try: 
-                #TODO: 3 attempts 
                 heater = HEATER(p)
                 heater.Start()
             except: 

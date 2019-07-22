@@ -65,7 +65,7 @@ options = {
         ],
     },
     "srtp": True,
-    "address": socket.gethostbyname(socket.gethostname()), #"192.168.1.7", 
+    "address": "192.168.1.7", #socket.gethostbyname(socket.gethostname()), #"192.168.1.7", 
     "start_stream_cmd" : ('ffmpeg -f video4linux2 -input_format h264 -video_size {width}x{height} '
         '-framerate 20 -i /dev/video0 '
         '-vcodec copy -an -payload_type 99 -ssrc 1 -f rtsp '

@@ -79,7 +79,7 @@ options = {
       'ffmpeg -f video4linux2 -input_format h264 -i ' + DEV_VIDEO + ' -threads 4 '
       '-vcodec copy -an -pix_fmt yuv420p -r {fps} '
       '-b:v 2M -bufsize 2M '
-      '-payload_type 99 -ssrc {v_ssrc} -f rtp '
+      '-payload_type 99 -ssrc {v_ssrc} -f rtsp '
       '-srtp_out_suite AES_CM_128_HMAC_SHA1_80 -srtp_out_params {v_srtp_key} '
       'srtp://{address}:{v_port}?rtcpport={v_port}&'
       'localrtcpport={v_port}&pkt_size=1316')    

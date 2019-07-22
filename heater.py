@@ -103,7 +103,7 @@ class HEATER(object):
         # in some cases temp still unnavailable on start 
         self.speak_temp = SPEAK_TEMP(self.weather.temp_in if hasattr(self.weather, 'temp_in') else 0)
         if self.conf.dash: self.dash = SevenSegments() #self.segments.seg.text = ...
-        logger.info('config parameters:\n' + '\n'.join([k.ljust(15) + '\t:\t' + str(v) for  k,v in self.conf.__dict__.items()]))
+        logger.info('config parameters:\n' + '\n'.join([k.ljust(25) + '\t:\t' + str(v) for  k,v in self.conf.__dict__.items()]))
 
     def esp(self,com):
         "using ESP contorol"
@@ -166,7 +166,7 @@ class HEATER(object):
             self.conf = p.heater
             if self._speak(): Speak('heater configuration paramaters have been changed')
             logger.info('heater configuration paramaters have been changed')
-            logger.info('config parameters:\n' + '\n'.join([k.ljust(15) + '\t:\t' + str(v) for  k,v in self.conf.__dict__.items()]))
+            logger.info('config parameters:\n' + '\n'.join([k.ljust(25) + '\t:\t' + str(v) for  k,v in self.conf.__dict__.items()]))
 
     def Start(self):
         logger.info('starting cycle')

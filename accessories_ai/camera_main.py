@@ -76,7 +76,7 @@ options = {
 #        'srtp://{address}:{v_port}?rtcpport={v_port}&'
 #        'localrtcpport={v_port}&pkt_size=1378')
 
-   "start_stream_cmd" :( 'ffmpeg -f video4linux2 -input_format h264 -i 0:0 -threads 0 '
+   "start_stream_cmd" :( 'ffmpeg -f video4linux2 -input_format h264 -i /dev/video0 -threads 0 '
     '-vcodec libx264 -an -pix_fmt yuv420p -r {fps} -f rawvideo -tune zerolatency '
     '-vf scale={width}:{height} -b:v {v_max_bitrate}k -bufsize {v_max_bitrate}k '
     '-payload_type 99 -ssrc {v_ssrc} -f rtp '

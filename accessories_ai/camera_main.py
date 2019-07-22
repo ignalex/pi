@@ -67,15 +67,23 @@ options = {
     },
     "srtp": True,
     "address": "192.168.1.7", #socket.gethostbyname(socket.gethostname()), #"192.168.1.7", 
-    "start_stream_cmd" : ('ffmpeg -f video4linux2 -input_format h264 -video_size {width}x{height} '
-        '-framerate 20 -i /dev/video0 '
-        '-vcodec copy -an -payload_type 99 -ssrc 1 -f rtsp '
-        '-b:v {v_max_bitrate}k -bufsize {v_max_bitrate}k '
-        '-payload_type 99 -f rtp '
-        '-srtp_out_suite AES_CM_128_HMAC_SHA1_80 -srtp_out_params {v_srtp_key} '
-        'srtp://{address}:{v_port}?rtcpport={v_port}&'
-        'localrtcpport={v_port}&pkt_size=1378')
-  
+#    "start_stream_cmd" : ('ffmpeg -f video4linux2 -input_format h264 -video_size {width}x{height} '
+#        '-framerate 20 -i /dev/video0 '
+#        '-vcodec copy -an -payload_type 99 -ssrc 1 -f rtsp '
+#        '-b:v {v_max_bitrate}k -bufsize {v_max_bitrate}k '
+#        '-payload_type 99 -f rtp '
+#        '-srtp_out_suite AES_CM_128_HMAC_SHA1_80 -srtp_out_params {v_srtp_key} '
+#        'srtp://{address}:{v_port}?rtcpport={v_port}&'
+#        'localrtcpport={v_port}&pkt_size=1378')
+
+   "start_stream_cmd" :( 'ffmpeg -f video4linux2 -input_format h264 -i 0:0 -threads 0 '
+    '-vcodec libx264 -an -pix_fmt yuv420p -r {fps} -f rawvideo -tune zerolatency '
+    '-vf scale={width}:{height} -b:v {v_max_bitrate}k -bufsize {v_max_bitrate}k '
+    '-payload_type 99 -ssrc {v_ssrc} -f rtp '
+    '-srtp_out_suite AES_CM_128_HMAC_SHA1_80 -srtp_out_params {v_srtp_key} '
+    'srtp://{address}:{v_port}?rtcpport={v_port}&'
+    'localrtcpport={v_port}&pkt_size=1378'
+)  
 }
 
 logger.debug('options: '+ str(options))

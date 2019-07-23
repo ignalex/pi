@@ -17,8 +17,8 @@ from modules.common import LOGGER
 logger = LOGGER('camera', 'INFO', True)
 
 DEV_VIDEO = '/dev/video0'
-
 IP_ADDRESS = [l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8',53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0]
+THREADS = 4
 
 from pyhap.accessory_driver import AccessoryDriver
 from pyhap import camera
@@ -67,7 +67,7 @@ options = {
     "srtp": True,
     "address": IP_ADDRESS,
 
-    "start_stream_cmd" :( 'ffmpeg -f video4linux2 -input_format h264 -i /dev/video0 -threads 0 '
+    "start_stream_cmd" :( 'ffmpeg -f video4linux2 -input_format h264 -i ' + DEV_VIDEO + ' -threads ' + str(THREADS) + ' '
     '-vcodec libx264 -an -pix_fmt yuv420p -r {fps} -f rawvideo -tune zerolatency '
     '-vf scale={width}:{height} -b:v {v_max_bitrate}k -bufsize {v_max_bitrate}k '
     '-payload_type 99 -ssrc {v_ssrc} -f rtp '

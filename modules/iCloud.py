@@ -145,9 +145,9 @@ def get_Photos(api, album=p.icloud_photo.album, version=p.icloud_photo.version, 
         path = os.path.join(target_dir, photo.filename)
         if os.path.exists(path):
             logger.debug('photo {} exists - skipping'.format(path))
-            next
+            continue
         v = version if version in photo.versions.keys() else 'thumb'
-        logger.info('downloading {}/{} : {} : {}'.format(n, len(album) - n, path, v))
+        logger.info('downloading {}/{} : {} : {}'.format(n, len(album), path, v))
         download = photo.download(v)
         with open(path, 'wb') as opened_file:
             opened_file.write(download.raw.read())

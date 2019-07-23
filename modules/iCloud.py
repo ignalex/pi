@@ -4,6 +4,10 @@ Created on Mon Aug 04 17:12:41 2014
 
 @author: aignatov
 """
+
+#TODO: class
+
+
 from __future__ import print_function
 
 from pyicloud import PyiCloudService
@@ -65,7 +69,7 @@ def request_2FA(api):
         pip3 install git+https://github.com/danielfmolnar/pyicloud
     """
     auth_type = [i for i in ['requires_2sa', 'requires_2fa'] if hasattr(api, i)][0]
-    if getattr(api, auth_type): # or 2sa? 
+    if getattr(api, auth_type): # or 2sa?
         m.logger.info ("Two-step authentication required {}. Your trusted devices are:".format(auth_type))
 
         devices = api.trusted_devices
@@ -132,6 +136,23 @@ def re_authenticate(api): # api must already exists
         Speak('icloud authentication complete')
         return True
 
+#%% photo
+def get_Photos(api, album=p.icloud_photo.album, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, select='all'):
+    "get photos from iCloud"
+    #TODO: run from pa_service for not creteing API
+    album = api.photos.albums[album]
+    for n, photo in enumerate(album):
+        path = os.path.join(target_dir, photo.filename)
+        if os.path.exists(path):
+            logger.debug('photo {} exists - skipping'.format(path))
+            next
+        v = version if version in photo.versions.keys() else 'thumb'
+        logger.info('downloading {}/{} : {} : {}'.format(n, len(album) - n, path, v))
+        download = photo.download(v)
+        with open(path, 'wb') as opened_file:
+            opened_file.write(download.raw.read())
+
+
 
 if __name__ == '__main__':
     logger = LOGGER('icloud')
@@ -143,3 +164,6 @@ if __name__ == '__main__':
                 logger.info ('authentication complete'); Speak('authentication complete')
             else:
                 logger.fatal('authentication failed'); Speak('authentication failed')
+        elif 'photo' in sys.argv:
+            logger.info('downloading photos')
+            get_Photos(api)

@@ -166,4 +166,5 @@ if __name__ == '__main__':
                 logger.fatal('authentication failed'); Speak('authentication failed')
         elif 'photo' in sys.argv:
             logger.info('downloading photos')
+            api = iCloudConnect()
             get_Photos(api)

@@ -9,6 +9,7 @@ Created on Mon Aug 04 17:32:17 2014
 - ESP integration (total dark trigger)  [DISABLED]
 - distance to home trigger              [DISABLED]
 - 2FA icloud > integration
+#TODO: as service
 """
 
 from __future__ import print_function
@@ -18,7 +19,7 @@ import datetime
 from time import sleep
 
 from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
-from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate)
+from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from PA import REMINDER
 
 #from tracking import DistanceToPoint
@@ -58,7 +59,9 @@ def PA_service():
     while True:
         now = datetime.datetime.now()
         if now - datetime.timedelta(minutes = 5) > p.last_scan:
-            logger.info('re-scanning >> ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
+
+            #rescan calendar
+            logger.info('re-scanning events >> ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
             try:
                 EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
             except:
@@ -72,13 +75,23 @@ def PA_service():
                     logger.error(' all bad :( skipping till next update')
                     sleep (60)
                     continue
+
+            #rescan photos
+            logger.info('rescanning Photo Library')
+            #TODO: mount smb
+            try:
+                get_Photos(p.iCloudApi, album=p.icloud_photo.album, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, select='all') # rest args default
+            except Exception as e:
+                logger.error(str(e))
+
             p.last_scan = now
+
+
         if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
             next_event = [v for k,v in EV.reminders.items() if k == datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)][0]
             min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
             reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
             logger.info(reminder)
-#            os.system('python {} {}'.format(os.path.join(Dirs()['REPO'],'PA.py'), reminder))  #TODO: fix > why not via internal call to PA?
             REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
         sleep(60)
 

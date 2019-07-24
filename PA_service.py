@@ -52,9 +52,13 @@ def PA_service():
     logger.info('PA service started')
     #esp = ESP()
     p.iCloudApi = iCloudConnect() # keeping connected API for later
+
     EV = Events(iCloudCal(p.iCloudApi, datetime.datetime.today()))
     logger.info('following events found for today: ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
     logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
+
+    get_Photos(p.iCloudApi, albums=p.icloud_photo.albums, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, select='all')
+
     p.last_scan = datetime.datetime.now()
     while True:
         now = datetime.datetime.now()

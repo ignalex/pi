@@ -44,7 +44,7 @@ sudo pip install plotly cufflinks psycopg2 python-daemon  speedtest-cli sqlalche
 sudo pip3 install plotly cufflinks psycopg2 python-daemon  speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
 
 #pyicloud
-#NEED TO  install from GIT > 
+#NEED TO  install from GIT >
 pip3 uninstall pyicloud
 pip3 install git+https://github.com/danielfmolnar/pyicloud
 
@@ -84,5 +84,8 @@ cd max7219
 sudo python3 setup.py install
 
 
-# KODI 
-sudo apt-get install kodi 
+# KODI
+sudo apt-get install kodi
+
+# mounting samba
+sudo mount -t cifs //192.168.1.7/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,vers=1.0,sec=ntlm

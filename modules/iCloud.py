@@ -144,10 +144,10 @@ def get_Photos(api, album=p.icloud_photo.album, version=p.icloud_photo.version, 
     for n, photo in enumerate(album):
         path = os.path.join(target_dir, photo.filename)
         if os.path.exists(path):
-            logger.debug('photo {} exists - skipping'.format(path))
+            m.logger.debug('photo {} exists - skipping'.format(path))
             continue
         v = version if version in photo.versions.keys() else 'thumb'
-        logger.info('downloading {}/{} : {} : {}'.format(n+1, len(album), path, v))
+        m.logger.info('downloading {}/{} : {} : {}'.format(n+1, len(album), path, v))
         download = photo.download(v)
         with open(path, 'wb') as opened_file:
             opened_file.write(download.raw.read())

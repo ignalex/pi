@@ -152,19 +152,21 @@ def get_Photos(api, albums=p.icloud_photo.albums, version=p.icloud_photo.version
             m.logger.info('creating folder {} for album {}'.format(os.path.join(target_dir, alb), alb))
             os.makedirs(os.path.join(target_dir, alb))
 
+        photos = []
         for n, photo in enumerate(album):
             path = os.path.join(target_dir, alb, photo.filename)
+            photos.append(photo.filename)
             if os.path.exists(path):
                 m.logger.debug('photo {} exists - skipping'.format(path))
                 continue
-            v = version if version in photo.versions.keys() else 'thumb'
-            m.logger.info('downloading {}/{} : {} : {}'.format(n+1, len(album), path, v))
+            v = version if version in photo.versions.keys() else 'thumb' #!!! isn't thumb too small?
+            m.logger.info('downloading {}/{} : {} :  {} ({})'.format(n+1, len(album), path, v, str(photo.versions.keys())))
             download = photo.download(v)
             with open(path, 'wb') as opened_file:
                 opened_file.write(download.raw.read())
 
         if delete_removed:
-            remove = [os.path.join(target_dir, alb, i) for i in os.listdir(os.path.join(target_dir, alb)) if i not  in [photo.filename for  photo in album]]
+            remove = [os.path.join(target_dir, alb, i) for i in os.listdir(os.path.join(target_dir, alb)) if i not  in photos]
             if remove != []:
                 for f in remove:
                     try:

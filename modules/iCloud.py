@@ -137,10 +137,10 @@ def re_authenticate(api): # api must already exists
         return True
 
 #%% photo
-def get_Photos(api, albums=p.icloud_photo.albums, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, select='all'):
+def get_Photos(api, albums=p.icloud_photo.albums, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, delete_removed=p.icloud_photo.delete_removed):
     "get photos from iCloud"
     #DONE: run from pa_service for not creating API (authentication)
-    #TODO: delete deleted photos
+    #DONE: delete deleted photos
 
     for alb in albums:
         m.logger.info('processing album : {}'.format(alb))
@@ -160,9 +160,22 @@ def get_Photos(api, albums=p.icloud_photo.albums, version=p.icloud_photo.version
             download = photo.download(v)
             with open(path, 'wb') as opened_file:
                 opened_file.write(download.raw.read())
+
+        if delete_removed:
+            remove = [os.path.join(target_dir, alb, i) for i in os.listdir(os.path.join(target_dir, alb)) if i not  in [photo.filename for  photo in album]]
+            if remove != []:
+                for f in remove:
+                    try:
+                        os.remove(f)
+                        m.logger.info('deleting removed image {}'.format(f))
+                    except Exception as e:
+                        m.logger.error(e)
+
+
         m.logger.info('Photo album {} syncronized'.format(alb))
 
 
+#%%
 if __name__ == '__main__':
     logger = LOGGER('icloud')
     if len(sys.argv) > 1:

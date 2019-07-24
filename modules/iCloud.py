@@ -137,21 +137,30 @@ def re_authenticate(api): # api must already exists
         return True
 
 #%% photo
-def get_Photos(api, album=p.icloud_photo.album, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, select='all'):
+def get_Photos(api, albums=p.icloud_photo.albums, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, select='all'):
     "get photos from iCloud"
-    #TODO: run from pa_service for not creating API (authentication)
-    album = api.photos.albums[album]
-    for n, photo in enumerate(album):
-        path = os.path.join(target_dir, photo.filename)
-        if os.path.exists(path):
-            m.logger.debug('photo {} exists - skipping'.format(path))
-            continue
-        v = version if version in photo.versions.keys() else 'thumb'
-        m.logger.info('downloading {}/{} : {} : {}'.format(n+1, len(album), path, v))
-        download = photo.download(v)
-        with open(path, 'wb') as opened_file:
-            opened_file.write(download.raw.read())
+    #DONE: run from pa_service for not creating API (authentication)
+    #TODO: delete deleted photos
 
+    for alb in albums:
+        m.logger.info('processing album : {}'.format(alb))
+        album = api.photos.albums[alb]
+
+        if not os.path.exists(os.path.join(target_dir, alb)):
+            m.logger.info('creating folder {} for album {}'.format(os.path.join(target_dir, alb), alb))
+            os.makedirs(os.path.join(target_dir, alb))
+
+        for n, photo in enumerate(album):
+            path = os.path.join(target_dir, alb, photo.filename)
+            if os.path.exists(path):
+                m.logger.debug('photo {} exists - skipping'.format(path))
+                continue
+            v = version if version in photo.versions.keys() else 'thumb'
+            m.logger.info('downloading {}/{} : {} : {}'.format(n+1, len(album), path, v))
+            download = photo.download(v)
+            with open(path, 'wb') as opened_file:
+                opened_file.write(download.raw.read())
+        m.logger.info('Photo album {} syncronized'.format(alb))
 
 
 if __name__ == '__main__':

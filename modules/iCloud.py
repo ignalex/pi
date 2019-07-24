@@ -139,7 +139,7 @@ def re_authenticate(api): # api must already exists
 #%% photo
 def get_Photos(api, album=p.icloud_photo.album, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, select='all'):
     "get photos from iCloud"
-    #TODO: run from pa_service for not creteing API
+    #TODO: run from pa_service for not creating API (authentication)
     album = api.photos.albums[album]
     for n, photo in enumerate(album):
         path = os.path.join(target_dir, photo.filename)

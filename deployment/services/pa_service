@@ -1,0 +1,14 @@
+# sudo nano /etc/systemd/system/PA_service.service
+# sudo systemctl enable PA_service
+
+[Unit]
+Description = PA service daemon
+After = local-fs.target network-online.target
+
+[Service]
+User=pi
+# It's a good idea to use some unprivileged system user
+ExecStart = /usr/bin/python3 /home/pi/git/pi/PA_service.py
+
+[Install]
+WantedBy = multi-user.target

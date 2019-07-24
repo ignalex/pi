@@ -80,9 +80,10 @@ def PA_service():
             logger.info('rescanning Photo Library')
             #TODO: mount smb
             try:
-                get_Photos(p.iCloudApi, album=p.icloud_photo.album, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, select='all') # rest args default
+                get_Photos(p.iCloudApi, albums=p.icloud_photo.albums, version=p.icloud_photo.version, target_dir=p.icloud_photo.target_dir, select='all') # rest args default
             except Exception as e:
                 logger.error(str(e))
+                MainException()
 
             p.last_scan = now
 
@@ -120,9 +121,9 @@ if __name__ == '__main__':
 
 #    while True:
     try:
-        import daemon
-        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-            pa_service_under_daemon()
+#        import daemon
+#        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
+        pa_service_under_daemon()
     except:
         MainException()
 #            if error.find('Unauthorized') != -1 or error.find('PyiCloudAPIResponseError') != -1:

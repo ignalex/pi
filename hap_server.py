@@ -21,7 +21,7 @@ from accessories_ai.windows import WindowCovering
 from accessories_ai.computers import SYSTEM
 
 from common import LOGGER
-logger = LOGGER('HAP_server', 'DEBUG')
+logger = LOGGER('HAP_server', 'INFO')
 
 from talk import Speak
 Speak('starting HAP server')

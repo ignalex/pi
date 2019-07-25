@@ -40,7 +40,7 @@ class AllSwitches(Accessory):
         self.service = {'light' :       ['Lightbulb', 'set_switch_esp'],
                         'heater':       ['Switch', 'set_switch_esp'],
                         'coffee':       ['Switch', 'set_switch_esp'],
-                        'ambient_light':['Switch', 'set_switch_sonoff', {'IP': '192.168.1.18'}],
+                        'ambient light':['Switch', 'set_switch_sonoff', {'IP': '192.168.1.18'}],
                         'beep' :        ['Switch', 'beep'],
                         'watering' :    ['Switch', 'watering']
                         }[self.id]

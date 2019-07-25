@@ -88,4 +88,4 @@ sudo python3 setup.py install
 sudo apt-get install kodi
 
 # mounting samba
-sudo mount -t cifs //192.168.1.7/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,vers=1.0,sec=ntlm
+sudo mount -t cifs //192.168.1.7/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,password=guest,vers=1.0,sec=ntlm

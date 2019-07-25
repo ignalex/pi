@@ -16,7 +16,7 @@ from pyhap.accessory_driver import AccessoryDriver
 # The below package can be found in the HAP-python github repo under accessories/
 
 from accessories_ai.sensors import TemperatureSensor, LightSensor#, InternetSpeed
-from accessories_ai.switches import AllSwitches, EspStatusCollector, ProgramableSwitch
+from accessories_ai.switches import AllSwitches, EspStatusCollector#, ProgramableSwitch
 from accessories_ai.windows import WindowCovering
 from accessories_ai.computers import SYSTEM
 
@@ -34,14 +34,14 @@ def get_bridge(driver):
 
     temp_sensor = TemperatureSensor(driver, 'temperature')
     light = AllSwitches(driver, 'light')
-    light_ambient = AllSwitches(driver, '14')
+    light_ambient = AllSwitches(driver, 'ambient_light')
     heater = AllSwitches(driver, 'heater')
     coffee = AllSwitches(driver, 'coffee')
     lightSenor1 = LightSensor(driver, 'light sensor 1', ip=175)
     lightSenor2 = LightSensor(driver, 'light sensor 2', ip=176)
     window = WindowCovering(driver, 'window', ip=175, calibrate=True, speak=True, minStep=10)
     beep = AllSwitches(driver, 'beep')
-    program1 = ProgramableSwitch(driver,'program 1')
+#    program1 = ProgramableSwitch(driver,'program 1')
     watering = AllSwitches(driver, 'watering')
     hippo = SYSTEM(driver, 'hippopotamus')
 #    raid = SYSTEM(driver, 'raid')
@@ -56,7 +56,7 @@ def get_bridge(driver):
     bridge.add_accessory(lightSenor2)
     bridge.add_accessory(window)
     bridge.add_accessory(beep)
-    bridge.add_accessory(program1)
+#    bridge.add_accessory(program1)
     bridge.add_accessory(watering)
     bridge.add_accessory(light_ambient)
     bridge.add_accessory(hippo)

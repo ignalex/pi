@@ -36,26 +36,37 @@ class AllSwitches(Accessory):
 
     def __init__(self, *args,  **kwargs):
         super().__init__(*args, **kwargs)
-        self.service = {'light' : ['Lightbulb', 'set_switch'],
-                        'heater': ['Switch', 'set_switch'],
-                        'coffee': ['Switch', 'set_switch'],
-                        '14':     ['Switch', 'set_switch'],
-                        'beep' :  ['Switch', 'beep'],
-                        'watering' : ['Switch', 'watering']
-                        }[args[1]]
+        self.id = args[1]
+        self.service = {'light' :       ['Lightbulb', 'set_switch_esp'],
+                        'heater':       ['Switch', 'set_switch_esp'],
+                        'coffee':       ['Switch', 'set_switch_esp'],
+                        'ambient_light':['Switch', 'set_switch_sonoff', {'IP': '192.168.1.18'}],
+                        'beep' :        ['Switch', 'beep'],
+                        'watering' :    ['Switch', 'watering']
+                        }[self.id]
         serv = self.add_preload_service(self.service[0], chars=['On','Name'])
         self.char_on = serv.configure_char(
             'On', setter_callback=getattr(self, self.service[1]))
-        self.id = args[1]
+        # switch_type : sonoff or esp or None
+        self.switch_type = self.service[1].split('_')[2] if self.service[1].find('set_switch') != -1 else None
+        # extra config / IP etc
+        self.metadata = self.service[2]  if len(self.service) > 2 else None
         self.char_name = serv.configure_char('Name')
         self.char_name.value = self.id
 
     def __setstate__(self, state):
         self.__dict__.update(state)
 
-    def set_switch(self, value):
+    def set_switch_esp(self, value):
         com = 'http://192.168.1.176/control/rf433/{}/{}'.format(self.id, value)
         resp = requests.request('GET', com, timeout = 5).json()['data']
+        logger.info(str(resp))
+
+    def set_switch_sonoff(self, value):
+        com = 'http://{}/cm?cmnd=Power%20{}'.format(self.metadata['IP'], value)
+        #http://<ip>/cm?cmnd=Power%20On
+        #PowerOnState
+        resp = requests.request('GET', com, timeout = 5).content
         logger.info(str(resp))
 
     def beep(self, value):
@@ -83,70 +94,52 @@ class AllSwitches(Accessory):
     def run(self):
         "!! status collector must be called from main module first with name st"
         logger.debug('requesting status for {}'.format(self.id))
-        if self.id not in m.st.status.keys():
-            logger.debug('status for {} is not set'.format(self.id))
-            return
-        if self.char_on.value != int(m.st.status[self.id]): #status changed outside
-            logger.info('state for {} changed to {}'.format(self.id, m.st.status[self.id]))
-           # Speak('state for {} changed to {}'.format(self.id, int(m.st.status[self.id])))
-            self.char_on.value = int(m.st.status[self.id])
+
+        if  self.switch_type in ['esp',None]:
+            if self.id not in m.st.status.keys():
+                logger.debug('status for {} is not set'.format(self.id))
+                return
+            if self.char_on.value != int(m.st.status[self.id]): #status changed outside
+                logger.info('state for {} changed to {}'.format(self.id, m.st.status[self.id]))
+               # Speak('state for {} changed to {}'.format(self.id, int(m.st.status[self.id])))
+                self.char_on.value = int(m.st.status[self.id])
+                self.char_on.notify()
+        elif self.switch_type == 'sonoff':
+            com = 'http://{}/cm?cmnd=Power'.format(self.metadata['IP'])
+            resp = requests.request('GET', com, timeout = 5).json()['POWER']
+            logger.info(str(resp)) #!!!: parse response + pass to accessory
+            self.char_on.value = 1 if resp == 'ON' else 0
             self.char_on.notify()
-        #TODO: implement delta time check
-
-#    @Accessory.run_at_interval(60)
-#    def run(self):
-#        "scanning and propogating state"
-#        if self.id not in ['light', 'coffee', 'heater']: return
-#        logger.debug('requesting status for {}'.format(self.id))
-#        com = 'http://192.168.1.176/control/rf_states'
-#        for attempt in range(0,2):
-#            try:
-#                resp = requests.request('GET', com, timeout = 1)#.json()['data']['rf_states']
-#                if resp.ok:
-#                    j = resp.json()['data']['rf_states']
-#                    if self.id in j.keys():
-#                        if self.char_on.value != int(j[self.id]): #status changed outside
-#                            logger.info('state for {} changed to {}'.format(self.id, int(j[self.id])))
-#                            Speak('state for {} changed to {}'.format(self.id, int(j[self.id]))) #!!!: remove later
-#                            self.char_on.value = int(j[self.id])
-#                            self.char_on.notify()
-#                    else:
-#                        logger.debug('no rf_state for {} returned'.format(self.id))
-#                    return
-#                else:
-#                    sleep(0.2)
-#            except Exception as e:
-#                logger.error('cant get meaningful response from ESP {} - attempt {}: {}'.format(self.id, attempt, str(e)))
 
     def stop(self):
         super().stop()
 
-class ProgramableSwitch(Accessory):
-    #TODO: doesn't work
-    """ "StatelessProgrammableSwitch": {
-      "OptionalCharacteristics": [
-         "Name",
-         "ServiceLabelIndex"
-      ],
-      "RequiredCharacteristics": [
-         "ProgrammableSwitchEvent"
-      ],"""
-    category = CATEGORY_PROGRAMMABLE_SWITCH
-
-    def __init__(self, *args,  **kwargs):
-        super().__init__(*args, **kwargs)
-        self.service = {'program 1' : ['StatelessProgrammableSwitch', 'ProgrammableSwitchEvent']
-                        }['program 1']
-        serv = self.add_preload_service(self.service[0])
-        self.char = serv.configure_char(self.service[1])#, setter_callback=getattr(self, args[1]))
-
-    def __setstate__(self, state):
-        self.__dict__.update(state)
-
-    def stop(self):
-        super().stop()
+#class ProgramableSwitch(Accessory):
+#    #???: doesn't work
+#    """ "StatelessProgrammableSwitch": {
+#      "OptionalCharacteristics": [
+#         "Name",
+#         "ServiceLabelIndex"
+#      ],
+#      "RequiredCharacteristics": [
+#         "ProgrammableSwitchEvent"
+#      ],"""
+#    category = CATEGORY_PROGRAMMABLE_SWITCH
+#
+#    def __init__(self, *args,  **kwargs):
+#        super().__init__(*args, **kwargs)
+#        self.service = {'program 1' : ['StatelessProgrammableSwitch', 'ProgrammableSwitchEvent']
+#                        }['program 1']
+#        serv = self.add_preload_service(self.service[0])
+#        self.char = serv.configure_char(self.service[1])#, setter_callback=getattr(self, args[1]))
+#
+#    def __setstate__(self, state):
+#        self.__dict__.update(state)
+#
+#    def stop(self):
+#        super().stop()
 #%%
-class EspStatusCollector():
+class EspStatusCollector(): #TODO: collector for SONOFF
     " status collector? >>> one pre-stored element"
     " get into threading"
     def __init__(self, ips = [175, 176]):

@@ -81,7 +81,7 @@ def PA_service():
                     continue
 
             #rescan photos
-            logger.info('rescanning Photo Library')
+            logger.debug('rescanning Photo Library')
             #TODO: mount smb
             try:
                 get_Photos(p.iCloudApi) # rest args default

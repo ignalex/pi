@@ -64,8 +64,6 @@ class AllSwitches(Accessory):
 
     def set_switch_sonoff(self, value):
         com = 'http://{}/cm?cmnd=Power%20{}'.format(self.metadata['IP'], value)
-        #http://<ip>/cm?cmnd=Power%20On
-        #PowerOnState
         resp = requests.request('GET', com, timeout = 5).content
         logger.info(str(resp))
 

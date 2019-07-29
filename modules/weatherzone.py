@@ -29,7 +29,7 @@ Created on Tue Jan 27 10:58:24 2015
 from __future__ import print_function
 import __main__ as m
 import requests
-from random import random 
+from random import random
 from statistics import mean
 
 import os, datetime, sys
@@ -75,7 +75,7 @@ class WEATHER(object):
             self.config[name] = (getattr(p.weather,name) if hasattr(p.weather, name) else default) \
                                 if hasattr(p,'weather') else default
         self.Update()
-        
+
     def Update(self):
         self.call = {'rain' : ["<b>Rain:</b> ","mm since"],
                      'temp_out' : ["<b>Temperature:</b> ","&#"],
@@ -118,7 +118,10 @@ class WEATHER(object):
         try:
             setattr(self,name,float(found))
         except:
-            setattr(self,name,None)
+            try:
+                setattr(self,name,float(found.replace(' ','')))  # removing spaces.
+            except:
+                setattr(self,name,None)
     def Forecast(self): #TODO: logic same > integrate better
         name,f =  'forecast', ['<img src="http://www.weatherzone.com.au/images/icons/fcast_30/','.gif']
         f1_pos = self.html.find(f[0])+len(f[0])
@@ -132,7 +135,7 @@ class WEATHER(object):
         "average over N readings"
         temp_in = Temp()
         self.temp_in_hist = ((self.temp_in_hist if hasattr(self,'temp_in_hist') else []) + \
-                             [float(temp_in)])[-N:]        
+                             [float(temp_in)])[-N:]
         self.temp_in = round(mean(self.temp_in_hist),1)
         self.call['temp_in'] = ["",""]
 
@@ -150,7 +153,7 @@ class WEATHER(object):
     def DHT11(self):
         "scan DHT11 sensor"
         temp_in, humid_in = dht11()
-        
+
         setattr(self,'temp_in',float(humid_in))
         setattr(self,'humid_in',float(humid_in))
         self.call['temp_in'] = ["",""]
@@ -163,13 +166,13 @@ class WEATHER(object):
         try:
             self.link_solar = p.SOLAR_LINK
             self.html_solar = requests.request('GET',self.link_solar,timeout = 5).text
-            for k,v in {'solar' : ["<td>Currently</td>    <td>    "," W</td></tr>"]}.items(): #!!!: here could be extra spaces
+            for k,v in {'solar' : ["<td>Currently</td>    <td>","W</td></tr>"]}.items(): #!!!: here could be extra spaces
                 self.Process(k,v, self.html_solar) # solar html
             self.call['solar'] = ["",""] #compatibility
             self.debug('solar scanned : {} kW'.format(str(self.solar)))
         except Exception as e:
             m.logger.debug('cant scan solar URL\n' + str(e))
-            #test 
+            #test
             self.call['solar'] = ["",""]
             self.solar = 500 + int(random() * 500) #!!!: turn off later
             return
@@ -206,7 +209,7 @@ def light_sensor(link='http://192.168.1.175/control/sensor'):
     except:
         return None
 
-def to_db(w, con = 'local_pi_db'): 
+def to_db(w, con = 'local_pi_db'):
     "con to be set in one of the INI files, default to localhost"
     #TODO: into class > to be able to write from inside
     print ('adding to db')

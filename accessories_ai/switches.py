@@ -4,7 +4,7 @@ Created on Wed Sep 19 19:15:48 2018
 
 @author: Alexander Ignatov
 """
-#TODO: add power outlet
+#DONE: add power outlet
 #TODO: find button event
 
 import requests

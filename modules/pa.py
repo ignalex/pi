@@ -27,7 +27,7 @@ def pa(arg):
     if 'ssh' in config.keys():
         cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/PA.py '{arg}'".format(**config)
     else:
-        cmd = "python /home/pi/git/pi/PA.py '{arg}'".format(**config) #was &
+        cmd = "python3 /home/pi/git/pi/PA.py '{arg}'".format(**config) #was &
     m.logger.info(cmd)
     os.system(cmd)
 

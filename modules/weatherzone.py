@@ -169,7 +169,7 @@ class WEATHER(object):
             for k,v in {'solar' : ["<td>Currently</td>    <td>","W</td></tr>"]}.items(): #!!!: here could be extra spaces
                 self.Process(k,v, self.html_solar) # solar html
             self.call['solar'] = ["",""] #compatibility
-            self.debug('solar scanned : {} kW'.format(str(self.solar)))
+            m.logger.debug('solar scanned : {} kW'.format(str(self.solar)))
         except Exception as e:
             m.logger.debug('cant scan solar URL\n' + str(e))
             #test

@@ -154,7 +154,7 @@ class WEATHER(object):
         "scan DHT11 sensor"
         temp_in, humid_in = dht11()
 
-        setattr(self,'temp_in',float(humid_in))
+        setattr(self,'temp_in',float(temp_in))
         setattr(self,'humid_in',float(humid_in))
         self.call['temp_in'] = ["",""]
         self.call['humid_in'] = ["",""]

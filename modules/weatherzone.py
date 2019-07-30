@@ -174,7 +174,7 @@ class WEATHER(object):
             m.logger.debug('cant scan solar URL\n' + str(e))
             #test
             self.call['solar'] = ["",""]
-            self.solar = 500 + int(random() * 500) #!!!: turn off later
+            self.solar = 0.009
             return
 
     def DateTime(self):

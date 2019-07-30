@@ -62,7 +62,7 @@ if __name__ == '__main__':
                     _ip, _to, _from_addr, _from_login, _from_pass = sys.argv[1:]
                     IP = MyIP()
                     if LastLine('/home/pi/LOG/send_ip', 2).find(IP) == -1: # updated
-                        reply = sendMail(_to.split(';'), [_from_addr, _from_login, _from_pass], 'IP - ' +  p.NAME , 'IP changed to ' + IP ,[]) +  ' IP changed'
+                        reply = sendMail(_to.split(':'), [_from_addr, _from_login, _from_pass], 'IP - ' +  p.NAME , 'IP changed to ' + IP ,[]) +  ' IP changed'
                     else:
                         reply = 'IP same '
                 logger.warn('OK, IP =' + IP + ' ' + reply)

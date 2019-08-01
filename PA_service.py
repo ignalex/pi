@@ -50,12 +50,13 @@ def command():
     "args=HR;AA --- etc."
     global p, m
     RUN, args = request.args.get('RUN'), request.args.get('args')
+    m.logger.info('PARAMS: ' + str(RUN) +  ' : ' + str(args))
     if RUN is None:
         m.logger.error('no module in RUN')
-        return
+        return jsonify({'status' : 'ERROR', 'message' : 'no module in RUN'})
     if RUN not in globals():
         m.logger.error('RUN = {}, module not loaded'.format(str(RUN)))
-        return
+        return jsonify({'status' : 'ERROR', 'message' : 'RUN = {}, module not loaded'.format(str(RUN))})
     else:
         # module loaded
         args = args.split(';') if args is not None else [] # must be array

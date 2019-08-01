@@ -20,7 +20,7 @@ def pac(run, args=None):
 
 if __name__ == '__main__':
     logger = LOGGER('pac')
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 2:
         pac(sys.argv[1])
-    else:
+    elif len(sys.argv) > 2:
         pac(sys.argv[1], sys.argv[2])

@@ -27,7 +27,7 @@ def pa(args):
     """
 
     config = CONFIGURATION().pa.__dict__
-    config['RUN'] = args[0] if type(args) == list else args # 1st param is MODULE
+    config['RUN'] = args[0].upper() if type(args) == list else args.upper() # 1st param is MODULE
 
     if 'ssh' in config.keys():
         cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/PA.py '{RUN}'".format(**config)

@@ -9,7 +9,12 @@ Created on Mon Aug 04 17:32:17 2014
 - ESP integration (total dark trigger)  [DISABLED]
 - distance to home trigger              [DISABLED]
 - 2FA icloud > integration
-#TODO: as service
+
+#DONE: as service
+#TODO: merge PA and PA_service (into pas :) > listen to port XXXX - trigger
+#TODO: from CMD: pa {command} will send com to port
+#NO: merge with internet_speed + rename to server? > that one is for non iCloud related
+#NO: make iCloud OPTIONAL for run > this one core is iCloud
 """
 
 from __future__ import print_function
@@ -17,10 +22,13 @@ from __future__ import print_function
 #import  os
 import datetime
 from time import sleep
+import threading
 
 from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
-from PA import REMINDER
+from PA import REMINDER, TIME
+
+from flask import Flask, request
 
 #from tracking import DistanceToPoint
 #from modules.sunrise import IsItNowTimeOfTheDay
@@ -30,6 +38,40 @@ from PA import REMINDER
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
+import __main__ as m
+
+#%% app
+app = Flask(__name__) #!!!: need to run it in a thread?
+
+@app.route("/cmnd")
+def command():
+    "get and run command by GET method"
+    "/cmnd?RUN={module}&args={args}"
+    "args=HR;AA --- etc."
+    global p, m
+    RUN, args = request.args.get('RUN'), request.args.get('args')
+    if RUN is None:
+        m.logger.error('no module in RUN')
+        return
+    if RUN not in globals():
+        m.logger.error('RUN = {}, module not loaded'.format(str(RUN)))
+        return
+    else:
+        # module loaded
+        args = args.split(';') if args is not None else None # must be array
+        m.logger.info('RUN : {}, args = {}'.format(RUN,str(args)))
+        try:
+            globals()[RUN](args)
+        except Exception as e:
+            m.logger.error(str(e))
+
+def App():
+    "run app in a thread"
+    app.run(debug=True, use_debugger = True, use_reloader = True, port = 8083, host = '127.0.0.1')
+
+
+
+#%%
 class Events(object):
     def __init__(self,Events):
         self.reminders = {}
@@ -60,6 +102,10 @@ def PA_service():
     get_Photos(p.iCloudApi)
 
     p.last_scan = datetime.datetime.now()
+
+    # start listining App port
+    threading.Thread(target=App).start()
+
     while True:
         now = datetime.datetime.now()
         if now - datetime.timedelta(minutes = 5) > p.last_scan:
@@ -100,7 +146,7 @@ def PA_service():
             REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
         sleep(60)
 
-def pa_service_under_daemon():
+def pa_reAuth():
     while True:
         try:
             #import daemon
@@ -123,17 +169,7 @@ if __name__ == '__main__':
     p.last_scan = '' # addition
     PID()
 
-#    while True:
     try:
-#        import daemon
-#        with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-        pa_service_under_daemon()
+        pa_reAuth()
     except:
         MainException()
-#            if error.find('Unauthorized') != -1 or error.find('PyiCloudAPIResponseError') != -1:
-#                while True:
-#                    if re_authenticate(p.iCloudApi): break # passing existing api / not authenticated
-#                    sleep(30) # time between attempts
-#            else:
-#                logger.info('waiting 1 min and retrying...')
-#                sleep (60)

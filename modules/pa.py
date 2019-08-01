@@ -11,6 +11,7 @@ Created on Sat Aug 02 08:04:03 2014
 #DONE: pa path OUT
 #DONE: pa via ssh or directly
 #TODO: whole call to pa via cmd is NOT GOOD
+#TODO: option > send command to SERVICE by PORT
 
 from __future__ import print_function
 import __main__ as m

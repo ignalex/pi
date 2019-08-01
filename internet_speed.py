@@ -157,7 +157,7 @@ def weather():
     #DONE: render template
     #DONE: pressure, wind, rain
     #DONE: interpolate on request
-    #TODO: non fixed columns 
+    #TODO: non fixed columns
     """   index bigint,
           wind_gust double precision,
           datetime timestamp without time zone,
@@ -176,18 +176,18 @@ def weather():
     resample = [i if i is not None else False for i in [request.args.get('resample')]][0]
     con = PANDAS2POSTGRES(p.local_pi_db.__dict__)
 
-    #TODO: commmon used + special 
+    #TODO: commmon used + special
     # spacial :  [values MUST be array - even if one]
     # weather_sensors = name_div|light,name_cols|light_1;light_2,select|light_1;light_2/1.2 as light_2
     # weather_sensors = name_div|solar,name_cols|solar;,select|solar;
-    
-    # collecting extra: 
+
+    # collecting extra:
     sel = (','.join(p.weather_sensors.select) + ',' if hasattr(p,'weather_sensors') else '').replace(',,',',')
-    
+
     df = con.read("""select datetime,
-        --light_1, 
-        --light_2/1.2 as light_2,  
-        """ + sel + """        
+        --light_1,
+        --light_2/1.2 as light_2,
+        """ + sel + """
     	temp_in, temp_out, temp_today,
         pressure,
         wind, wind_gust,
@@ -200,9 +200,9 @@ def weather():
 
     DIV = {'temperature' : parse_df_for_figure(df, ['temp_in', 'temp_out', 'temp_today'], 'temperature'),
            #'light' : parse_df_for_figure(df, ['light_1', 'light_2'], 'light'),
-           
+
            'extra' : parse_df_for_figure(df, p.weather_sensors.name_cols, p.weather_sensors.name_div)  if hasattr(p,'weather_sensors') else '',
-           
+
            'pressure' : parse_df_for_figure(df, ['pressure'], 'pressure'),
            'wind' : parse_df_for_figure(df, ['wind', 'wind_gust'], 'wind'),
            'rain' : parse_df_for_figure(df, ['humidity', 'rain'], 'humidity and rain')
@@ -221,6 +221,7 @@ def parse_df_for_figure(df, cols, title):
 
 @app.route("/2fa")
 def icloud_authentication():
+    #TODO: move to PAS?
     """get the code and place it into specific location
     syntax: /2fa?code=XXXXXX"""
     #TODO: form instead of only API

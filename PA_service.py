@@ -26,7 +26,7 @@ import threading
 
 from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
-from PA import REMINDER, TIME
+from PA import (REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
 
 from flask import Flask, request, jsonify
 
@@ -48,6 +48,8 @@ def command():
     "get and run command by GET method"
     "/cmnd?RUN={module}&args={args}"
     "args=HR;AA --- etc."
+    "curl localhost:8083/cmnd?RUN=TIME\&args=HM"
+
     global p, m
     RUN, args = request.args.get('RUN'), request.args.get('args')
     m.logger.info('PARAMS: ' + str(RUN) +  ' : ' + str(args))

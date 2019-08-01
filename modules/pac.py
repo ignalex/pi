@@ -12,7 +12,7 @@ import __main__ as m
 import os,sys
 from common import LOGGER
 
-def pac(*args, **kargs):
+def pac(args):
     "python pac.py TIME HR"
     cmd = "curl localhost:8083/cmnd?RUN={}".format(args[0]) +  ('' if len(args) == 1 else '\&args='+';'.join(args[1:]))
     m.logger.info(cmd)

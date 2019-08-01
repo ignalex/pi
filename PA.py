@@ -4,6 +4,8 @@ Created on Tue Jul 29 10:19:08 2014
 
 @author: aignatov
 """
+#TODO: bad design > all reimporting all time - run from CMD not good.
+
 from __future__ import print_function
 
 import sys, os
@@ -31,38 +33,38 @@ import __main__ as m
 
 def Event (args):
     module, p  = args.split('_')[0], args.split('_')[1:]
-    logger.info('module ' + module + ', args ' + str(p))
+    m.logger.info('module ' + module + ', args ' + str(p))
     try:
         if len(args.split('_')) == 1 and module in globals(): # no arguments
             try:
                 globals()[module]([''])
             except:
-                logger.error('error in module ' + module )
+                m.logger.error('error in module ' + module )
                 MainException()
         elif module in globals():
-            logger.info('module imported')
+            m.logger.info('module imported')
             globals()[module](p)
         else:
-            logger.info('>>> to general')
+            m.logger.info('>>> to general')
             GENERAL([module])
     except:
-        logger.error('error in module ' + module + ' ' + str(sys.exc_info()))
+        m.logger.error('error in module ' + module + ' ' + str(sys.exc_info()))
 
 def PA():
     TASKS = [item for sublist in [i.split(':') for i in [j.upper() for j in sys.argv[1:] if j!='-d']] for item in sublist] # taking args and splitting by :
-    logger.debug(str(TASKS))
+    m.logger.debug(str(TASKS))
     for task in TASKS:
-        logger.debug(str(task))
+        m.logger.debug(str(task))
         Event(task)
-        logger.debug(str(task) + ' . ')
+        m.logger.debug(str(task) + ' . ')
         sleep(1)
 
 def GENERAL(arg):
     try:
-        logger.debug( str(arg))
+        m.logger.debug( str(arg))
         Phrase({'TYPE' : arg[0]}) # speak phrase if nothing else.
     except Exception as e:
-        logger.error( str(e) )
+        m.logger.error( str(e) )
         MainException()
 
 def TIME(arg):
@@ -71,7 +73,7 @@ def TIME(arg):
 
 def RUTIME(arg):
     try:
-        logger.debug(str(arg))
+        m.logger.debug(str(arg))
         if arg[0] == '': arg[0] = 'HM'
         Phrase({'TYPE' : 'RUTIME_'+arg[0]})
     except:
@@ -88,7 +90,7 @@ def TEMP(arg):
 def WEATHER(arg):
     w = WEATHER_class()
     w.ToInt()
-    logger.debug('weather read and parsed ' +  '\t'.join([str(w.temp_out) , str(w.humidity) ,  str(w.pressure) , str(w.rain) , str(w.forecast) , str(w.temp_today)]))
+    m.logger.debug('weather read and parsed ' +  '\t'.join([str(w.temp_out) , str(w.humidity) ,  str(w.pressure) , str(w.rain) , str(w.forecast) , str(w.temp_today)]))
     if w.rain_at_all:
         Phrase({'TYPE' : 'WEATHER1', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
                 'RAIN' : str(w.rain), 'FORECAST': str(w.forecast),'TMAX' : str(w.temp_today), \
@@ -99,13 +101,13 @@ def WEATHER(arg):
 
 def WEATHERYAHOO(arg):
     w = weather_yahoo()
-    logger.debug('w element ok')
+    m.logger.debug('w element ok')
     Speak(w.all, store=False) # cause filename <250
-    logger.debug('spoken done')
+    m.logger.debug('spoken done')
 
 def MAIL(arg):
     if 'EMAIL' in p.INI.keys() and p.INI['EMAIL'] != 'NO':
-        logger.info( 'mailing to ' + p.INI['EMAIL'] + ' file ' + str(arg[0]) + ' located at ' + str(p.INI[arg[0]]))
+        m.logger.info( 'mailing to ' + p.INI['EMAIL'] + ' file ' + str(arg[0]) + ' located at ' + str(p.INI[arg[0]]))
         status = []
         if len(arg) > 1:
             subj = arg[1]
@@ -180,15 +182,16 @@ def SPENDINGS(args):
 
 def ALLEVENTSTODAY(args):
     "speak all events from the iCloud calendar"
+    #TODO: instead of initiating new connection, use the pa_service
     events = AllEvents()
     if events not in [None,'']:
         Speak('today planned in your calendar. ' + str(events)) # translating unicode to str > otherwise error
-
-def CAMERA(args):
-    logger.info('capturing pic from octopus')
-    os.system("ssh -p 2227 -i /home/pi/.ssh/octopus pi@192.168.1.154 nohup python /home/pi/PYTHON/GPIO/modules/camera.py &")
-    logger.info('done')
-
+#
+#def CAMERA(args):
+#    m.logger.info('capturing pic from octopus')
+#    os.system("ssh -p 2227 -i /home/pi/.ssh/octopus pi@192.168.1.154 nohup python /home/pi/PYTHON/GPIO/modules/camera.py &")
+#    m.logger.info('done')
+##
 
 # -----------------------------------------------
 
@@ -199,11 +202,11 @@ if __name__ == '__main__':
     try: #FIXME: with daemon works very slow
 #        try:
 #            import daemon
-#            with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
-#                logger.debug('PA with daemon')
+#            with daemon.DaemonContext(files_preserve = [m.logger.handlers[0].stream,]):
+#                m.logger.debug('PA with daemon')
 #                PA()
 #        except:
-            logger.debug('PA without daemon')
+            m.logger.debug('PA without daemon')
             PA()
     except:
         MainException()

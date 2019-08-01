@@ -80,6 +80,7 @@ def RUTIME(arg):
         MainException()
 
 def TEMP(arg):
+    if type(arg) != list: arg = [arg]
     w = WEATHER_class()
     w.ToInt()
     Phrase({'TYPE' : 'INSIDE_TEMP', 'T' : str(w.temp_in)})

@@ -67,7 +67,7 @@ def command():
 
 def App():
     "run app in a thread"
-    app.run(debug=True, use_debugger = True, use_reloader = True, port = 8083, host = '127.0.0.1')
+    app.run(debug=False, use_debugger = False, use_reloader = False, port = 8083, host = '127.0.0.1')
 
 
 

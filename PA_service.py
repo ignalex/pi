@@ -11,8 +11,8 @@ Created on Mon Aug 04 17:32:17 2014
 - 2FA icloud > integration
 
 #DONE: as service
-#TODO: merge PA and PA_service (into pas :) > listen to port XXXX - trigger
-#TODO: from CMD: pa {command} will send com to port
+#DONE: merge PA and PA_service (into pas :) > listen to port XXXX - trigger
+#DONE: from CMD: pa {command} will send com to port
 #NO: merge with internet_speed + rename to server? > that one is for non iCloud related
 #NO: make iCloud OPTIONAL for run > this one core is iCloud
 """
@@ -42,7 +42,7 @@ requests.packages.urllib3.disable_warnings()
 import __main__ as m
 
 #%% app
-app = Flask(__name__) #!!!: need to run it in a thread?
+app = Flask(__name__)
 
 @app.route("/cmnd")
 def command():
@@ -56,28 +56,26 @@ def command():
     curl localhost:8083/cmnd?RUN=SPENDINGS
     curl localhost:8083/cmnd?RUN=ALLEVENTSTODAY
     curl localhost:8083/cmnd?RUN=MORNING
-
-
     """
 
     global p, m
     RUN, args = request.args.get('RUN'), request.args.get('args')
-    m.logger.info('PARAMS: ' + str(RUN) +  ' : ' + str(args))
+    m.logger.debug('PARAMS: ' + str(RUN) +  ' : ' + str(args))
     if RUN is None:
         m.logger.error('no module in RUN')
         return jsonify({'status' : 'ERROR', 'message' : 'no module in RUN'})
     if RUN not in globals():
         # trying phrase
         if GENERAL([RUN]):
-            m.logger.info('Phrase = {} : OK'.format(str(RUN)))
+            m.logger.info('API RUN : Phrase = {} : OK'.format(str(RUN)))
             return jsonify({'status' : 'OK', 'message' : 'Phrase = {} : OK'.format(str(RUN))})
         else:
-            m.logger.error('RUN = {}, module not loaded'.format(str(RUN)))
+            m.logger.error('API RUN = {}, module not loaded'.format(str(RUN)))
             return jsonify({'status' : 'ERROR', 'message' : 'RUN = {}, module not loaded'.format(str(RUN))})
     else:
         # module loaded
         args = args.split(';') if args is not None else [] # must be array
-        m.logger.info('RUN : {}, args = {}'.format(RUN,str(args)))
+        m.logger.info('API RUN : {}, args = {}'.format(RUN,str(args)))
         try:
             resp = globals()[RUN](args)
             return  jsonify({'status' : 'OK', 'message' : resp, 'command' : 'RUN : {}, args = {}'.format(RUN,str(args))})

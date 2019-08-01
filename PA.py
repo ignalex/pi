@@ -118,14 +118,14 @@ def MAIL(arg):
             status.append(sendMail([recepient],p.INI['SMTP'].split(','), subj,'' , p.INI[arg[0]].split(';')))
 
 
-def MONEYREPORT(arg = ''):
-    today_file = p.INI['MONEY_REPORT']
-    spendings = [(i.split(' ')[2].replace('_',' '),i.split('\t')[-3].replace('-','')) for i in [i for i in open(today_file,'r').read().splitlines() if i.startswith('20')]]
-    delta = [i for i in open(today_file,'r').read().splitlines() if i.startswith('DELTA')][0].replace('DELTA', 'Delta on the end of the year is ')
-    if spendings != []:
-        Phrase({'TYPE': 'TODAY_SPENDINGS'})
-        for sp in spendings: Speak(' '.join(sp))
-    Speak(delta)
+#def MONEYREPORT(arg = ''):
+#    today_file = p.INI['MONEY_REPORT']
+#    spendings = [(i.split(' ')[2].replace('_',' '),i.split('\t')[-3].replace('-','')) for i in [i for i in open(today_file,'r').read().splitlines() if i.startswith('20')]]
+#    delta = [i for i in open(today_file,'r').read().splitlines() if i.startswith('DELTA')][0].replace('DELTA', 'Delta on the end of the year is ')
+#    if spendings != []:
+#        Phrase({'TYPE': 'TODAY_SPENDINGS'})
+#        for sp in spendings: Speak(' '.join(sp))
+#    Speak(delta)
 
 def REMINDER(arg):
     #DONE: work only with iPone connected

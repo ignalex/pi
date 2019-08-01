@@ -26,6 +26,7 @@ import threading
 
 from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
+from modules.talk import Speak
 from PA import (REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
 
 from flask import Flask, request, jsonify
@@ -83,7 +84,18 @@ def App():
     "run app in a thread"
     app.run(debug=False, use_debugger = False, use_reloader = False, port = 8083, host = '127.0.0.1')
 
+def ALLEVENTSTODAY(args):
+    "speak all events from the iCloud calendar > called from inside"
+    def AllEvents():
+        'returns the string of all todays events'
+        ev = Events(iCloudCal(p.iCloudApi, datetime.datetime.today()))
+        m.logger.debug('read from iCloud > \n' + str(ev))
+        return ', '.join([(k + ' at ' + ' '.join([str(i) if i != 0 else '' for i in v['localStartDate'][4:6]])) for (k,v) in ev.items() if v['localStartDate'][3] == datetime.date.today().day])
 
+    events = AllEvents()
+
+    if events not in [None,'']:
+        Speak('today planned in your calendar. ' + str(events)) # translating unicode to str > otherwise error
 
 #%%
 class Events(object):

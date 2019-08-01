@@ -68,8 +68,8 @@ def GENERAL(arg):
         MainException()
 
 def TIME(arg):
-    if arg[0] == '': arg[0] = 'HM'
-    Phrase({'TYPE' : 'TIME_'+arg[0]})
+    a  = 'HM' if (len(arg) == 0 or arg is None) else ('HM' if arg[0] == '' else arg[0])
+    Phrase({'TYPE' : 'TIME_'+ a})
 
 def RUTIME(arg):
     try:

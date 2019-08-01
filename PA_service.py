@@ -58,7 +58,7 @@ def command():
         return
     else:
         # module loaded
-        args = args.split(';') if args is not None else None # must be array
+        args = args.split(';') if args is not None else [] # must be array
         m.logger.info('RUN : {}, args = {}'.format(RUN,str(args)))
         try:
             resp = globals()[RUN](args)
@@ -67,7 +67,7 @@ def command():
         except Exception as e:
             m.logger.error(str(e))
             MainException()
-            return  jsonify({'status' : 'ERROR', 'message' : e})
+            return  jsonify({'status' : 'ERROR', 'message' : str(e)})
 
 
 def App():
@@ -109,6 +109,7 @@ def PA_service():
     p.last_scan = datetime.datetime.now()
 
     # start listining App port
+    logger.info('starting app')
     threading.Thread(target=App).start()
 
     while True:

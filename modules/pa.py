@@ -23,7 +23,7 @@ def pa(arg):
     'start PA.py on remote module using ssh'
 
     config = CONFIGURATION().pa.__dict__
-    config['arg'] =  [ arg[0] if type(arg) == list else arg][0]
+    config['arg'] =   arg[0] if type(arg) == list else arg
 
     if 'ssh' in config.keys():
         cmd = "ssh -p {port} -i {ssh} {user}@{ip} nohup python /home/pi/git/pi/PA.py '{arg}'".format(**config)

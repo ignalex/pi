@@ -45,10 +45,16 @@ app = Flask(__name__) #!!!: need to run it in a thread?
 
 @app.route("/cmnd")
 def command():
-    "get and run command by GET method"
+    """get and run command by GET method"
     "/cmnd?RUN={module}&args={args}"
     "args=HR;AA --- etc."
-    "curl localhost:8083/cmnd?RUN=TIME\&args=HM"
+    curl localhost:8083/cmnd?RUN=TIME\&args=HM
+    curl localhost:8083/cmnd?RUN=TIME
+    curl localhost:8083/cmnd?RUN=TEMP\&args=IN
+    curl localhost:8083/cmnd?RUN=WEATHER
+    curl localhost:8083/cmnd?RUN=SPENDINGS
+
+    """
 
     global p, m
     RUN, args = request.args.get('RUN'), request.args.get('args')
@@ -65,7 +71,7 @@ def command():
         m.logger.info('RUN : {}, args = {}'.format(RUN,str(args)))
         try:
             resp = globals()[RUN](args)
-            return  jsonify({'status' : 'OK', 'message' : resp})
+            return  jsonify({'status' : 'OK', 'message' : resp, 'command' : 'RUN : {}, args = {}'.format(RUN,str(args))})
 
         except Exception as e:
             m.logger.error(str(e))

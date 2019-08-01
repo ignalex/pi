@@ -12,15 +12,12 @@ import __main__ as m
 import os,sys
 from common import LOGGER
 
-def pac(run, args=None):
-    "python pac.py time hr"
-    cmd = "curl localhost:8083/cmnd?RUN={}".format(run) +  ('' if args is None else '\&args='+args)
+def pac(*args, **kargs):
+    "python pac.py TIME HR"
+    cmd = "curl localhost:8083/cmnd?RUN={}".format(args[0]) +  ('' if len(args) == 1 else '\&args='+';'.join(args[1:]))
     m.logger.info(cmd)
     os.system(cmd)
 
 if __name__ == '__main__':
     logger = LOGGER('pac')
-    if len(sys.argv) == 2:
-        pac(sys.argv[1])
-    elif len(sys.argv) > 2:
-        pac(sys.argv[1], sys.argv[2])
+    pac(sys.argv[1:])

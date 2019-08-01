@@ -4,7 +4,7 @@ Created on Tue Jul 29 10:19:08 2014
 
 @author: aignatov
 """
-#TODO: bad design > all reimporting all time - run from CMD not good.
+#DONE: bad design > all reimporting all time - run from CMD not good.
 
 from __future__ import print_function
 

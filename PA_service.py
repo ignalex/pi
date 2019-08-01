@@ -28,7 +28,7 @@ from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from PA import REMINDER, TIME
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 #from tracking import DistanceToPoint
 #from modules.sunrise import IsItNowTimeOfTheDay
@@ -61,9 +61,14 @@ def command():
         args = args.split(';') if args is not None else None # must be array
         m.logger.info('RUN : {}, args = {}'.format(RUN,str(args)))
         try:
-            globals()[RUN](args)
+            resp = globals()[RUN](args)
+            return  jsonify({'status' : 'OK', 'message' : resp})
+
         except Exception as e:
             m.logger.error(str(e))
+            MainException()
+            return  jsonify({'status' : 'ERROR', 'message' : e})
+
 
 def App():
     "run app in a thread"

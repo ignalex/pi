@@ -88,7 +88,7 @@ def ALLEVENTSTODAY(args):
     "speak all events from the iCloud calendar > called from inside"
     def AllEvents():
         'returns the string of all todays events'
-        ev = Events(iCloudCal(p.iCloudApi, datetime.datetime.today()))
+        ev = iCloudCal(p.iCloudApi, datetime.datetime.today())
         m.logger.debug('read from iCloud > \n' + str(ev))
         return ', '.join([(k + ' at ' + ' '.join([str(i) if i != 0 else '' for i in v['localStartDate'][4:6]])) for (k,v) in ev.items() if v['localStartDate'][3] == datetime.date.today().day])
 

@@ -26,7 +26,7 @@ import threading
 
 from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
-from modules.talk import Speak
+from modules.talk import Speak, Phrase
 from PA import (REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
 
 from flask import Flask, request, jsonify
@@ -54,6 +54,9 @@ def command():
     curl localhost:8083/cmnd?RUN=TEMP\&args=IN
     curl localhost:8083/cmnd?RUN=WEATHER
     curl localhost:8083/cmnd?RUN=SPENDINGS
+    curl localhost:8083/cmnd?RUN=ALLEVENTSTODAY
+    curl localhost:8083/cmnd?RUN=MORNING
+
 
     """
 
@@ -64,8 +67,13 @@ def command():
         m.logger.error('no module in RUN')
         return jsonify({'status' : 'ERROR', 'message' : 'no module in RUN'})
     if RUN not in globals():
-        m.logger.error('RUN = {}, module not loaded'.format(str(RUN)))
-        return jsonify({'status' : 'ERROR', 'message' : 'RUN = {}, module not loaded'.format(str(RUN))})
+        # trying phrase
+        if GENERAL([RUN]):
+            m.logger.info('Phrase = {} : OK'.format(str(RUN)))
+            return jsonify({'status' : 'OK', 'message' : 'Phrase = {} : OK'.format(str(RUN))})
+        else:
+            m.logger.error('RUN = {}, module not loaded'.format(str(RUN)))
+            return jsonify({'status' : 'ERROR', 'message' : 'RUN = {}, module not loaded'.format(str(RUN))})
     else:
         # module loaded
         args = args.split(';') if args is not None else [] # must be array
@@ -79,6 +87,15 @@ def command():
             MainException()
             return  jsonify({'status' : 'ERROR', 'message' : str(e)})
 
+def GENERAL(arg):
+    try:
+        m.logger.debug( str(arg))
+        Phrase({'TYPE' : arg[0]}) # speak phrase if nothing else.
+        return True
+    except Exception as e:
+        m.logger.error( str(e) )
+        MainException()
+        return False
 
 def App():
     "run app in a thread"

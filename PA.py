@@ -69,7 +69,7 @@ def GENERAL(arg):
 
 def TIME(arg):
     a  = 'HM' if (len(arg) == 0 or arg is None) else ('HM' if arg[0] == '' else arg[0])
-    Phrase({'TYPE' : 'TIME_'+ a})
+    return Phrase({'TYPE' : 'TIME_'+ a})
 
 def RUTIME(arg):
     try:
@@ -86,18 +86,18 @@ def TEMP(arg):
     Phrase({'TYPE' : 'INSIDE_TEMP', 'T' : str(w.temp_in)})
     if arg[0] != 'IN':
         sleep(1)
-        Phrase({'TYPE' : 'OUTSIDE', 'T' : str(w.temp_out),'HUM' : str(w.humidity) })
+        return Phrase({'TYPE' : 'OUTSIDE', 'T' : str(w.temp_out),'HUM' : str(w.humidity) })
 
 def WEATHER(arg):
     w = WEATHER_class()
     w.ToInt()
     m.logger.debug('weather read and parsed ' +  '\t'.join([str(w.temp_out) , str(w.humidity) ,  str(w.pressure) , str(w.rain) , str(w.forecast) , str(w.temp_today)]))
     if w.rain_at_all:
-        Phrase({'TYPE' : 'WEATHER1', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
+        return Phrase({'TYPE' : 'WEATHER1', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
                 'RAIN' : str(w.rain), 'FORECAST': str(w.forecast),'TMAX' : str(w.temp_today), \
                 'WIND' : str(w.wind), 'WND_GUST' : str(w.wind_gust)})
     else:
-        Phrase({'TYPE' : 'WEATHER2', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
+        return Phrase({'TYPE' : 'WEATHER2', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
                 'FORECAST': str(w.forecast),'TMAX' : str(w.temp_today), 'WIND' : str(w.wind), 'WND_GUST' : str(w.wind_gust)  })
 
 def WEATHERYAHOO(arg):
@@ -136,9 +136,9 @@ def REMINDER(arg):
                 end = ''
             else:
                 end = 's'
-            Phrase({'TYPE' : 'REMINDER_H', 'ACTION' : arg[0].replace('-',' '),'LEFT' : h, 'END' : end})
+            return Phrase({'TYPE' : 'REMINDER_H', 'ACTION' : arg[0].replace('-',' '),'LEFT' : h, 'END' : end})
         else:
-            Phrase({'TYPE' : 'REMINDER', 'ACTION' : arg[0].replace('-',' '),'LEFT' : arg[1]})
+            return  Phrase({'TYPE' : 'REMINDER', 'ACTION' : arg[0].replace('-',' '),'LEFT' : arg[1]})
     else:
         m.logger.debug('reminder NOT spoken > iPhone not around')
 
@@ -179,7 +179,10 @@ def ESP(arg):
 
 def SPENDINGS(args):
     text = [i for i in open(os.path.join(Dirs()['SPENDINGS'],'today.txt'),'r').read().splitlines() if i != '']
-    for t in text:  Speak(t)
+    res = []
+    for t in text:
+        res.append(Speak(t)['text'])
+    return {'status': True, 'text' : '; '.join(res)}
 
 def ALLEVENTSTODAY(args):
     "speak all events from the iCloud calendar"

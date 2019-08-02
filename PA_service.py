@@ -66,12 +66,13 @@ def command():
         return jsonify({'status' : 'ERROR', 'message' : 'no module in RUN'})
     if RUN not in globals():
         # trying phrase
-        if GENERAL([RUN]):
+        ok,  message = GENERAL([RUN])
+        if ok:
             m.logger.info('API RUN : Phrase = {} : OK'.format(str(RUN)))
-            return jsonify({'status' : 'OK', 'message' : 'Phrase = {} : OK'.format(str(RUN))})
+            return jsonify({'status' : ok, 'message' : 'Phrase = {}'.format(str(RUN)), 'text' : message})
         else:
             m.logger.error('API RUN = {}, module not loaded'.format(str(RUN)))
-            return jsonify({'status' : 'ERROR', 'message' : 'RUN = {}, module not loaded'.format(str(RUN))})
+            return jsonify({'status' : ok, 'message' : 'RUN = {}, module not loaded'.format(str(RUN)), 'text' : message})
     else:
         # module loaded
         args = args.split(';') if args is not None else [] # must be array
@@ -88,12 +89,11 @@ def command():
 def GENERAL(arg):
     try:
         m.logger.debug( str(arg))
-        Phrase({'TYPE' : arg[0]}) # speak phrase if nothing else.
-        return True
+        return [True, Phrase({'TYPE' : arg[0]})] # speak phrase if nothing else.
     except Exception as e:
         m.logger.error( str(e) )
         MainException()
-        return False
+        return [False, str(e)]
 
 def App():
     "run app in a thread"
@@ -110,7 +110,7 @@ def ALLEVENTSTODAY(args):
     events = AllEvents()
 
     if events not in [None,'']:
-        Speak('today planned in your calendar. ' + str(events)) # translating unicode to str > otherwise error
+        return Speak('today planned in your calendar. ' + str(events)) # translating unicode to str > otherwise error
 
 #%%
 class Events(object):

@@ -48,7 +48,7 @@ def Phrase(about):
     choice = options[int(random.random()*len(options))]
     for k,v in [(a,b) for (a,b) in about.items() if a != 'TYPE']:
         choice = choice.replace('%'+k,v)
-    Speak( choice )
+    return Speak( choice )
 
 def Speak(text, store=True):
     #DONE: if p has attr talk > pass it via ssh
@@ -69,6 +69,7 @@ def Speak(text, store=True):
         Google_speak(text, m.p.LANGUAGE, store)
         lock.Unlock()
     m.logger.debug ('---')
+    return {'status': True,  'text' : text}
 
 
 class Google_speak(object):

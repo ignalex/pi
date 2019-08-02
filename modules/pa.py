@@ -10,8 +10,8 @@ Created on Sat Aug 02 08:04:03 2014
 #DONE: default setup where to run pa
 #DONE: pa path OUT
 #DONE: pa via ssh or directly
-#TODO: whole call to pa via cmd is NOT GOOD
-#TODO: option > send command to SERVICE by PORT
+#DONE: option > send command to SERVICE by PORT
+#TODO: handling : and a_1:a_2 syntax \
 
 from __future__ import print_function
 import __main__ as m
@@ -20,10 +20,26 @@ import os,sys
 from common import CONFIGURATION, LOGGER
 
 def pa(args):
+    """
+    wrapper pa for many
+    pa([run1_options1:run2_options2])
+    """
+
+    if args[0].find(':') == -1: #  one
+        _pa(args)
+    else:
+        for n, job in enumerate(args[0].split(':')):
+            m.logger.debug(str(n) +  ' : ' + str(job))
+            _pa(job.slpit('_'))
+
+
+def _pa(args):
+    "subtask pa"
     """call common PA methods via api or local or on remote using ssh
     - pa = direct|yes
     - pa = ip|192.168.1.154,user|pi,ssh|/home/pi/.ssh/octopus,port|2227
     - pa = api|,host|localhost,port|8083
+    pa([RUN,{options}])
     """
 
     config = CONFIGURATION().pa.__dict__

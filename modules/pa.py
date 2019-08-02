@@ -30,7 +30,7 @@ def pa(args):
     else:
         for n, job in enumerate(args[0].split(':')):
             m.logger.debug(str(n) +  ' : ' + str(job))
-            _pa(job.slpit('_'))
+            _pa(job.split('_'))
 
 
 def _pa(args):

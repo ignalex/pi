@@ -34,7 +34,11 @@ def FilterDict(the_dict, keys):
     return {k: str(v) for k, v in the_dict.items() if k in keys}
 
 def iCloudCal(api,date):
-    events = api.calendar.events(date, date + datetime.timedelta(days = 1))
+    try:
+        events = api.calendar.events(date, date + datetime.timedelta(days = 1))
+    except KeyError:
+        m.logger.debug('KeyError in icludCalendar module - handled')
+        return {}
     attribs = ['localStartDate', 'localEndDate', 'duration', 'alarms'] #changed to local > otherwise UTC for recurret events - wrong
     parsed_events = {}
     for e in events:

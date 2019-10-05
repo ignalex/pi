@@ -1,0 +1,9 @@
+# taken from https://www.raspberrypi.org/documentation/remote-access/ftp.md
+# more info https://www.pureftpd.org/project/pure-ftpd/
+
+user upload
+pass im...
+
+dir /media/ssd/FTP
+
+sudo service pure-ftpd restart

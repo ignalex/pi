@@ -35,6 +35,7 @@ def get_bridge(driver):
     temp_sensor = TemperatureSensor(driver, 'temperature')
     light = AllSwitches(driver, 'light')
     light_ambient = AllSwitches(driver, 'ambient light')
+    light_toilet = AllSwitches(driver, 'toilet light')
     heater = AllSwitches(driver, 'heater')
     coffee = AllSwitches(driver, 'coffee')
     lightSenor1 = LightSensor(driver, 'light sensor 1', ip=175)
@@ -59,6 +60,7 @@ def get_bridge(driver):
 #    bridge.add_accessory(program1)
     bridge.add_accessory(watering)
     bridge.add_accessory(light_ambient)
+    bridge.add_accessory(light_toilet)
     bridge.add_accessory(hippo)
 #    bridge.add_accessory(raid)
 

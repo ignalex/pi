@@ -41,6 +41,7 @@ class AllSwitches(Accessory):
                         'heater':       ['Switch', 'set_switch_esp'],
                         'coffee':       ['Switch', 'set_switch_esp'],
                         'ambient light':['Switch', 'set_switch_sonoff', {'IP': '192.168.1.18'}],
+                        'toilet light': ['Switch', 'set_switch_sonoff', {'IP': '192.168.1.9'}],                        
                         'beep' :        ['Switch', 'beep'],
                         'watering' :    ['Switch', 'watering']
                         }[self.id]

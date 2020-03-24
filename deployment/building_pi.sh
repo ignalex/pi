@@ -3,7 +3,7 @@
 #https://desertbot.io/blog/headless-raspberry-pi-3-bplus-ssh-wifi-setup
 
 # POSTGRES
-sudo apt-get install postgresql postgis postgresql-server-dev-11 #postgresql-9.6 postgresql-plpython3-9.6 postgresql-server-dev-9.6 -y
+sudo apt-get install postgresql postgis postgresql-server-dev-11 postgresql-plpython3-11 #postgresql-9.6 postgresql-plpython3-9.6 postgresql-server-dev-9.6 -y
 
 
 # sudo su postgres
@@ -89,6 +89,41 @@ sudo apt-get install kodi
 
 # mounting samba
 sudo mount -t cifs //192.168.1.7/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,password=guest,vers=1.0,sec=ntlm
+sudo mount -t cifs //shrimp.local/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,password=guest,vers=1.0,sec=ntlm
 
 # MQTT
 sudo apt-get install mosquitto
+
+
+--- mounting external drive on PI
+From
+https://www.raspberrypi.org/documentation/configuration/external-storage.md
+
+pi@shrimp:~ $ sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
+UUID                                 NAME        FSTYPE   SIZE MOUNTPOINT   LABEL       MODEL
+                                     sda                119.2G                          Tech
+A777-7A74                            └─sda1      vfat   119.2G /media/ssd   ssd_zorab
+                                     sdb                  1.8T                          HD710
+18E9-142B                            └─sdb1      vfat     1.8T /media/adata ADATA HD710
+
+sudo blkid
+
+/dev/sda1: LABEL="ssd_zorab" UUID="A777-7A74" TYPE="vfat" PARTUUID="36c68d8d-01"
+/dev/sdb1: LABEL="ADATA HD710" UUID="18E9-142B" TYPE="vfat" PARTUUID="79a8564b-01"
+
+sudo nano /etc/fstab
+
+** for  exfat on linux   : sudo apt-get install exfat-fuse exfat-utils
+
+Works:
+# was ok : @reboot sleep 3 && sudo mount -o umask=000 /dev/sda1 /media/ssd
+#ADATA
+UUID=18E9-142B /media/adata vfat defaults,auto,users,rw,nofail,umask=000,x-systemd.device-timeout=30 0 0
+#SSD
+UUID=A777-7A74 /media/ssd vfat defaults,auto,users,rw,nofail,umask=000,x-systemd.device-timeout=30 0 0
+#IntelSSD - Gecko
+UUID=5E4A-343B /media/ssd exfat defaults,auto,umask=000,users,rw 0 0
+#SSD-shrimp (400Gb)
+UUID=A8E4-097E /media/ssd exfat defaults,auto,users,rw,nofail,umask=000,x-systemd.device-timeout=30 0 0
+
+

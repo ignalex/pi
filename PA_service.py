@@ -27,6 +27,7 @@ import threading
 from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from modules.talk import Speak, Phrase
+from moudles.sunrise import Astro
 from PA import (REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
 
 from flask import Flask, request, jsonify
@@ -186,6 +187,14 @@ def PA_service():
             reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
             logger.info(reminder)
             REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
+
+        # astro
+        A = Astro()
+
+        n = [k  for k,v in A.items() if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) == v]
+        if n != []:
+            Speak('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))
+
         sleep(60)
 
 def pa_reAuth():

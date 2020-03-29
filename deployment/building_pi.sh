@@ -59,6 +59,11 @@ sudo  apt-get install gunicorn3 gunicorn
 sudo pip install pynmea2
 sudo pip3 install pynmea2
 
+# astral
+pip install astral
+pip3 install astral
+
+
 # extra for LIRC
 sudo apt-get install lirc python3-lirc python-lirc -y
 sudo cp ~/git/pi/data/lircrc /etc/lirc/lircrc
@@ -125,5 +130,18 @@ UUID=A777-7A74 /media/ssd vfat defaults,auto,users,rw,nofail,umask=000,x-systemd
 UUID=5E4A-343B /media/ssd exfat defaults,auto,umask=000,users,rw 0 0
 #SSD-shrimp (400Gb)
 UUID=A8E4-097E /media/ssd exfat defaults,auto,users,rw,nofail,umask=000,x-systemd.device-timeout=30 0 0
+
+
+# hotspot / access point
+# https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md
+
+sudo apt install hostapd bridge-utils
+sudo systemctl stop hostapd
+...  more
+
+
+
+
+
 
 

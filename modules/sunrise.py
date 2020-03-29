@@ -17,6 +17,8 @@ except:
     from modules.common import Dirs
 import datetime, os
 
+from astral import LocationInfo
+from astral.sun import sun
 
 def Sun(date, filename = 'sunrise2014.txt'):
     "gets the date, returns tuple with [sunrise,sunset,window_light,total_dark]"
@@ -37,6 +39,14 @@ def Sun(date, filename = 'sunrise2014.txt'):
 def IsItNowTimeOfTheDay(the_type):
     sun = Sun(datetime.date.today())["sunrise,sunset,window_light,total_dark,sun_has_gone".split(',').index(the_type)]
     return  sun.hour == datetime.datetime.now().hour and sun.minute == datetime.datetime.now().minute
+
+
+def Astro():
+    today = datetime.date.today()
+    city = LocationInfo("Sydney", "Australia", "Australia/Sydney", -33.8688, 151.2093)
+    s = {j:  datetime.datetime(today.year, today.month, today.day, i.hour, i.minute,0)  for j,i in
+         {k : v.astimezone() for k, v in sun(city.observer, date=datetime.date.today()).items()}.items()}
+    return  s
 
 if __name__ == '__main__':
     for a in Sun(datetime.date.today()):

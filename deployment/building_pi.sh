@@ -45,8 +45,8 @@ sudo pip3 install plotly cufflinks psycopg2 python-daemon  speedtest-cli sqlalch
 
 #pyicloud
 #NEED TO  install from GIT >
-pip3 uninstall pyicloud
-pip3 install git+https://github.com/danielfmolnar/pyicloud
+sudo  pip3 uninstall pyicloud
+sudo  pip3 install git+https://github.com/danielfmolnar/pyicloud
 
 # flask server
 sudo pip install flask-compress

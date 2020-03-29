@@ -27,7 +27,7 @@ import threading
 from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from modules.talk import Speak, Phrase
-from moudles.sunrise import Astro
+from modules.sunrise import Astro
 from PA import (REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
 
 from flask import Flask, request, jsonify
@@ -190,7 +190,6 @@ def PA_service():
 
         # astro
         A = Astro()
-
         n = [k  for k,v in A.items() if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) == v]
         if n != []:
             Speak('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))

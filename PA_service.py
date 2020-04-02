@@ -27,7 +27,7 @@ import threading
 from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from modules.talk import Speak, Phrase
-# from modules.sunrise import Astro
+#from modules.sunrise import Sun #Astro
 from PA import (REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
 
 from flask import Flask, request, jsonify
@@ -194,6 +194,7 @@ def PA_service():
         # if n != []:
         #     Speak('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))
         #     logger.debug('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))
+
         sleep(60)
 
 def pa_reAuth():

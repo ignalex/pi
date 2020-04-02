@@ -34,7 +34,9 @@ def Sun(date, filename = 'sunrise2014.txt'):
     total_dark = datetime.datetime(today.year, today.month, today.day, int(twilight[2].split(':')[0]), int(twilight[2].split(':')[1]),0)
     sun_has_gone = datetime.datetime(today.year, today.month, today.day, int(twilight[0].split(':')[0]) + shift_hours[1], int(twilight[0].split(':')[1]),0)
 
-    return [sunrise,sunset,window_light,total_dark,sun_has_gone]
+    dawn = datetime.datetime(today.year, today.month, today.day, int(string.split(' ')[4].split(':')[0]), int(string.split(' ')[4].split(':')[1]),0)
+
+    return [sunrise,sunset,window_light,total_dark,sun_has_gone,dawn]
 
 def IsItNowTimeOfTheDay(the_type):
     sun = Sun(datetime.date.today())["sunrise,sunset,window_light,total_dark,sun_has_gone".split(',').index(the_type)]

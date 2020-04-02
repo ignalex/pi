@@ -59,9 +59,12 @@ sudo  apt-get install gunicorn3 gunicorn
 sudo pip install pynmea2
 sudo pip3 install pynmea2
 
-# astral
+# astral > wont work on py < 3.6
 pip install astral
 pip3 install astral
+
+#  istall new python
+URL https://installvirtual.com/install-python-3-7-on-raspberry-pi/
 
 
 # extra for LIRC
@@ -138,10 +141,16 @@ UUID=A8E4-097E /media/ssd exfat defaults,auto,users,rw,nofail,umask=000,x-system
 sudo apt install hostapd bridge-utils
 sudo systemctl stop hostapd
 ...  more
+** didnt work well on shrimp
 
 
-
-
+# DOCKER
+# URL https://pimylifeup.com/raspberry-pi-docker/
+curl -sSL https://get.docker.com | sh
+sudo usermod -aG docker pi
+logout
+groups
+docker run hello-world
 
 
 

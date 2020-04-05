@@ -152,5 +152,7 @@ logout
 groups
 docker run hello-world
 
+# JACKET
+docker pull linuxserver/jackett
 
 

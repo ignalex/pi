@@ -117,10 +117,11 @@ class AllSwitches(Accessory):
             if 'turn_off_after' in self.metadata.keys():
                 if self.char_on.value == 1 and \
                     (datetime.datetime.now() - self.last_change).total_seconds() >= self.metadata['turn_off_after']:
+                    self.set_switch_sonoff(0)
                     self.char_on.value = 0
                     self.char_on.notify()
-                    self.last_change = datetime.datetime.now()
                     logger.info(self.id  + ' turned off after sec: '+ str((datetime.datetime.now() - self.last_change).total_seconds()))
+                    self.last_change = datetime.datetime.now()
 
     def stop(self):
         super().stop()

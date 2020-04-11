@@ -44,8 +44,8 @@ def get_bridge(driver):
     # beep = AllSwitches(driver, 'beep')
 #    program1 = ProgramableSwitch(driver,'program 1')
     watering = AllSwitches(driver, 'watering')
-    hippo = SYSTEM(driver, 'hippopotamus')
-#    raid = SYSTEM(driver, 'raid')
+    hippo = SYSTEM(driver, 'hippo')
+    rhino = SYSTEM(driver, 'rhino')
 
    # internet_speed = InternetSpeed(driver,'internet speed', task='download') #!!!: will wait till right type of sensor
 
@@ -62,7 +62,7 @@ def get_bridge(driver):
     bridge.add_accessory(light_ambient)
     bridge.add_accessory(light_toilet)
     bridge.add_accessory(hippo)
-#    bridge.add_accessory(raid)
+    bridge.add_accessory(rhino)
 
   #  bridge.add_accessory(internet_speed)
 

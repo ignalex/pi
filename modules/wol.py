@@ -7,7 +7,8 @@ def wol(PC = ['SURFACE']):
            #'KROT' : '00:b3:f6:03:09:85',
            #'MONSTER' : '1c:6f:65:d5:3c:b6',
            'SURFACE' : '58:82:A8:94:82:02',
-           'HIPPO' : 'C8:60:00:CC:B8:BE'}
+           'HIPPO' : 'C8:60:00:CC:B8:BE',
+           'RHINO' : '34:17:EB:B4:B9:E0'}
 
     ethernet_address = PCs[PC[0].upper()]
   # Construct a six-byte hardware address

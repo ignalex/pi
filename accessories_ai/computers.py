@@ -40,7 +40,6 @@ class SYSTEM(Accessory):
     def OnOff(self, value):
         logger.info('{} on / off: {}'.format(self.id, value))
         if value:
-#            globals()['_' + self.id + '_on']
             getattr(self,'_' + self.id + '_on')()
             self.char_on.value = 1
             self.char_on.notify()
@@ -48,7 +47,6 @@ class SYSTEM(Accessory):
 
         else:
             if (datetime.datetime.now() - self.__last_call__[-1]).seconds < 60:
-#                globals()['_' + self.id + '_off']
                 getattr(self,'_' + self.id + '_off')()
                 self.char_on.value = 0
                 self.char_on.notify()
@@ -59,56 +57,33 @@ class SYSTEM(Accessory):
 
     @Accessory.run_at_interval(60)
     def run(self):
-#        globals()['_run_at_interval_' + self.id](self)
-        if hasattr(self,  '_run_at_interval_' + self.id):
-            getattr(self, '_run_at_interval_' + self.id)()
+        if hasattr(self,  '_run_at_interval'):
+            getattr(self, '_run_at_interval')()
 
     def stop(self):
         super().stop()
 
-
     #%% specific
-    def _hippopotamus_on(self):
-        os.system('python /home/pi/git/pi/modules/wol.py hippo')
+    def _hippo_on(self):
+        os.system(f'python /home/pi/git/pi/modules/wol.py {self.id}')
 
-    def _hippopotamus_off(self):
+    def _hippo_off(self):
         os.system('/usr/bin/ssh -i /home/pi/.ssh/hippo ai@hippo.local sudo poweroff')
 
-#    def _raid_on(self):
-#        return requests.request('GET', 'http://192.168.1.175/control/pin/14/1', timeout = 2).ok
+    def _rhino_on(self):
+        os.system(f'python /home/pi/git/pi/modules/wol.py {self.id}')
 
-#    def _raid_off(self):
-#        return requests.request('GET', 'http://192.168.1.175/control/pin/14/0', timeout = 2).ok
-##
-#    def _run_at_interval_raid(self):
-#        "scanning and propogating state"
-#
-#        logger.debug('requesting raid status')
-#        com = 'http://192.168.1.175/control/rf_states'
-#        for attempt in range(0,2):
-#            try:
-#                resp = requests.request('GET', com, timeout = 2)#.json()['data']['rf_states']
-#                if resp.ok:
-#                    j = resp.json()['data']['rf_states']
-#                    if self.id in j.keys():
-#                        if self.char_on.value != int(j[self.id]): #status changed outside
-#                            logger.info('state for {} changed to {}'.format(self.id, int(j[self.id])))
-#                            Speak('state for {} changed to {}'.format(self.id, int(j[self.id]))) #!!!: remove later
-#                            self.char_on.value = int(j[self.id])
-#                            self.char_on.notify()
-#                    else:
-#                        logger.debug('no rf_state for {} returned'.format(self.id))
-#                    return
-#                else:
-#                    sleep(0.2)
-#            except Exception as e:
-#                logger.error('cant get meaningful response from ESP {} - attempt {}: {}'.format(self.id, attempt, str(e)))
+    def _rhino_off(self):
+        "not implemented yet"
+        logger.info('_rhino_off : not implemented yet')
 
-    def _run_at_interval_hippopotamus(self):
-        logger.debug('requesting hippo status')
-        status = int(PingIP('hippo.local')[0])
+
+    def _run_at_interval(self):
+        logger.debug(f'requesting {self.id} status')
+        status = int(PingIP(f'{self.id}.local')[0])
+
         if self.char_on.value != int(status): #status changed outside
-            logger.info('state for {} changed to {}'.format(self.id, status))
-            Speak('state for {} changed to {}'.format(self.id, status))
+            logger.info('{} is {}'.format(self.id, 'on' if status else 'off'))
+            Speak('{} is {}'.format(self.id, 'on' if status else 'off'))
             self.char_on.value = status
             self.char_on.notify()

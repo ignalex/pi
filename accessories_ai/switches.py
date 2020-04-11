@@ -41,7 +41,7 @@ class AllSwitches(Accessory):
                         'heater':       ['Switch', 'set_switch_esp'],
                         'coffee':       ['Switch', 'set_switch_esp'],
                         'ambient light':['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.18'}],
-                        'toilet light': ['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.9'}],                        
+                        'toilet light': ['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.9', 'turn_off_after' : 300}],
                         'beep' :        ['Switch', 'beep'],
                         'watering' :    ['Switch', 'watering']
                         }[self.id]
@@ -52,6 +52,7 @@ class AllSwitches(Accessory):
         self.switch_type = self.service[1].split('_')[2] if self.service[1].find('set_switch') != -1 else None
         # extra config / IP etc
         self.metadata = self.service[2]  if len(self.service) > 2 else None
+        self.last_change = datetime.datetime.now() # for turning off after X sec
         self.char_name = serv.configure_char('Name')
         self.char_name.value = self.id
 
@@ -106,37 +107,25 @@ class AllSwitches(Accessory):
         elif self.switch_type == 'sonoff':
             com = 'http://{}/cm?cmnd=Power'.format(self.metadata['IP'])
             resp = requests.request('GET', com, timeout = 5).json()['POWER']
-            logger.info(str(resp)) #!!!: parse response + pass to accessory
+            logger.info(str(resp))
+            if self.char_on.value != (1 if resp == 'ON' else 0):  #changed
+                self.last_change = datetime.datetime.now()
             self.char_on.value = 1 if resp == 'ON' else 0
             self.char_on.notify()
+
+            #check for auto off
+            if 'turn_off_after' in self.metadata.keys():
+                if self.char_on.value == 1 and \
+                    (datetime.datetime.now() - self.last_change).total_seconds() >= self.metadata['turn_off_after']:
+                    self.char_on.value = 0
+                    self.char_on.notify()
+                    self.last_change = datetime.datetime.now()
+                    logger.info(self.id  + ' turned off after sec: '+ str((datetime.datetime.now() - self.last_change).total_seconds()))
 
     def stop(self):
         super().stop()
 
-#class ProgramableSwitch(Accessory):
-#    #???: doesn't work
-#    """ "StatelessProgrammableSwitch": {
-#      "OptionalCharacteristics": [
-#         "Name",
-#         "ServiceLabelIndex"
-#      ],
-#      "RequiredCharacteristics": [
-#         "ProgrammableSwitchEvent"
-#      ],"""
-#    category = CATEGORY_PROGRAMMABLE_SWITCH
-#
-#    def __init__(self, *args,  **kwargs):
-#        super().__init__(*args, **kwargs)
-#        self.service = {'program 1' : ['StatelessProgrammableSwitch', 'ProgrammableSwitchEvent']
-#                        }['program 1']
-#        serv = self.add_preload_service(self.service[0])
-#        self.char = serv.configure_char(self.service[1])#, setter_callback=getattr(self, args[1]))
-#
-#    def __setstate__(self, state):
-#        self.__dict__.update(state)
-#
-#    def stop(self):
-#        super().stop()
+
 #%%
 class EspStatusCollector(): #TODO: collector for SONOFF
     " status collector? >>> one pre-stored element"

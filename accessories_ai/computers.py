@@ -65,13 +65,13 @@ class SYSTEM(Accessory):
 
     #%% specific
     def _hippo_on(self):
-        os.system(f'python /home/pi/git/pi/modules/wol.py {self.id}')
+        os.system('python /home/pi/git/pi/modules/wol.py {}'.format(self.id))
 
     def _hippo_off(self):
         os.system('/usr/bin/ssh -i /home/pi/.ssh/hippo ai@hippo.local sudo poweroff')
 
     def _rhino_on(self):
-        os.system(f'python /home/pi/git/pi/modules/wol.py {self.id}')
+        os.system('python /home/pi/git/pi/modules/wol.py {}'.format(self.id))
 
     def _rhino_off(self):
         "not implemented yet"
@@ -79,8 +79,8 @@ class SYSTEM(Accessory):
 
 
     def _run_at_interval(self):
-        logger.debug(f'requesting {self.id} status')
-        status = int(PingIP(f'{self.id}.local')[0])
+        logger.debug('requesting {} status'.format(self.id))
+        status = int(PingIP('{}.local'.format(self.id))[0])
 
         if self.char_on.value != int(status): #status changed outside
             logger.info('{} is {}'.format(self.id, 'on' if status else 'off'))

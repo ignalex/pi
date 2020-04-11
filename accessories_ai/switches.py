@@ -62,12 +62,12 @@ class AllSwitches(Accessory):
     def set_switch_esp(self, value):
         com = 'http://192.168.1.176/control/rf433/{}/{}'.format(self.id, value)
         resp = requests.request('GET', com, timeout = 5).json()['data']
-        logger.info(str(resp))
+        logger.info(self.id + ' ' +str(resp))
 
     def set_switch_sonoff(self, value):
         com = 'http://{}/cm?cmnd=Power%20{}'.format(self.metadata['IP'], value)
         resp = requests.request('GET', com, timeout = 5).content
-        logger.info(str(resp))
+        logger.info(self.id + ' ' +str(resp))
 
     def beep(self, value):
         com = 'http://192.168.1.176/control/beep/{}' #testing
@@ -78,7 +78,7 @@ class AllSwitches(Accessory):
             resp = requests.request('GET', com.format(1), timeout = 5).json()['data']
             sleep(0.2)
             resp = requests.request('GET', com.format(0), timeout = 5).json()['data']
-            logger.info(str(resp))
+            logger.info(self.id + ' ' +str(resp))
 
         self.char_on.value = 0
         self.char_on.notify()
@@ -107,7 +107,7 @@ class AllSwitches(Accessory):
         elif self.switch_type == 'sonoff':
             com = 'http://{}/cm?cmnd=Power'.format(self.metadata['IP'])
             resp = requests.request('GET', com, timeout = 5).json()['POWER']
-            logger.info(str(resp))
+            logger.info(self.id + ' ' +str(resp))
             if self.char_on.value != (1 if resp == 'ON' else 0):  #changed
                 self.last_change = datetime.datetime.now()
             self.char_on.value = 1 if resp == 'ON' else 0

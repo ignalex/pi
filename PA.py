@@ -128,8 +128,8 @@ def MAIL(arg):
 #    Speak(delta)
 
 def REMINDER(arg):
-    #DONE: work only with iPone connected
     if AcquireResult(): # reading last reading iPhone reading
+        m.logger.info('PA module : reminder  ' + str(arg))
         if int(arg[1]) % 60 == 0:
             h = str(int(arg[1]) / 60)
             if h == 1:
@@ -140,7 +140,7 @@ def REMINDER(arg):
         else:
             return  Phrase({'TYPE' : 'REMINDER', 'ACTION' : arg[0].replace('-',' '),'LEFT' : arg[1]})
     else:
-        m.logger.debug('reminder NOT spoken > iPhone not around')
+        m.logger.info('reminder NOT spoken > iPhone not around')
 
 def ESP(arg):
     arg = [i.lower() for i in arg]

@@ -152,11 +152,11 @@ def PA_service():
     while True:
         now = datetime.datetime.now()
         if now - datetime.timedelta(minutes = 5) > p.last_scan:
-
             #rescan calendar
-            logger.info('re-scanning events >> ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
             try:
                 EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
+                logger.info('re-scanning events >> ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
+                logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
             except:
                 logger.error('error in iCloud - re-connecting...,')
                 try:

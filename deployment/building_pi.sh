@@ -34,6 +34,9 @@ sudo apt-get install python-dev python3-dev ipython ipython3
 sudo apt-get install mpg123
 sudo apt-get install fbi
 
+#ssl error
+sudo apt-get install rng-tools
+
 #for homeKit
 sudo apt-get install libavahi-compat-libdnssd-dev
 sudo pip3 install HAP-python[QRCode]

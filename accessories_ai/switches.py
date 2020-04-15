@@ -41,7 +41,7 @@ class AllSwitches(Accessory):
                         'heater':       ['Switch', 'set_switch_esp'],
                         'coffee':       ['Switch', 'set_switch_esp'],
                         'ambient light':['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.18'}],
-                        'toilet light': ['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.9', 'turn_off_after':{'sec': 300, 'twice' : [5,6,18,19,20,21,22]}}],
+                        'toilet light': ['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.9', 'turn_off_after':{'sec': 180, 'more' : [5,6,18,19,20,21,22]}}],
                         'beep' :        ['Switch', 'beep'],
                         'watering' :    ['Switch', 'watering']
                         }[self.id]
@@ -117,7 +117,7 @@ class AllSwitches(Accessory):
             if 'turn_off_after' in self.metadata.keys():
                 if self.char_on.value == 1 and \
                     (datetime.datetime.now() - self.last_change).total_seconds() >= self.metadata['turn_off_after']['sec'] * \
-                        [2 if datetime.datetime.now().hour in self.metadata['turn_off_after']['twice'] else 1][0]:
+                        [3.3 if datetime.datetime.now().hour in self.metadata['turn_off_after']['more'] else 1][0]:
                     self.set_switch_sonoff(0)
                     self.char_on.value = 0
                     self.char_on.notify()

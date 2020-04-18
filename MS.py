@@ -265,14 +265,17 @@ def main():
                 logger.info('iPhone - contact lost')
                 iPhone_connection_lost()
         if 'lamp' in control.move.keys():
-            if timing.TwilightSwitcher('morning') and items.lamp.status:
-                logger.info('TwilightSwitcher morning')
-                lamp(['OFF'])
-                items.lamp.status = False
-            if  timing.TwilightSwitcher('evening') and items.lamp.status == False and iPhone.Status():# timing.IamAround(30):
-                lamp(['ON'])
-                timing.Move()
-                items.lamp.status = True
+            if timing.TwilightSwitcher('morning'):
+                logger.info('TwilightSwitcher morning, lamp status: {}'.format(items.lamp.status))
+                if items.lamp.status:
+                    lamp(['OFF'])
+                    items.lamp.status = False
+            if  timing.TwilightSwitcher('evening'):
+                logger.info('TwilightSwitcher evening, lamp status: {}, iPhone status'.format(items.lamp.status, iPhone.Status()))
+                if items.lamp.status == False and iPhone.Status():# timing.IamAround(30):
+                    lamp(['ON'])
+                    timing.Move()
+                    items.lamp.status = True
         sleep(iPhone.Pause([5,45]))  #was 5 - 30
 
     # finishing

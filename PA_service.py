@@ -167,7 +167,7 @@ def PA_service():
                     'iPhone=':OBJECT({'status':iPhone.Status()})})
 
     TW = Twilight()
-    ESP(['6', 'color', 'yellow' ] ,'0') # ESP indicator on 5 esp
+    ESP(['6', 'color', 'yellow']) # ESP indicator on 5 esp
 
 
     while True:
@@ -250,7 +250,7 @@ def iPhone(TW, items, twilight=True, iPhoneStatus=True):
     # changed
     if iPhoneStatus:
         if iPhone.changed != None:
-            ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0') # ESP indicator on 5 esp
+            ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]]) # ESP indicator on 5 esp
             logger.info('iPhone status changed to ' + str(iPhone.changed))
             items.iPhone.status = iPhone.Status()
 

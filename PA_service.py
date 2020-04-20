@@ -162,7 +162,6 @@ def PA_service():
     #threading.Thread(target=iPhoneThread).start()
 
     iPhone = PING()
-    iPhone.Ping()
     items = OBJECT({'lamp': OBJECT({'status':False}),
                     'iPhone=':OBJECT({'status':iPhone.Status()})})
 
@@ -222,7 +221,7 @@ def PA_service():
         #     Speak('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))
         #     logger.debug('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))
 
-        iPhone(TW, items)
+        iPhonePING(TW, items, iPhone)
 
         sleep(58)
 
@@ -243,7 +242,7 @@ def pa_reAuth():
                 sleep (60)
 
 #%% iPhone
-def iPhone(TW, items, twilight=True, iPhoneStatus=True):
+def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
 
     iPhone.Ping()
 

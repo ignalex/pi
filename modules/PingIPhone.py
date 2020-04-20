@@ -69,7 +69,7 @@ def PingBT(MAC=CONFIGURATION().BT):
     if stderr in ERRORS.keys():
         return [ERRORS[stderr],None]
     elif True in [False if j == -1 else True for j in [stdout.find(i) for i in REPLIES]]:
-        ms = stdout[stdout.find('time ') + 5: stdout.find('ms')+2]
+        ms = stdout[stdout.find(b'time ') + 5: stdout.find(b'ms')+2]
         return [True, ms]
     else:
         return [False,None]

@@ -32,7 +32,7 @@ from modules.common import  LOGGER, PID, CONFIGURATION, MainException, OBJECT#, 
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from modules.talk import Speak, Phrase
 #from modules.sunrise import Sun #Astro
-from PA import (REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
+from PA import REMINDER #(REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
 from modules.PingIPhone import PING
 from modules.sunrise import Twilight
 
@@ -152,6 +152,7 @@ def PA_service():
     # get_Photos(p.iCloudApi)
 
     p.last_scan = datetime.datetime.now()
+    p.last_reminder = datetime.datetime.now()
 
     # start listining App port
     logger.info('starting app')
@@ -206,13 +207,14 @@ def PA_service():
 
             p.last_scan = now
 
-
-        if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
-            next_event = [v for k,v in EV.reminders.items() if k == datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)][0]
-            min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
-            reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
-            logger.info(reminder)
-            REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
+        if now - datetime.timedelta(minutes = 1) >= p.last_reminder:
+            if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
+                next_event = [v for k,v in EV.reminders.items() if k == datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)][0]
+                min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
+                reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
+                logger.info(reminder)
+                REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
+            p.last_reminder = now
 
         # # astro
         # A = Astro()
@@ -221,9 +223,8 @@ def PA_service():
         #     Speak('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))
         #     logger.debug('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))
 
-        iPhonePING(TW, items, iPhone)
-
-        sleep(58)
+        pause_time = iPhonePING(TW, items, iPhone)
+        sleep(pause_time)
 
 def pa_reAuth():
     while True:
@@ -249,17 +250,15 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
     # changed
     if iPhoneStatus:
         if iPhone.changed != None:
-            # ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]]) # ESP indicator on 5 esp
             os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.changed else 'red'))
 
             logger.info('iPhone status changed to ' + str(iPhone.changed))
-            items.iPhone.status = iPhone.Status()
 
-            # ON >> OFF
+            # WAS ON >> OFF
             if items.iPhone.status: # was on
                 if  iPhone.Status() == False: #  changed to OFF
                     logger.info('iPhone - contact lost')
-                    items.iPhone.status = False
+                    # items.iPhone.status = False
                     #lamps off on connection lost
                     if items.lamp.status:
                         # ESP(['6','rf433','light','off'])
@@ -267,15 +266,17 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                         items.lamp.status = False
                     iPhone_connection_lost()
 
-            # OFF >> ON
-            else: # was off
+            # WAS OFF >> ON
+            elif items.iPhone.status == False: # was off
                 logger.info('iPhone - reconnected')
                 if TW.IsItTotalDark() and  items.lamp.status == False:
                     # ESP(['6','rf433','light','on'])
                     os.system('curl http://192.168.1.176/control/rf433/light/on')
                     items.lamp.status = True
-
                 iPhone_reconnected()
+
+            #updating status
+            items.iPhone.status = iPhone.Status()
 
     # twilight
     if twilight:  #!!!: placeholder for standby condition
@@ -292,7 +293,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                 os.system('curl http://192.168.1.176/control/rf433/light/on')
                 items.lamp.status = True
 
-        # sleep(iPhone.Pause([5,45]))  #was 5 - 30
+    return iPhone.Pause([5,57]) # offline (searching) / online skipping minute
 
 def iPhone_connection_lost():
     pass

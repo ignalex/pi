@@ -57,7 +57,7 @@ def PingBT(MAC=CONFIGURATION().BT):
     com = ["l2ping","-s","1","-c","1",MAC]
     if socket.gethostname() != 'RaspPI': com.insert(0,'sudo')
     process = Popen(com, stdout=PIPE, stderr=PIPE)
-    stdout, stderr = process.communicate()
+    stdout, stderr = process.communicate(timeout=4)
 
     ERRORS  = {"Can't connect: Connection refused\n" : True,
                "Can't connect: Host is down\n" : False,

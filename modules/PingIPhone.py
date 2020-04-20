@@ -54,7 +54,7 @@ def PingBT(MAC=CONFIGURATION().BT):
     # pairing https://www.cnet.com/how-to/how-to-setup-bluetooth-on-a-raspberry-pi-3/
 
 #    sudo = ['' if i == 'RaspPI' else 'sudo' for i in [socket.gethostname()]][0]
-    com = ["l2ping","-s","1","-c","1",MAC]
+    com = ["l2ping","-s","1","-c","1", MAC]
     if socket.gethostname() != 'RaspPI': com.insert(0,'sudo')
     process = Popen(com, stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate(timeout=4)

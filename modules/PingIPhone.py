@@ -64,7 +64,7 @@ def PingBT(MAC=CONFIGURATION().BT):
                "Can't connect: Permission denied\n" : True}
                #"1 received" : True }
 
-    REPLIES = ['bytes from', 'recieved']
+    REPLIES = [b'bytes from', b'recieved']
 
     if stderr in ERRORS.keys():
         return [ERRORS[stderr],None]

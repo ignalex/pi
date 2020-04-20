@@ -23,7 +23,7 @@ Created on Mon Aug 04 17:32:17 2014
 
 from __future__ import print_function
 
-#import  os
+import  os
 import datetime
 from time import sleep
 import threading
@@ -163,11 +163,11 @@ def PA_service():
 
     iPhone = PING()
     items = OBJECT({'lamp': OBJECT({'status':False}),
-                    'iPhone=':OBJECT({'status':iPhone.Status()})})
+                    'iPhone':OBJECT({'status':iPhone.Status()})})
 
     TW = Twilight()
-    ESP(['6', 'color', 'yellow']) # ESP indicator on 5 esp
-
+    # ESP(['6', 'color', 'blue']) # ESP indicator on 5 esp
+    os.system('curl http://192.168.1.176/control/color/yellow')
 
     while True:
         now = datetime.datetime.now()
@@ -249,7 +249,9 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
     # changed
     if iPhoneStatus:
         if iPhone.changed != None:
-            ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]]) # ESP indicator on 5 esp
+            # ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]]) # ESP indicator on 5 esp
+            os.system('curl http://192.168.1.176/control/color/' +'green' if iPhone.changed else 'red')
+
             logger.info('iPhone status changed to ' + str(iPhone.changed))
             items.iPhone.status = iPhone.Status()
 
@@ -260,7 +262,8 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                     items.iPhone.status = False
                     #lamps off on connection lost
                     if items.lamp.status:
-                        ESP(['6','rf433','light','off'])
+                        # ESP(['6','rf433','light','off'])
+                        os.system('curl http://192.168.1.176/control/rf433/light/off')
                         items.lamp.status = False
                     iPhone_connection_lost()
 
@@ -268,7 +271,8 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
             else: # was off
                 logger.info('iPhone - reconnected')
                 if TW.IsItTotalDark() and  items.lamp.status == False:
-                    ESP(['6','rf433','light','on'])
+                    # ESP(['6','rf433','light','on'])
+                    os.system('curl http://192.168.1.176/control/rf433/light/on')
                     items.lamp.status = True
 
                 iPhone_reconnected()
@@ -278,12 +282,14 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
         if TW.IsItTwilight('morning'):
             logger.info('TwilightSwitcher morning')
             #if items.lamp.status: #!!!: lets turn it off even if it was off
-            ESP(['6','rf433','light','off'])
+            # ESP(['6','rf433','light','off'])
+            os.system('curl http://192.168.1.176/control/rf433/light/off')
             items.lamp.status = False
         if  TW.IsItTwilight('evening'):
             logger.info('TwilightSwitcher evening, iPhone status {}'.format(iPhone.Status()))
             if  iPhone.Status():  #!!!: items.lamp.status == False --- lets turn it off even if it was off
-                ESP(['6','rf433','light','on'])
+                # ESP(['6','rf433','light','on'])
+                os.system('curl http://192.168.1.176/control/rf433/light/on')
                 items.lamp.status = True
 
         # sleep(iPhone.Pause([5,45]))  #was 5 - 30

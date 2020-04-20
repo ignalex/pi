@@ -149,7 +149,7 @@ def PA_service():
     logger.info('following events found for today: ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
     logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
 
-    get_Photos(p.iCloudApi)
+    # get_Photos(p.iCloudApi)
 
     p.last_scan = datetime.datetime.now()
 
@@ -250,7 +250,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
     if iPhoneStatus:
         if iPhone.changed != None:
             # ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]]) # ESP indicator on 5 esp
-            os.system('curl http://192.168.1.176/control/color/' +'green' if iPhone.changed else 'red')
+            os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.changed else 'red'))
 
             logger.info('iPhone status changed to ' + str(iPhone.changed))
             items.iPhone.status = iPhone.Status()

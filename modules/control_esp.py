@@ -27,7 +27,7 @@ def Request(com):
         return 'no dict found for ' + resp
     except:
         try:
-            m.logger.info('error in ' + com + ' : ' + str(sys.exc_info()[1]))
+            m.logger.info('error in ' + com + ' : ' + str(sys.exc_info()))
         except:
             pass
         return str(com[19]) + '-X'

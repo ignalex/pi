@@ -100,8 +100,9 @@ class CONFIGURATION(object):
 
 class OBJECT (object):
     "basic empty object"
-    def __init__(self):
-        pass
+    def __init__(self,d={}):
+        for k,v in d.items():
+            setattr(self,k,v)
 
 
 def TryToInt(a):

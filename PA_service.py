@@ -226,7 +226,7 @@ def pa_reAuth():
 
 #%% iPhone
 def iPhoneThread(twilight=True, iPhoneStatus=True):
-    logger = LOGGER('pa_service', level = 'INFO') # log into  same file
+    logger = LOGGER('pa_service_iphone', level = 'INFO') # log into  same file
     iPhone = PING()
 
     iPhone.Ping()

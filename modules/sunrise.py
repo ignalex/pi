@@ -43,6 +43,20 @@ def IsItNowTimeOfTheDay(the_type):
     return  sun.hour == datetime.datetime.now().hour and sun.minute == datetime.datetime.now().minute
 
 
+
+class Twilight():
+    def __init__(self):
+        self.n = {'morning':0,'evening':1 , 'windows_light' : 2,'total_dark' : 3}
+        self.today()
+    def today(self):
+        self.twilight_times = Sun(datetime.date.today())
+    def IsItTwilight(self,  twilight='morning'):
+        return datetime.datetime.now().hour == self.twilight_times[self.n[twilight]].hour and datetime.datetime.now().minute == self.twilight_times[self.n[twilight]].minute
+    def IsItTotalDark(self):
+        # time > total dark
+        return (self.twilight_times[self.n['total_dark']] - datetime.datetime.now()).days < 0
+
+
 # def Astro():
 #     today = datetime.date.today()
 #     city = LocationInfo("Sydney", "Australia", "Australia/Sydney", -33.8688, 151.2093)

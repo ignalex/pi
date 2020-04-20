@@ -15,6 +15,10 @@ Created on Mon Aug 04 17:32:17 2014
 #DONE: from CMD: pa {command} will send com to port
 #NO: merge with internet_speed + rename to server? > that one is for non iCloud related
 #NO: make iCloud OPTIONAL for run > this one core is iCloud
+#TODO: sunrise / sunset
+#TODO: iPhone status
+#TODO: from MS > task 'good morning' : coffee, lights, ...
+#TODO: LED colors? ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0')
 """
 
 from __future__ import print_function
@@ -24,11 +28,13 @@ import datetime
 from time import sleep
 import threading
 
-from modules.common import  LOGGER, PID, CONFIGURATION, MainException#, Dirs
+from modules.common import  LOGGER, PID, CONFIGURATION, MainException, OBJECT#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from modules.talk import Speak, Phrase
 #from modules.sunrise import Sun #Astro
 from PA import (REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
+from modules.PingIPhone import PING
+from modules.sunrise import Twilight
 
 from flask import Flask, request, jsonify
 
@@ -57,6 +63,8 @@ def command():
     curl localhost:8083/cmnd?RUN=SPENDINGS
     curl localhost:8083/cmnd?RUN=ALLEVENTSTODAY
     curl localhost:8083/cmnd?RUN=MORNING
+    curl localhost:8083/cmnd?RUN=ESP\&args="6;color;green"
+    curl localhost:8083/cmnd?RUN=ESP\&args="6;rf433;light;off"
     """
 
     global p, m
@@ -149,6 +157,9 @@ def PA_service():
     logger.info('starting app')
     threading.Thread(target=App).start()
 
+    logger.info('starting pinging iPhone')
+    threading.Thread(target=iPhoneThread).start()
+
     while True:
         now = datetime.datetime.now()
         if now - datetime.timedelta(minutes = 5) > p.last_scan:
@@ -213,7 +224,76 @@ def pa_reAuth():
                 logger.info('waiting 1 min and retrying...')
                 sleep (60)
 
+#%% iPhone
+def iPhoneThread(twilight=True, iPhoneStatus=True):
+    logger = LOGGER('pa_service', level = 'INFO') # log into  same file
+    iPhone = PING()
 
+    iPhone.Ping()
+    items = OBJECT({'lamp': OBJECT({'status':False}),
+                    'iPhone=':OBJECT({'status':iPhone.Status()})})
+
+    TW = Twilight()
+    ESP(['6', 'color', 'green' if items.iPhone.status else 'red'] ,'0') # ESP indicator on 5 esp
+
+    while True:
+
+        # rereading SUN times
+        if datetime.datetime.now().hour == 0 and datetime.datetime.now().minute == 0:
+            TW.today()
+            logger.info('Sun times reset : {}'.format(str(TW.twilight_times)))
+
+        iPhone.Ping()
+
+        # changed
+        if iPhoneStatus:
+            if iPhone.changed != None:
+                ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0') # ESP indicator on 5 esp
+                logger.info('iPhone status changed to ' + str(iPhone.changed))
+                items.iPhone.status = iPhone.Status()
+
+                # ON >> OFF
+                if items.iPhone.status: # was on
+                    if  iPhone.Status() == False: #  changed to OFF
+                        logger.info('iPhone - contact lost')
+                        items.iPhone.status = False
+                        #lamps off on connection lost
+                        if items.lamp.status:
+                            ESP(['6','rf433','light','off'])
+                            items.lamp.status = False
+                        iPhone_connection_lost()
+
+                # OFF >> ON
+                else: # was off
+                    logger.info('iPhone - reconnected')
+                    if TW.IsItTotalDark() and  items.lamp.status == False:
+                        ESP(['6','rf433','light','on'])
+                        items.lamp.status = True
+
+                    iPhone_reconnected()
+
+        # twilight
+        if twilight:  #!!!: placeholder for standby condition
+            if TW.IsItTwilight('morning'):
+                logger.info('TwilightSwitcher morning')
+                #if items.lamp.status: #!!!: lets turn it off even if it was off
+                ESP(['6','rf433','light','off'])
+                items.lamp.status = False
+            if  TW.IsItTwilight('evening'):
+                logger.info('TwilightSwitcher evening, iPhone status {}'.format(iPhone.Status()))
+                if  iPhone.Status():  #!!!: items.lamp.status == False --- lets turn it off even if it was off
+                    ESP(['6','rf433','light','on'])
+                    items.lamp.status = True
+
+        sleep(iPhone.Pause([5,45]))  #was 5 - 30
+
+def iPhone_connection_lost():
+    pass
+
+def iPhone_reconnected():
+    pass
+
+#%%
 if __name__ == '__main__':
     logger = LOGGER('pa_service', level = 'INFO')
     p = CONFIGURATION()

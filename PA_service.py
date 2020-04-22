@@ -144,8 +144,10 @@ class Events(object):
                 self.reminders[localStartDateTime - datetime.timedelta(hours = delta)] = name
 
 def PA_service():
+    global timer
     logger.info('PA service started')
     Speak('starting P.A. service')
+
     #esp = ESP()
     p.iCloudApi = iCloudConnect() # keeping connected API for later
 
@@ -170,12 +172,6 @@ def PA_service():
     items = OBJECT({'lamp': OBJECT({'status':False}),
                     'iPhone':OBJECT({'status':iPhone.Status()})})
 
-    timer = OBJECT({'iPhone': TIMER(60),
-                    'iCloud': TIMER(60*5),
-                    'reminders' : TIMER(60),
-                    'Sun' : TIMER(60),
-                    'speak' : TIMER(60),
-                    'CheckTime' : CheckTime})
 
     TW = Twilight()
     os.system('curl http://192.168.1.176/control/color/yellow')
@@ -251,6 +247,7 @@ def pa_reAuth():
                     sleep(30) # time between attempts
             else:
                 logger.info('waiting 1 min and retrying...')
+                Speak('error in P. A. service')
                 sleep (60)
 
 #%% iPhone
@@ -349,6 +346,13 @@ if __name__ == '__main__':
     p = CONFIGURATION()
     p.last_scan = '' # addition
     PID()
+
+    timer = OBJECT({'iPhone': TIMER(60),
+                'iCloud': TIMER(60*5),
+                'reminders' : TIMER(60),
+                'Sun' : TIMER(60),
+                'speak' : TIMER(60),
+                'CheckTime' : CheckTime})
 
     try:
         pa_reAuth()

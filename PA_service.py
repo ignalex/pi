@@ -167,7 +167,7 @@ def PA_service():
 
     logger.info('starting pinging iPhone')
 
-    iPhone = PING()
+    iPhone = PING(2,8)
     items = OBJECT({'lamp': OBJECT({'status':False}),
                     'iPhone':OBJECT({'status':iPhone.Status()})})
 
@@ -307,7 +307,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                     items.lamp.status = True
                     Speak("it is sunset")
 
-    return iPhone.Pause([5,50]) # offline (searching) / online skipping minute
+    return iPhone.Pause([10,50]) # offline (searching) / online skipping minute
 
 def iPhone_connection_lost():
     pass

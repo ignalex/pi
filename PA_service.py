@@ -19,6 +19,9 @@ Created on Mon Aug 04 17:32:17 2014
 #TODO: iPhone status
 #TODO: from MS > task 'good morning' : coffee, lights, ...
 #TODO: LED colors? ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0')
+#TODO: light change at night
+#TODO: speaking on sunset / sunrise etc
+
 """
 
 from __future__ import print_function
@@ -166,19 +169,28 @@ def PA_service():
     items = OBJECT({'lamp': OBJECT({'status':False}),
                     'iPhone':OBJECT({'status':iPhone.Status()})})
 
+    timer = OBJECT({'iPhone': TIMER(60),
+                    'iCloud': TIMER(60*5),
+                    'reminders' : TIMER(60),
+                    'Sun' : TIMER(60),
+                    'CheckTime' : CheckTime})
+
     TW = Twilight()
-    # ESP(['6', 'color', 'blue']) # ESP indicator on 5 esp
     os.system('curl http://192.168.1.176/control/color/yellow')
+
+    ping_pause_time = 5 # starting
 
     while True:
         now = datetime.datetime.now()
 
         # rereading SUN times
-        if datetime.datetime.now().hour == 0 and datetime.datetime.now().minute == 0:
-            TW.today()
-            logger.info('Sun times reset : {}'.format(str(TW.twilight_times)))
+        if timer.CheckTime(0,0):
+            if timer.Sun.CheckDelay():
+                TW.today()
+                logger.info('Sun times reset : {}'.format(str(TW.twilight_times)))
+                os.system('curl http://192.168.1.176/control/color/off')
 
-        if now - datetime.timedelta(minutes = 5) > p.last_scan:
+        if timer.iCloud.CheckDelay(): #now - datetime.timedelta(minutes = 5) > p.last_scan:
             #rescan calendar
             try:
                 EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
@@ -197,34 +209,31 @@ def PA_service():
                     continue
 
             #rescan photos
-            logger.debug('rescanning Photo Library')
             #TODO: mount smb
             try:
+                logger.debug('rescanning Photo Library')
                 get_Photos(p.iCloudApi) # rest args default
             except Exception as e:
                 logger.error(str(e))
                 MainException()
 
-            p.last_scan = now
+            # p.last_scan = now
 
-        if now - datetime.timedelta(minutes = 1) >= p.last_reminder:
+        if timer.reminders.CheckDelay(): #now - datetime.timedelta(minutes = 1) >= p.last_reminder: #!!!: something wrong with logic
             if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
                 next_event = [v for k,v in EV.reminders.items() if k == datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)][0]
                 min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
                 reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
                 logger.info(reminder)
                 REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
-            p.last_reminder = now
+            # p.last_reminder = now
 
-        # # astro
-        # A = Astro()
-        # n = [k  for k,v in A.items() if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) == v]
-        # if n != []:
-        #     Speak('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))
-        #     logger.debug('it is {}. time is {} {}'.format(n[0], now.hour, now.minute))
 
-        pause_time = iPhonePING(TW, items, iPhone)
-        sleep(pause_time)
+        if timer.iPhone.CheckDelay(ping_pause_time):
+            ping_pause_time = iPhonePING(TW, items, iPhone)
+
+        sleep(5) # increments
+        logger.debug(str(now))
 
 def pa_reAuth():
     while True:
@@ -244,11 +253,16 @@ def pa_reAuth():
 
 #%% iPhone
 def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
+    global ti
 
     iPhone.Ping()
 
     # changed
     if iPhoneStatus:
+
+        if CheckTime(5,0):
+            os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.Status() else 'red'))
+
         if iPhone.changed != None:
             os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.changed else 'red'))
 
@@ -269,7 +283,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
             # WAS OFF >> ON
             elif items.iPhone.status == False: # was off
                 logger.info('iPhone - reconnected')
-                if TW.IsItTotalDark() and  items.lamp.status == False:
+                if TW.IsItTotalDark() and  items.lamp.status == False: #!!!: doesn't work > check total dark
                     # ESP(['6','rf433','light','on'])
                     os.system('curl http://192.168.1.176/control/rf433/light/on')
                     items.lamp.status = True
@@ -279,7 +293,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
             items.iPhone.status = iPhone.Status()
 
     # twilight
-    if twilight:  #!!!: placeholder for standby condition
+    if twilight:
         if TW.IsItTwilight('morning'):
             logger.info('TwilightSwitcher morning')
             #if items.lamp.status: #!!!: lets turn it off even if it was off
@@ -293,13 +307,32 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                 os.system('curl http://192.168.1.176/control/rf433/light/on')
                 items.lamp.status = True
 
-    return iPhone.Pause([5,57]) # offline (searching) / online skipping minute
+    return iPhone.Pause([5,50]) # offline (searching) / online skipping minute
 
 def iPhone_connection_lost():
     pass
 
 def iPhone_reconnected():
     pass
+
+class TIMER():
+    "delays per object"
+    def __init__(self, delay=60):
+        self.delay = delay - 1
+        self.last_scan = datetime.datetime.now() - datetime.timedelta(minutes=10)
+
+    def CheckDelay(self, delay=None):
+        if datetime.datetime.now() - self.last_scan >= datetime.timedelta(seconds = self.delay if delay is None else delay):
+            self.last_scan = datetime.datetime.now()
+            return True
+        else:
+            return False
+
+
+def CheckTime( h,m):
+    now = datetime.datetime.now()
+    #TODO: once a minute
+    return now.hour == h and now.minute == m
 
 #%%
 if __name__ == '__main__':

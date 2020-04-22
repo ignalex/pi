@@ -30,21 +30,24 @@ def PingIPhoneOnce(source = 'BT', log = True):
         result =  PingHornet()
     return result
 
-def PingIP(IP = '155'):
-    "ping device via wifi by IP. not stable for dynamic IPs, but still usefull"
+def PingIP(IP = '7'):
+    "ping device via wifi by IP. not stable for dynamic IPs, but still usefull; doesnt work as Wifi on dev can sleep"
     IP = str(IP)
     if IP.isdecimal() : IP = "192.168.1."+IP # fof consistency
-    cmd = ["ping","-c","1", IP]
+    cmd = ["ping","-c","1", "-W", "2", IP]
     if Platform()[0]: cmd = ['sudo'] + cmd # "sudo", - FOR RASPBIAN
 
-    process = Popen(cmd, stdout=PIPE, stderr=PIPE)
-    stdout, stderr = process.communicate()
+    # try:
+    stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate(timeout=5)
+    # except:
+    #     # hanging timeout
+    #     return [False,None]
 
-    REPLIES  = {"0 packets received" : False,
-                "1 packets received"  : True,
-                "1 received" : True}
+    REPLIES  = {b"0 packets received" : False,
+                b"1 packets received"  : True,
+                b"1 received" : True}
     print (str (cmd))
-    print (stdout)
+    print (str(stdout))
     try:
         return [[ v for k,v in REPLIES.items() if str(stdout).find(k) != -1][0],None]
     except:

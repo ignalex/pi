@@ -145,6 +145,7 @@ class Events(object):
 
 def PA_service():
     logger.info('PA service started')
+    Speak('starting P.A. service')
     #esp = ESP()
     p.iCloudApi = iCloudConnect() # keeping connected API for later
 
@@ -173,6 +174,7 @@ def PA_service():
                     'iCloud': TIMER(60*5),
                     'reminders' : TIMER(60),
                     'Sun' : TIMER(60),
+                    'speak' : TIMER(60),
                     'CheckTime' : CheckTime})
 
     TW = Twilight()
@@ -253,7 +255,7 @@ def pa_reAuth():
 
 #%% iPhone
 def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
-    global ti
+    global timer
 
     iPhone.Ping()
 
@@ -261,7 +263,9 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
     if iPhoneStatus:
 
         if CheckTime(5,0):
-            os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.Status() else 'red'))
+            if timer.speak.CheckDelay():
+                os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.Status() else 'red'))
+                Speak('Good morning')
 
         if iPhone.changed != None:
             os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.changed else 'red'))
@@ -276,17 +280,20 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                     #lamps off on connection lost
                     if items.lamp.status:
                         # ESP(['6','rf433','light','off'])
-                        os.system('curl http://192.168.1.176/control/rf433/light/off')
-                        items.lamp.status = False
+                        if timer.speak.CheckDelay():
+                            os.system('curl http://192.168.1.176/control/rf433/light/off')
+                            items.lamp.status = False
+                            Speak('lights off')
                     iPhone_connection_lost()
 
             # WAS OFF >> ON
             elif items.iPhone.status == False: # was off
                 logger.info('iPhone - reconnected')
                 if TW.IsItTotalDark() and  items.lamp.status == False: #!!!: doesn't work > check total dark
-                    # ESP(['6','rf433','light','on'])
-                    os.system('curl http://192.168.1.176/control/rf433/light/on')
-                    items.lamp.status = True
+                    if timer.speak.CheckDelay():
+                        os.system('curl http://192.168.1.176/control/rf433/light/on')
+                        Speak('lights on')
+                        items.lamp.status = True
                 iPhone_reconnected()
 
             #updating status
@@ -295,17 +302,19 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
     # twilight
     if twilight:
         if TW.IsItTwilight('morning'):
-            logger.info('TwilightSwitcher morning')
-            #if items.lamp.status: #!!!: lets turn it off even if it was off
-            # ESP(['6','rf433','light','off'])
-            os.system('curl http://192.168.1.176/control/rf433/light/off')
-            items.lamp.status = False
+            if timer.speak.CheckDelay():
+                logger.info('TwilightSwitcher morning')
+                Speak('time to turn off the lights')
+                os.system('curl http://192.168.1.176/control/rf433/light/off')
+                items.lamp.status = False
         if  TW.IsItTwilight('evening'):
             logger.info('TwilightSwitcher evening, iPhone status {}'.format(iPhone.Status()))
             if  iPhone.Status():  #!!!: items.lamp.status == False --- lets turn it off even if it was off
-                # ESP(['6','rf433','light','on'])
-                os.system('curl http://192.168.1.176/control/rf433/light/on')
-                items.lamp.status = True
+                if timer.speak.CheckDelay():
+                    os.system('curl http://192.168.1.176/control/rf433/light/on')
+                    items.lamp.status = True
+                    Speak("it's too dark, I am turning lights on")
+
 
     return iPhone.Pause([5,50]) # offline (searching) / online skipping minute
 

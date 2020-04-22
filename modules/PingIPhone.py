@@ -61,7 +61,7 @@ def PingBT(MAC=CONFIGURATION().BT):
     if socket.gethostname() != 'RaspPI': com.insert(0,'sudo')
 
     try:
-        stdout, stderr = Popen(com, stdout=PIPE, stderr=PIPE).communicate(timeout=5)
+        stdout, stderr = Popen(com, stdout=PIPE, stderr=PIPE).communicate(timeout=10)
     except:
         # hanging l2ping
         return [False,None]
@@ -105,16 +105,18 @@ def PingIPhone(N=4,S=5): # was 1, 0
         return False
 
 class PING(object):
-    def __init__(self):
+    def __init__(self,N=4,S=5):
         self.status = True # presume I am around at the start moment
         self.current = True
         self.True_history = []
         self.previous_status = None
         self.changed = None
+        self.N = N
+        self.S = S
         #self.Ping()
         #self.Status()
     def Ping(self):  # immidiate result + checking
-        self.current = PingIPhone()
+        self.current = PingIPhone(self.N, self.S)
         if self.current:
             self.True_history.append(datetime.now())
         if self.current != self.previous_status: # changed

@@ -15,12 +15,12 @@ Created on Mon Aug 04 17:32:17 2014
 #DONE: from CMD: pa {command} will send com to port
 #NO: merge with internet_speed + rename to server? > that one is for non iCloud related
 #NO: make iCloud OPTIONAL for run > this one core is iCloud
-#TODO: sunrise / sunset
-#TODO: iPhone status
-#TODO: from MS > task 'good morning' : coffee, lights, ...
-#TODO: LED colors? ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0')
-#TODO: light change at night
-#TODO: speaking on sunset / sunrise etc
+#DONE: sunrise / sunset
+#TODO: iPhone status > breaking
+#NO: from MS > task 'good morning' : coffee, lights, ...
+#DONE: LED colors? ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0')
+#DONE: light change at night
+#DONE: speaking on sunset / sunrise etc
 
 """
 
@@ -166,12 +166,10 @@ def PA_service():
 
 
     logger.info('starting pinging iPhone')
-    #threading.Thread(target=iPhoneThread).start()
 
     iPhone = PING()
     items = OBJECT({'lamp': OBJECT({'status':False}),
                     'iPhone':OBJECT({'status':iPhone.Status()})})
-
 
     TW = Twilight()
     os.system('curl http://192.168.1.176/control/color/yellow')
@@ -188,7 +186,7 @@ def PA_service():
                 logger.info('Sun times reset : {}'.format(str(TW.twilight_times)))
                 os.system('curl http://192.168.1.176/control/color/off')
 
-        if timer.iCloud.CheckDelay(): #now - datetime.timedelta(minutes = 5) > p.last_scan:
+        if timer.iCloud.CheckDelay():
             #rescan calendar
             try:
                 EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
@@ -207,25 +205,22 @@ def PA_service():
                     continue
 
             #rescan photos
-            #TODO: mount smb
             try:
                 logger.debug('rescanning Photo Library')
                 get_Photos(p.iCloudApi) # rest args default
             except Exception as e:
                 logger.error(str(e))
+                Speak("There is error with syncronizing photographs.  I am trying to remounting the drive")
                 MainException()
+                os.system("sudo mount -t cifs //shrimp.local/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,password=guest,vers=1.0,sec=ntlm")
 
-            # p.last_scan = now
-
-        if timer.reminders.CheckDelay(): #now - datetime.timedelta(minutes = 1) >= p.last_reminder: #!!!: something wrong with logic
+        if timer.reminders.CheckDelay():
             if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
                 next_event = [v for k,v in EV.reminders.items() if k == datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)][0]
                 min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
                 reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
                 logger.info(reminder)
                 REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
-            # p.last_reminder = now
-
 
         if timer.iPhone.CheckDelay(ping_pause_time):
             ping_pause_time = iPhonePING(TW, items, iPhone)
@@ -301,7 +296,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
         if TW.IsItTwilight('morning'):
             if timer.speak.CheckDelay():
                 logger.info('TwilightSwitcher morning')
-                Speak('time to turn off the lights')
+                Speak('it is sunrise')
                 os.system('curl http://192.168.1.176/control/rf433/light/off')
                 items.lamp.status = False
         if  TW.IsItTwilight('evening'):
@@ -310,8 +305,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                 if timer.speak.CheckDelay():
                     os.system('curl http://192.168.1.176/control/rf433/light/on')
                     items.lamp.status = True
-                    Speak("it's too dark, I am turning lights on")
-
+                    Speak("it is sunset")
 
     return iPhone.Pause([5,50]) # offline (searching) / online skipping minute
 
@@ -344,7 +338,6 @@ def CheckTime( h,m):
 if __name__ == '__main__':
     logger = LOGGER('pa_service', level = 'INFO')
     p = CONFIGURATION()
-    p.last_scan = '' # addition
     PID()
 
     timer = OBJECT({'iPhone': TIMER(60),
@@ -353,7 +346,6 @@ if __name__ == '__main__':
                 'Sun' : TIMER(60),
                 'speak' : TIMER(60),
                 'CheckTime' : CheckTime})
-
     try:
         pa_reAuth()
     except:

@@ -234,15 +234,15 @@ def PA_service():
         logger.debug(str(now))
 
 def pa_reAuth():
+    global p
     while True:
         try:
-            #import daemon
-            #with daemon.DaemonContext(files_preserve = [logger.handlers[0].stream,]):
             PA_service()
         except:
             error = str(MainException()) # in case nothing returned
-            if error.find('Unauthorized') != -1 or error.find('PyiCloudAPIResponseError') != -1:
+            if True in [error.find(i) != -1 for i in ['PyiCloud2SARequiredError', 'PyiCloudAPIResponseError', 'Unauthorized']]:
                 while True:
+                    p.iCloudApi = iCloudConnect()
                     if re_authenticate(p.iCloudApi): break # passing existing api / not authenticated
                     sleep(30) # time between attempts
             else:

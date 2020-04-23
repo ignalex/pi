@@ -222,7 +222,7 @@ def PA_service():
                 logger.info(reminder)
                 REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
 
-        if timer.iPhone.CheckDelay(ping_pause_time):
+        if timer.iPhone.CheckDelay(ping_pause_time) and timer.iPhone.Awake():
             ping_pause_time = iPhonePING(TW, items, iPhone)
 
         sleep(5) # increments
@@ -272,7 +272,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                     #lamps off on connection lost
                     if items.lamp.status:
                         # ESP(['6','rf433','light','off'])
-                        if timer.speak.CheckDelay():
+                        if timer.lamp.CheckDelay():
                             os.system('curl http://192.168.1.176/control/rf433/light/off')
                             items.lamp.status = False
                             Speak('lights off')
@@ -282,7 +282,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
             elif items.iPhone.status == False: # was off
                 logger.info('iPhone - reconnected')
                 if TW.IsItDark() and  items.lamp.status == False: #!!!: doesn't work > check total dark
-                    if timer.speak.CheckDelay():
+                    if timer.lamp.CheckDelay():
                         os.system('curl http://192.168.1.176/control/rf433/light/on')
                         Speak('lights on')
                         items.lamp.status = True
@@ -294,7 +294,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
     # twilight
     if twilight:
         if TW.IsItTwilight('morning'):
-            if timer.speak.CheckDelay():
+            if timer.lamp.CheckDelay():
                 logger.info('TwilightSwitcher morning')
                 Speak('it is sunrise')
                 os.system('curl http://192.168.1.176/control/rf433/light/off')
@@ -302,7 +302,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
         if  TW.IsItTwilight('evening'):
             logger.info('TwilightSwitcher evening, iPhone status {}'.format(iPhone.Status()))
             if  iPhone.Status():  #!!!: items.lamp.status == False --- lets turn it off even if it was off
-                if timer.speak.CheckDelay():
+                if timer.lamp.CheckDelay():
                     os.system('curl http://192.168.1.176/control/rf433/light/on')
                     items.lamp.status = True
                     Speak("it is sunset")
@@ -317,9 +317,10 @@ def iPhone_reconnected():
 
 class TIMER():
     "delays per object"
-    def __init__(self, delay=60):
+    def __init__(self, delay=60,sleep_hours=[]):
         self.delay = delay - 1
         self.last_scan = datetime.datetime.now() - datetime.timedelta(minutes=10)
+        self.sleep_hours = sleep_hours
 
     def CheckDelay(self, delay=None):
         if datetime.datetime.now() - self.last_scan >= datetime.timedelta(seconds = self.delay if delay is None else delay):
@@ -328,6 +329,9 @@ class TIMER():
         else:
             return False
 
+    def Awake(self):
+        "True if not in sleep hours array"
+        return datetime.datetime.now().hour not in self.sleep_hours
 
 def CheckTime( h,m):
     now = datetime.datetime.now()
@@ -340,12 +344,13 @@ if __name__ == '__main__':
     p = CONFIGURATION()
     PID()
 
-    timer = OBJECT({'iPhone': TIMER(60),
-                'iCloud': TIMER(60*5),
-                'reminders' : TIMER(60),
-                'Sun' : TIMER(60),
-                'speak' : TIMER(60),
-                'CheckTime' : CheckTime})
+    timer = OBJECT({'iPhone': TIMER(60, [0,1,2,3,4]),
+                    'iCloud': TIMER(60*5),
+                    'reminders' : TIMER(60),
+                    'Sun' : TIMER(60),
+                    'speak' : TIMER(60),
+                    'lamp' : TIMER(60),
+                    'CheckTime' : CheckTime})
     try:
         pa_reAuth()
     except:

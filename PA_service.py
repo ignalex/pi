@@ -167,7 +167,7 @@ def PA_service():
 
     logger.info('starting pinging iPhone')
 
-    iPhone = PING(2,8)
+    iPhone = PING(2,10)
     items = OBJECT({'lamp': OBJECT({'status':False}),
                     'iPhone':OBJECT({'status':iPhone.Status()})})
 

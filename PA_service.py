@@ -214,16 +214,18 @@ def PA_service():
                 MainException()
                 os.system("sudo mount -t cifs //shrimp.local/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,password=guest,vers=1.0,sec=ntlm")
 
-        if timer.reminders.CheckDelay():
-            if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
-                next_event = [v for k,v in EV.reminders.items() if k == datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)][0]
-                min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
-                reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
-                logger.info(reminder)
-                REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
+        if timer.reminders.Awake():
+            if timer.reminders.CheckDelay() : # don't repereat witin 1 min and dont speak at night
+                if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
+                    next_event = [v for k,v in EV.reminders.items() if k == datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)][0]
+                    min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
+                    reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
+                    logger.info(reminder)
+                    REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
 
-        if timer.iPhone.CheckDelay(ping_pause_time) and timer.iPhone.Awake():
-            ping_pause_time = iPhonePING(TW, items, iPhone)
+        if timer.iPhone.Awake():
+            if timer.iPhone.CheckDelay(ping_pause_time):
+                ping_pause_time = iPhonePING(TW, items, iPhone)
 
         sleep(5) # increments
         logger.debug(str(now))
@@ -346,7 +348,7 @@ if __name__ == '__main__':
 
     timer = OBJECT({'iPhone': TIMER(60, [0,1,2,3,4]),
                     'iCloud': TIMER(60*5),
-                    'reminders' : TIMER(60),
+                    'reminders' : TIMER(60, [23,0,1,2,3,4]),
                     'Sun' : TIMER(60),
                     'speak' : TIMER(60),
                     'lamp' : TIMER(60),

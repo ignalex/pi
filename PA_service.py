@@ -281,7 +281,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
             # WAS OFF >> ON
             elif items.iPhone.status == False: # was off
                 logger.info('iPhone - reconnected')
-                if TW.IsItTotalDark() and  items.lamp.status == False: #!!!: doesn't work > check total dark
+                if TW.IsItDark() and  items.lamp.status == False: #!!!: doesn't work > check total dark
                     if timer.speak.CheckDelay():
                         os.system('curl http://192.168.1.176/control/rf433/light/on')
                         Speak('lights on')

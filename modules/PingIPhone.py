@@ -61,7 +61,7 @@ def PingBT(MAC=CONFIGURATION().BT, BT_DEVICE=CONFIGURATION().BT_DEVICE):
     if BT_DEVICE.lower() == 'self':
         com = com.split(' ')
     else:
-        com = 'ssh -i /home/pi/.ssh/{} pi@{}.local'.format(BT_DEVICE,BT_DEVICE).split(' ') + ['"'+com+'"']
+        com = ('ssh -i /home/pi/.ssh/{} pi@{}.local '.format(BT_DEVICE,BT_DEVICE) + com).split(' ')
     try:
         stdout, stderr = Popen(com, stdout=PIPE, stderr=PIPE).communicate(timeout=10)
         print (str(stdout))

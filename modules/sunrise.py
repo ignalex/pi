@@ -57,7 +57,7 @@ class Twilight():
         return (self.twilight_times[self.n['total_dark']] - datetime.datetime.now()).days < 0
     def IsItDark(self):
         # time > total dark
-        return (self.twilight_times[self.n['sunset']] - datetime.datetime.now()).days < 0
+        return (self.twilight_times[self.n['evening']] - datetime.datetime.now()).days < 0
 
 
 

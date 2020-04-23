@@ -53,13 +53,15 @@ def PingIP(IP = '7'):
     except:
         return [False,None]
 
-def PingBT(MAC=CONFIGURATION().BT):
+def PingBT(MAC=CONFIGURATION().BT, BT_DEVICE=CONFIGURATION().BT_DEVICE):
     # pairing https://www.cnet.com/how-to/how-to-setup-bluetooth-on-a-raspberry-pi-3/
 
-#    sudo = ['' if i == 'RaspPI' else 'sudo' for i in [socket.gethostname()]][0]
-    com = ["l2ping","-s","1","-c","1","-t","4", MAC]
-    if socket.gethostname() != 'RaspPI': com.insert(0,'sudo')
-
+    com = "sudo l2ping -s 1 -c 1 -t 4 "+MAC
+    #if socket.gethostname() != 'RaspPI': com.insert(0,'sudo')
+    if BT_DEVICE.lower() == 'self':
+        com = com.split(' ')
+    else:
+        com = 'ssh -i /home/pi/.ssh/{} pi@{}.local'.format(BT_DEVICE,BT_DEVICE).split(' ') + ['"'+com+'"']
     try:
         stdout, stderr = Popen(com, stdout=PIPE, stderr=PIPE).communicate(timeout=10)
     except:

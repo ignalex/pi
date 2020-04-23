@@ -64,6 +64,8 @@ def PingBT(MAC=CONFIGURATION().BT, BT_DEVICE=CONFIGURATION().BT_DEVICE):
         com = 'ssh -i /home/pi/.ssh/{} pi@{}.local'.format(BT_DEVICE,BT_DEVICE).split(' ') + ['"'+com+'"']
     try:
         stdout, stderr = Popen(com, stdout=PIPE, stderr=PIPE).communicate(timeout=10)
+        print (str(stdout))
+        print (str(stderr))
     except Exception as e:
         print(str(e))
         return [False,None]

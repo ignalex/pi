@@ -15,9 +15,9 @@ from pyhap.accessory_driver import AccessoryDriver
 
 # The below package can be found in the HAP-python github repo under accessories/
 
-from accessories_ai.sensors import TemperatureSensor, LightSensor#, InternetSpeed
-from accessories_ai.switches import AllSwitches, EspStatusCollector#, ProgramableSwitch
-from accessories_ai.windows import WindowCovering
+from accessories_ai.sensors import TemperatureSensor, LightSensor
+from accessories_ai.switches import AllSwitches, EspStatusCollector
+# from accessories_ai.windows import WindowCovering
 from accessories_ai.computers import SYSTEM
 
 from common import LOGGER
@@ -38,6 +38,7 @@ def get_bridge(driver):
     light_toilet = AllSwitches(driver, 'toilet light')
     heater = AllSwitches(driver, 'heater')
     coffee = AllSwitches(driver, 'coffee')
+    i_am_home = AllSwitches(driver, 'i_am_home')
     #lightSenor1 = LightSensor(driver, 'light sensor 1', ip=175)
     lightSenor2 = LightSensor(driver, 'light sensor 2', ip=176)
     # window = WindowCovering(driver, 'window', ip=175, calibrate=True, speak=True, minStep=10)
@@ -47,24 +48,23 @@ def get_bridge(driver):
     hippo = SYSTEM(driver, 'hippo')
     rhino = SYSTEM(driver, 'rhino')
 
-   # internet_speed = InternetSpeed(driver,'internet speed', task='download') #!!!: will wait till right type of sensor
+   # internet_speed = InternetSpeed(driver,'internet speed', task='download')
 
     bridge.add_accessory(temp_sensor)
     bridge.add_accessory(light)
     bridge.add_accessory(heater)
     bridge.add_accessory(coffee)
+    bridge.add_accessory(i_am_home)
     #bridge.add_accessory(lightSenor1)
     bridge.add_accessory(lightSenor2)
     # bridge.add_accessory(window)
     # bridge.add_accessory(beep)
-#    bridge.add_accessory(program1)
     bridge.add_accessory(watering)
     bridge.add_accessory(light_ambient)
     bridge.add_accessory(light_toilet)
     bridge.add_accessory(hippo)
     bridge.add_accessory(rhino)
 
-  #  bridge.add_accessory(internet_speed)
 
     return bridge
 

@@ -31,7 +31,7 @@ import datetime
 from time import sleep
 import threading
 
-from modules.common import  LOGGER, PID, CONFIGURATION, MainException, OBJECT#, Dirs
+from modules.common import  LOGGER, CONFIGURATION, MainException, OBJECT#, Dirs
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from modules.talk import Speak, Phrase
 #from modules.sunrise import Sun #Astro
@@ -312,10 +312,10 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
     return iPhone.Pause([10,50]) # offline (searching) / online skipping minute
 
 def iPhone_connection_lost():
-    pass
+    os.system('curl http://192.168.1.176/control/rf433/i_am_home/off')
 
 def iPhone_reconnected():
-    pass
+    os.system('curl http://192.168.1.176/control/rf433/i_am_home/on')
 
 class TIMER():
     "delays per object"
@@ -344,15 +344,14 @@ def CheckTime( h,m):
 if __name__ == '__main__':
     logger = LOGGER('pa_service', level = 'INFO')
     p = CONFIGURATION()
-    PID()
 
-    timer = OBJECT({'iPhone': TIMER(60, [0,1,2,3,4]),
-                    'iCloud': TIMER(60*5),
-                    'reminders' : TIMER(60, [23,0,1,2,3,4]),
-                    'Sun' : TIMER(60),
-                    'speak' : TIMER(60),
-                    'lamp' : TIMER(60),
-                    'CheckTime' : CheckTime})
+    timer = OBJECT({'iPhone':       TIMER(60, [0,1,2,3,4]),
+                    'iCloud':       TIMER(60*5),
+                    'reminders' :   TIMER(60, [23,0,1,2,3,4]),
+                    'Sun' :         TIMER(60),
+                    'speak' :       TIMER(60),
+                    'lamp' :        TIMER(60),
+                    'CheckTime' :   CheckTime})
     try:
         pa_reAuth()
     except:

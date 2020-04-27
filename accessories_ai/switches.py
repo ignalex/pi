@@ -40,6 +40,7 @@ class AllSwitches(Accessory):
         self.service = {'light' :       ['Lightbulb', 'set_switch_esp'],
                         'heater':       ['Switch', 'set_switch_esp'],
                         'coffee':       ['Switch', 'set_switch_esp'],
+                        'i_am_home':    ['Switch', 'set_switch_esp'],
                         'ambient light':['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.18'}],
                         'toilet light': ['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.9', 'turn_off_after':{'sec': 180, 'more' : [5,6,18,19,20,21,22]}}],
                         'beep' :        ['Switch', 'beep'],
@@ -133,6 +134,7 @@ class EspStatusCollector(): #TODO: collector for SONOFF
     " status collector? >>> one pre-stored element"
     " get into threading"
     def __init__(self, ips = [175, 176]):
+        #175 North (off), 176 East
         self.ips =          ips
         self.DO =           True
         self.sleep =        60 # seconds

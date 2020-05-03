@@ -140,7 +140,7 @@ class WEATHER(object):
         self.call['temp_in'] = ["",""]
 
 
-    def LightSensor(self, sensors = {'light_1' : {'link': 'http://192.168.1.175/control/sensor', 'calibr' : 1},
+    def LightSensor(self, sensors = {#'light_1' : {'link': 'http://192.168.1.175/control/sensor', 'calibr' : 1},
                                      'light_2' : {'link': 'http://192.168.1.176/control/sensor/sound', 'calibr' : 1.2}}):
         for light, params in sensors.items():
             try:

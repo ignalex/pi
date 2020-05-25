@@ -215,7 +215,7 @@ class HEATER(object):
                 if self.Armed():
                     self.OnOff('off')
 
-            elif self.weather.solar is None : # can't read solar
+            elif self.conf.solar and self.weather.solar is None : # can't read solar
                 if self.Armed():
                     self.OnOff('off')
 

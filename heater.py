@@ -28,7 +28,7 @@ Created on Mon Jun 01 21:18:58 2015
 #DONE: rescan params
 """
 
-import sys, datetime
+import sys, datetime, requests
 from time import sleep
 
 
@@ -45,10 +45,10 @@ try:
 except:
     print('no speak imported')
 
-try:
-    from modules.control_esp import ESP
-except:
-    print('no esp imported')
+# try:
+#     from modules.control_esp import ESP
+# except:
+#     print('no esp imported')
 
 try:
     from modules.rf433 import rf433
@@ -107,7 +107,8 @@ class HEATER(object):
 
     def esp(self,com):
         "using ESP contorol"
-        ESP([str(self.conf.ip),'rf433',self.conf.command,str(com)])
+        #ESP([str(self.conf.ip),'rf433',self.conf.command,str(com)]) > broken for py3
+        resp = requests.request('GET', 'http://192.168.1.176/control/rf433/heater/'+str(com), timeout = 4)
 
     def rf433(self,com):
         "using rf433  control"

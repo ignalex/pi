@@ -16,6 +16,7 @@ def Request(com):
     "outside class for joblib"
     try:
         resp = requests.request('GET', com, timeout = 4).content.replace('<!DOCTYPE HTML>\r\n<html>\r\n', '').replace('</html>\n','')
+        if type(resp) != str : resp = resp.decode("utf-8")
         if resp.find('high') != -1 :            return '1'
         if resp.find('low') != -1 :             return '0'
         if resp.find('alive') != -1 :           return 'OK'

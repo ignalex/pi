@@ -39,6 +39,7 @@ class AllSwitches(Accessory):
         self.id = args[1]
         self.service = {'light' :       ['Lightbulb', 'set_switch_esp'],
                         'heater':       ['Switch', 'set_switch_esp'],
+                        '13':           ['Switch', 'set_switch_esp'],
                         'coffee':       ['Switch', 'set_switch_esp'],
                         'i_am_home':    ['Switch', 'set_switch_esp'],
                         'ambient light':['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.18'}],

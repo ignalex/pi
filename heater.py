@@ -193,7 +193,8 @@ class HEATER(object):
                                      (str(self.weather.solar).rjust(4) if hasattr(self.weather, 'solar') else '----' )
 
             # normal > ON
-            if self.weather.temp_in <= self.conf.Tmin and self.weather.temp_today <= self.conf.minTout_required \
+            if self.weather.temp_in <= self.conf.Tmin \
+                and (self.weather.temp_today if self.weather.temp_today is not None else 20 ) <= self.conf.minTout_required \
                 and ping \
                 and ((self.weather.solar >= self.conf.kW_need) if (self.conf.solar and self.weather.solar is not None) else True): # temp less lower lever and PING
                 if self.Armed():
@@ -247,9 +248,9 @@ if __name__ == '__main__':
             except:
                 MainException()
                 if heater._speak():
-                    Speak('error on loading attempt {}, trying again in 5 sec'.format(attempt))
+                    Speak('heater module: error on loading attempt {}, trying again in 5 sec'.format(attempt))
     except:
         heater.Stop()
         MainException()
         if heater._speak():
-            Speak('cant start from {} attempts, check the logs. exiting.'.format(attempt))
+            Speak('heater module: cant start from {} attempts, check the logs. exiting.'.format(attempt))

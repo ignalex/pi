@@ -91,7 +91,8 @@ class WEATHER(object):
             self.timeout = False
         except:
             self.timeout = True
-            return
+            self.html='' #???: added this and removed next > need to have  attribs if connection lost...
+            #return
         if self.html == '': # error on remote side
             self.rain_at_all = False
             self.rain = 0

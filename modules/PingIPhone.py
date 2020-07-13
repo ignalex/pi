@@ -92,21 +92,20 @@ def Log(result):
 
 def PingIPhone(N=4,S=5): # was 1, 0
     " N times to ping, S - sleep"
-    response = []
+    response, log = [], []
     for n in range(0,N):
         #print 'pinging ', n
         response.append(PingIPhoneOnce())
-        Log('\t'.join([str(i) for i in [n,N,S,response[-1][0]]]))
-        #print response[-1]
+        # Log('\t'.join([str(i) for i in [n,N,S,response[-1][0]]])) #!!!: False to LOG > issue with AcquireResult - false from 1st attempt
+        log.append('\t'.join([str(i) for i in [n,N,S,response[-1][0]]]))
         if response[-1][0] == True:
+            for f in log: Log(f)
             return True
         sleep(S)
-    # status to file
 
-    if True in [i[0] for i in response]:
-        return True
-    else:
-        return False
+    # status to file
+    for f in log: Log(f) #finally log
+    return True in [i[0] for i in response]
 
 class PING(object):
     def __init__(self,N=4,S=5):

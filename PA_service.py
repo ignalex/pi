@@ -167,7 +167,7 @@ def PA_service():
 
     logger.info('starting pinging iPhone')
 
-    iPhone = PING(2,10)
+    iPhone = PING(4,15) # 4 attempts with 15 sec gap
     items = OBJECT({'lamp': OBJECT({'status':False}),
                     'iPhone':OBJECT({'status':iPhone.Status()})})
 

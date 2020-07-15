@@ -37,11 +37,11 @@ def PingIP(IP = '7'):
     cmd = ["ping","-c","1", "-W", "2", IP]
     if Platform()[0]: cmd = ['sudo'] + cmd # "sudo", - FOR RASPBIAN
 
-    # try:
-    stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate(timeout=5)
-    # except:
-    #     # hanging timeout
-    #     return [False,None]
+    try:
+        stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate(timeout=5)
+    except:
+        #  timeout
+        return [False,None]
 
     REPLIES  = {b"0 packets received" : False,
                 b"1 packets received"  : True,

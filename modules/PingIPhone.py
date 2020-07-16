@@ -13,6 +13,8 @@ from time import sleep
 from datetime import datetime, timedelta
 from subprocess import Popen, PIPE
 
+import bluetooth
+
 try:
     from common import CONFIGURATION, Dirs, Platform
 except:
@@ -53,19 +55,31 @@ def PingIP(IP = '7'):
     except:
         return [False,None]
 
-def PingBT(MAC=CONFIGURATION().BT, BT_DEVICE=CONFIGURATION().BT_DEVICE):
+def PingBT(MAC=CONFIGURATION().BT.MAC, BT_METHOD=CONFIGURATION().BT.METHOD):
+    "BT_METHOD : self, ssh_shrimp [alike], bluetooth"
     # pairing https://www.cnet.com/how-to/how-to-setup-bluetooth-on-a-raspberry-pi-3/
 
     com = "sudo l2ping -s 1 -c 1 -t 4 "+MAC
     #if socket.gethostname() != 'RaspPI': com.insert(0,'sudo')
-    if BT_DEVICE.lower() == 'self':
+    if BT_METHOD.lower() == 'self':
         com = com.split(' ')
+        return RunCMD_BT(com)
+    elif BT_METHOD.lower().startswith('ssh'):
+        bt=BT_METHOD.lower().replace('ssh_','')
+        com = ('ssh -i /home/pi/.ssh/{} pi@{}.local '.format(bt,bt) + com).split(' ')
+        return RunCMD_BT(com)
+    elif BT_METHOD.lower() == 'bluetooth':
+        start = datetime.datetime.now()
+        result = bluetooth.lookup_name(MAC) is not None
+        return [result, (datetime.datetime.now() - start).microseconds/10 ] #  status, milliseconds
     else:
-        com = ('ssh -i /home/pi/.ssh/{} pi@{}.local '.format(BT_DEVICE,BT_DEVICE) + com).split(' ')
+        print('BT_METHOD not recognized')
+        return [None,None]
+
+
+def RunCMD_BT(com):
     try:
         stdout, stderr = Popen(com, stdout=PIPE, stderr=PIPE).communicate(timeout=10)
-        #print (str(stdout))
-        #print (str(stderr))
     except Exception as e:
         print(str(e))
         return [False,None]

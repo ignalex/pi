@@ -69,9 +69,9 @@ def PingBT(MAC=CONFIGURATION().BT.MAC, BT_METHOD=CONFIGURATION().BT.METHOD):
         com = ('ssh -i /home/pi/.ssh/{} pi@{}.local '.format(bt,bt) + com).split(' ')
         return RunCMD_BT(com)
     elif BT_METHOD.lower() == 'bluetooth':
-        start = datetime.datetime.now()
+        start = datetime.now()
         result = bluetooth.lookup_name(MAC) is not None
-        return [result, (datetime.datetime.now() - start).microseconds/10 ] #  status, milliseconds
+        return [result, (datetime.now() - start).microseconds/10 ] #  status, milliseconds
     else:
         print('BT_METHOD not recognized')
         return [None,None]

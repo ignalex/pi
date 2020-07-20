@@ -111,7 +111,7 @@ def PingIPhone(N=4,S=5): # was 1, 0
         #print 'pinging ', n
         response.append(PingIPhoneOnce())
         # Log('\t'.join([str(i) for i in [n,N,S,response[-1][0]]])) #!!!: False to LOG > issue with AcquireResult - false from 1st attempt
-        log.append('\t'.join([str(i) for i in [n,N,S,response[-1][0]]]))
+        log.append('\t'.join([str(i) for i in [n,N,S,response[-1][0] ]]))
         if response[-1][0] == True:
             for f in log: Log(f)
             return True
@@ -173,26 +173,17 @@ def PingHornet():
     else:
         return [False,None]
 
-
 def AcquireResult(allowed_delay_min = 5):
     """using SSH, returns 1 / 0 / None if iphone is around (not directly pinging > only reading last logs)
     if more time passed than allowed_delay_min since last ping > returns None *too old log
     ** to be run from another device with SSH / RSA keys on it"""
 
-    path_to_log = os.path.join(Dirs()['LOG'],'log_ping_iPhone.txt')
-    com =  "tail -1 " + path_to_log
-
-    process = Popen(com.split(' '), stdout=PIPE, stderr=PIPE)
-    stdout, stderr = process.communicate()
+    com =  "tail -1 " + os.path.join(Dirs()['LOG'],'log_ping_iPhone.txt')
+    stdout, stderr = Popen(com.split(' '), stdout=PIPE, stderr=PIPE).communicate()
 
     if type(stdout) != str : stdout = stdout.decode("utf-8") #for python3 > return is Byte like object
 
-    #!!!: if stuck it won't return  true
-    # if ((datetime.now() + timedelta(seconds = 120)) - datetime.strptime(stdout.split('\t')[0],'%Y-%m-%d %H:%M:%S')).seconds < allowed_delay_min * 60 + 120 :
-    #     return stdout.replace('\n','').split('\t')[-1] == 'True'
-    # else:
-    #     print ((datetime.now() - datetime.strptime(stdout.split('\t')[0],'%Y-%m-%d %H:%M:%S')).seconds)
-    #     return None
+    #return LAST False / True
     return stdout.replace('\n','').split('\t')[-1] != 'False'
 
 #%%

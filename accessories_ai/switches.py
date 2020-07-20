@@ -134,15 +134,15 @@ class AllSwitches(Accessory):
 class EspStatusCollector(): #TODO: collector for SONOFF
     " status collector? >>> one pre-stored element"
     " get into threading"
-    def __init__(self, ips = [175, 176]):
-        #175 North (off), 176 East
+    def __init__(self, ips = [175, 176], sleep = 10):
+        #175 North (off), 176 East , sleep was 60
         self.ips =          ips
         self.DO =           True
-        self.sleep =        60 # seconds
+        self.sleep =        sleep # seconds
         self.status =       {} # falettening structure : keys must be unique
         self.online =       {i : {} for i in ips}
         self.last_update =  {i : None for i in ips}
-        self.config =       dict(attempts=2, timeout=2, interval=60)
+        self.config =       dict(attempts=2, timeout=2)
         self.Start()
 
     def Start(self):
@@ -180,7 +180,7 @@ class EspStatusCollector(): #TODO: collector for SONOFF
                     logger.debug('{} OK'.format(ip) )
                     return True
                 else:
-                    sleep(0.2)
+                    sleep(0.5)
             except Exception as e:
                 logger.error('cant get meaningful response from ESP {} - attempt {}: {}'.format(ip, attempt, str(e)))
         self.online[ip] = False

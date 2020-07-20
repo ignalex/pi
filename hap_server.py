@@ -26,7 +26,7 @@ logger = LOGGER('HAP_server', 'INFO')
 from talk import Speak
 Speak('starting HAP server')
 
-st = EspStatusCollector(ips = [176]) # starting threaded status collector, must have name 'st'
+st = EspStatusCollector(ips=[176], sleep=10 ) # starting threaded status collector, must have name 'st'
 
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""

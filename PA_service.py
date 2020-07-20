@@ -321,13 +321,8 @@ def iPhone_connection(status):
     "True / False"
     os.system('curl http://192.168.1.176/control/rf433/i_am_home/' + ('on' if status else 'off'))
     os.system('curl http://192.168.1.176/control/color/' + ('green' if status else 'red'))
+    Speak('iPhone ' + ('connected' if status else 'connection lost'))
 
-
-# def iPhone_connection_lost():
-#     os.system('curl http://192.168.1.176/control/rf433/i_am_home/off')
-
-# def iPhone_reconnected():
-#     os.system('curl http://192.168.1.176/control/rf433/i_am_home/on')
 
 class TIMER():
     "delays per object"

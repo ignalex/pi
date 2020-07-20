@@ -92,7 +92,7 @@ class AllSwitches(Accessory):
         self.char_on.value = 0
         self.char_on.notify()
 
-    @Accessory.run_at_interval(60)
+    @Accessory.run_at_interval(10) # was 60
     def run(self):
         "!! status collector must be called from main module first with name st"
         logger.debug('requesting status for {}'.format(self.id))

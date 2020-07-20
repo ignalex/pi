@@ -102,7 +102,9 @@ if __name__ == '__main__':
     location = (151.2, -33.85)
     alert, alert_type, alert_distance, alert_time, alert_time_window = True, 'speak', int(p.ISS.alert_distance), datetime.datetime.now() - datetime.timedelta(hours = 12), (6,21) # initital time > setting to yesterday
     proxies = {}
+    time.sleep(delay) # to manage SSL entropy on reboot
     try:
+        Speak('I monitor ISS position, will let you know if it is within {} km')
         logger.info('starting')
         Start()
     except:

@@ -275,8 +275,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
             # WAS ON >> OFF
             if items.iPhone.status: # was on
                 if  iPhone.Status() == False: #  changed to OFF
-                    logger.info('iPhone - contact lost')
-                    # items.iPhone.status = False
+                    iPhone_connection(False)
                     #lamps off on connection lost
                     if items.lamp.status:
                         # ESP(['6','rf433','light','off'])
@@ -284,17 +283,15 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                             os.system('curl http://192.168.1.176/control/rf433/light/off')
                             items.lamp.status = False
                             Speak('lights off')
-                    iPhone_connection(False)
 
             # WAS OFF >> ON
             elif items.iPhone.status == False: # was off
-                logger.info('iPhone - reconnected')
+                iPhone_connection(True)
                 if TW.IsItDark() and  items.lamp.status == False: #!!!: doesn't work > check total dark
                     if timer.lamp.CheckDelay():
                         os.system('curl http://192.168.1.176/control/rf433/light/on')
                         Speak('lights on')
                         items.lamp.status = True
-                iPhone_connection(True)
 
             #updating status
             items.iPhone.status = iPhone.Status()
@@ -322,6 +319,7 @@ def iPhone_connection(status):
     os.system('curl http://192.168.1.176/control/rf433/i_am_home/' + ('on' if status else 'off'))
     os.system('curl http://192.168.1.176/control/color/' + ('green' if status else 'red'))
     Speak('iPhone ' + ('connected' if status else 'connection lost'))
+    logger.info('iPhone '+ ('connected' if status else 'connection lost'))
 
 
 class TIMER():

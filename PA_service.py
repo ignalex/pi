@@ -264,7 +264,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
 
         if CheckTime(5,0):
             if timer.speak.CheckDelay():
-                os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.Status() else 'red'))
+                sleep(0.1); os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.Status() else 'red'))
                 Speak('Good morning')
 
         if iPhone.changed != None:
@@ -280,7 +280,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                     if items.lamp.status:
                         # ESP(['6','rf433','light','off'])
                         if timer.lamp.CheckDelay():
-                            os.system('curl http://192.168.1.176/control/rf433/light/off')
+                            sleep(0.1); os.system('curl http://192.168.1.176/control/rf433/light/off')
                             items.lamp.status = False
                             Speak('lights off')
 
@@ -289,7 +289,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                 iPhone_connection(True)
                 if TW.IsItDark() and  items.lamp.status == False: #!!!: doesn't work > check total dark
                     if timer.lamp.CheckDelay():
-                        os.system('curl http://192.168.1.176/control/rf433/light/on')
+                        sleep(0.1); os.system('curl http://192.168.1.176/control/rf433/light/on')
                         Speak('lights on')
                         items.lamp.status = True
 
@@ -302,13 +302,13 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
             if timer.lamp.CheckDelay():
                 logger.info('TwilightSwitcher morning')
                 Speak('it is sunrise')
-                os.system('curl http://192.168.1.176/control/rf433/light/off')
+                sleep(0.1); os.system('curl http://192.168.1.176/control/rf433/light/off')
                 items.lamp.status = False
         if  TW.IsItTwilight('evening'):
             logger.info('TwilightSwitcher evening, iPhone status {}'.format(iPhone.Status()))
             if  iPhone.Status():  #!!!: items.lamp.status == False --- lets turn it off even if it was off
                 if timer.lamp.CheckDelay():
-                    os.system('curl http://192.168.1.176/control/rf433/light/on')
+                    sleep(0.1); os.system('curl http://192.168.1.176/control/rf433/light/on')
                     items.lamp.status = True
                     Speak("it is sunset")
 
@@ -316,8 +316,8 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
 
 def iPhone_connection(status):
     "True / False"
-    os.system('curl http://192.168.1.176/control/rf433/i_am_home/' + ('on' if status else 'off'))
-    os.system('curl http://192.168.1.176/control/color/' + ('green' if status else 'red'))
+    sleep(0.1); os.system('curl http://192.168.1.176/control/rf433/i_am_home/' + ('on' if status else 'off'))
+    sleep(0.1); os.system('curl http://192.168.1.176/control/color/' + ('green' if status else 'red'))
     Speak('iPhone ' + ('connected' if status else 'connection lost'))
     logger.info('iPhone '+ ('connected' if status else 'connection lost'))
 

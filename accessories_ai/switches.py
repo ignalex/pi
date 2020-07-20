@@ -109,8 +109,9 @@ class AllSwitches(Accessory):
         elif self.switch_type == 'sonoff':
             com = 'http://{}/cm?cmnd=Power'.format(self.metadata['IP'])
             resp = requests.request('GET', com, timeout = 5).json()['POWER']
-            logger.info(self.id + ' ' +str(resp))
+            logger.debug(self.id + ' ' +str(resp))
             if self.char_on.value != (1 if resp == 'ON' else 0):  #changed
+                logger.info(self.id + ' changed to ' +str(resp))
                 self.last_change = datetime.datetime.now()
             self.char_on.value = 1 if resp == 'ON' else 0
             self.char_on.notify()

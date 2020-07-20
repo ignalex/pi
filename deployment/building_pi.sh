@@ -44,7 +44,7 @@ sudo pip3 install HAP-python[QRCode]
 # pandas + plotly
 sudo apt-get install python-pandas python3-pandas
 sudo pip install plotly cufflinks psycopg2 python-daemon  speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
-sudo pip3 install plotly cufflinks psycopg2 python-daemon  speedtest-cli sqlalchemy googletrans weather-api gTTS joblib
+sudo pip3 install plotly cufflinks psycopg2 python-daemon  speedtest-cli sqlalchemy googletrans weather-api gTTS joblib pybluez
 
 #pyicloud
 #NEED TO  install from GIT >

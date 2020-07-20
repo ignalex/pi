@@ -268,7 +268,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                 Speak('Good morning')
 
         if iPhone.changed != None:
-            os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.changed else 'red'))
+            # os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.changed else 'red'))  # doesnt work here
 
             logger.info('iPhone status changed to ' + str(iPhone.changed))
 
@@ -284,7 +284,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                             os.system('curl http://192.168.1.176/control/rf433/light/off')
                             items.lamp.status = False
                             Speak('lights off')
-                    iPhone_connection_lost()
+                    iPhone_connection(False)
 
             # WAS OFF >> ON
             elif items.iPhone.status == False: # was off
@@ -294,7 +294,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
                         os.system('curl http://192.168.1.176/control/rf433/light/on')
                         Speak('lights on')
                         items.lamp.status = True
-                iPhone_reconnected()
+                iPhone_connection(True)
 
             #updating status
             items.iPhone.status = iPhone.Status()
@@ -317,11 +317,17 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
 
     return iPhone.Pause([10,50]) # offline (searching) / online skipping minute
 
-def iPhone_connection_lost():
-    os.system('curl http://192.168.1.176/control/rf433/i_am_home/off')
+def iPhone_connection(status):
+    "True / False"
+    os.system('curl http://192.168.1.176/control/rf433/i_am_home/' + ('on' if status else 'off'))
+    os.system('curl http://192.168.1.176/control/color/' + ('green' if status else 'red'))
 
-def iPhone_reconnected():
-    os.system('curl http://192.168.1.176/control/rf433/i_am_home/on')
+
+# def iPhone_connection_lost():
+#     os.system('curl http://192.168.1.176/control/rf433/i_am_home/off')
+
+# def iPhone_reconnected():
+#     os.system('curl http://192.168.1.176/control/rf433/i_am_home/on')
 
 class TIMER():
     "delays per object"

@@ -114,7 +114,7 @@ class AllSwitches(Accessory):
                     break
                 except Exception as e:
                     logger.error('cant get meaningful response from SONOFF {} - attempt {}: {}'.format(self.metadata['IP'], attempt, str(e)))
-            logger.debug(self.id + ' ' +str(resp))
+                    logger.debug(self.id + ' ' +str(resp))
             if self.char_on.value != (1 if resp == 'ON' else 0):  #changed
                 logger.info(self.id + ' changed to ' +str(resp))
                 self.last_change = datetime.datetime.now()

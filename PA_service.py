@@ -38,6 +38,7 @@ from modules.talk import Speak, Phrase
 from PA import REMINDER #(REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
 from modules.PingIPhone import PING
 from modules.sunrise import Twilight
+from modules.weatherzone import WEATHER as WEATHER_class
 
 from flask import Flask, request, jsonify
 
@@ -123,6 +124,26 @@ def ALLEVENTSTODAY(args):
 
     if events not in [None,'']:
         return Speak('today planned in your calendar. ' + str(events)) # translating unicode to str > otherwise error
+
+def WEATHER(arg):
+    w = WEATHER_class()
+    w.ToInt()
+    m.logger.debug('weather read and parsed ' +  '\t'.join([str(w.temp_out) , str(w.humidity) ,  str(w.pressure) , str(w.rain) , str(w.forecast) , str(w.temp_today)]))
+    if w.rain_at_all:
+        return Phrase({'TYPE' : 'WEATHER1', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
+                'RAIN' : str(w.rain), 'FORECAST': str(w.forecast),'TMAX' : str(w.temp_today), \
+                'WIND' : str(w.wind), 'WND_GUST' : str(w.wind_gust)})
+    else:
+        return Phrase({'TYPE' : 'WEATHER2', 'TEMP' : str(w.temp_out),'HUM' : str(w.humidity), 'PR' : str(w.pressure), \
+                'FORECAST': str(w.forecast),'TMAX' : str(w.temp_today), 'WIND' : str(w.wind), 'WND_GUST' : str(w.wind_gust)  })
+def TEMP(arg):
+    if arg ==  []: arg = ['ALL']
+    w = WEATHER_class()
+    w.ToInt()
+    Phrase({'TYPE' : 'INSIDE_TEMP', 'T' : str(w.temp_in)})
+    if arg[0] != 'IN':
+        sleep(1)
+        return Phrase({'TYPE' : 'OUTSIDE', 'T' : str(w.temp_out),'HUM' : str(w.humidity) })
 
 #%%
 class Events(object):

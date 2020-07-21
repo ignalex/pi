@@ -50,7 +50,7 @@ def get_bridge(driver):
     watering = AllSwitches(driver, 'watering')
     hippo = SYSTEM(driver, 'hippo')
     rhino = SYSTEM(driver, 'rhino')
-    motion = MotionSensor(driver)
+    motion = MotionSensor(driver, 'motion sensor')
 
    # internet_speed = InternetSpeed(driver,'internet speed', task='download')
 

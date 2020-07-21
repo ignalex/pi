@@ -192,3 +192,27 @@ def LastLine(file_to_read, lines = 1):
 def Platform():
     'returns True for RaspPI and name of platform'
     return (True if sys.platform == 'linux2' else False, sys.platform)
+
+
+class TIMER():
+    "delays per object"
+    def __init__(self, delay=60,sleep_hours=[], last_scan_init=10):
+        self.delay = delay - 1
+        self.last_scan = datetime.datetime.now() - datetime.timedelta(minutes=last_scan_init)
+        self.sleep_hours = sleep_hours
+
+    def CheckDelay(self, delay=None):
+        if datetime.datetime.now() - self.last_scan >= datetime.timedelta(seconds = self.delay if delay is None else delay):
+            self.last_scan = datetime.datetime.now()
+            return True
+        else:
+            return False
+
+    def Awake(self):
+        "True if not in sleep hours array"
+        return datetime.datetime.now().hour not in self.sleep_hours
+
+def CheckTime( h,m):
+    now = datetime.datetime.now()
+    #TODO: once a minute
+    return now.hour == h and now.minute == m

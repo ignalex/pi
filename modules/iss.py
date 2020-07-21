@@ -104,7 +104,7 @@ if __name__ == '__main__':
     proxies = {}
     time.sleep(delay) # to manage SSL entropy on reboot
     try:
-        Speak('I monitor ISS position, will let you know if it is within {} km')
+        Speak('I monitor ISS position, will let you know if it is within {} km'.format(alert_distance))
         logger.info('starting')
         Start()
     except:

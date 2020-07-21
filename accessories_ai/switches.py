@@ -108,7 +108,13 @@ class AllSwitches(Accessory):
                 self.char_on.notify()
         elif self.switch_type == 'sonoff':
             com = 'http://{}/cm?cmnd=Power'.format(self.metadata['IP'])
-            resp = requests.request('GET', com, timeout = 5).json()['POWER']
+            for attempt in range(0, 2):
+                try:
+                    resp = requests.request('GET', com, timeout = 5).json()['POWER']
+                    if resp.ok:
+                        break
+                except Exception as e:
+                    logger.error('cant get meaningful response from SONOFF {} - attempt {}: {}'.format(self.metadata['IP'], attempt, str(e)))
             logger.debug(self.id + ' ' +str(resp))
             if self.char_on.value != (1 if resp == 'ON' else 0):  #changed
                 logger.info(self.id + ' changed to ' +str(resp))

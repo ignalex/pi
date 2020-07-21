@@ -41,7 +41,7 @@ class MotionSensor(Accessory):
         GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #DONE: UP works
         GPIO.setup(p.pins.BLINK, GPIO.OUT, initial = GPIO.HIGH)
 
-        GPIO.add_event_detect(7, GPIO.RISING, callback=self._detected)
+        GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=self._detected)
 
     def _detected(self, _pin):
         self.char_detected.set_value(True)

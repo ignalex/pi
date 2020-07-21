@@ -111,8 +111,7 @@ class AllSwitches(Accessory):
             for attempt in range(0, 2):
                 try:
                     resp = requests.request('GET', com, timeout = 5).json()['POWER']
-                    if resp.ok:
-                        break
+                    break
                 except Exception as e:
                     logger.error('cant get meaningful response from SONOFF {} - attempt {}: {}'.format(self.metadata['IP'], attempt, str(e)))
             logger.debug(self.id + ' ' +str(resp))

@@ -20,6 +20,8 @@ from accessories_ai.switches import AllSwitches, EspStatusCollector
 # from accessories_ai.windows import WindowCovering
 from accessories_ai.computers import SYSTEM
 
+from accessories_ai.MotionSensor import  MotionSensor
+
 from common import LOGGER
 logger = LOGGER('HAP_server', 'INFO')
 
@@ -48,6 +50,7 @@ def get_bridge(driver):
     watering = AllSwitches(driver, 'watering')
     hippo = SYSTEM(driver, 'hippo')
     rhino = SYSTEM(driver, 'rhino')
+    motion = MotionSensor(driver)
 
    # internet_speed = InternetSpeed(driver,'internet speed', task='download')
 
@@ -66,6 +69,7 @@ def get_bridge(driver):
     bridge.add_accessory(light_toilet)
     bridge.add_accessory(hippo)
     bridge.add_accessory(rhino)
+    bridge.add_accessory(motion)
 
 
     return bridge

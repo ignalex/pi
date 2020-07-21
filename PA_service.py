@@ -31,7 +31,7 @@ import datetime
 from time import sleep
 import threading
 
-from modules.common import  LOGGER, CONFIGURATION, MainException, OBJECT#, Dirs
+from modules.common import  LOGGER, CONFIGURATION, MainException, OBJECT, TIMER, CheckTime
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from modules.talk import Speak, Phrase
 #from modules.sunrise import Sun #Astro
@@ -265,7 +265,7 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
         if CheckTime(5,0):
             if timer.speak.CheckDelay():
                 sleep(0.1); os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.Status() else 'red'))
-                Speak('Good morning')
+                #Speak('Good morning')
 
         if iPhone.changed != None:
             # os.system('curl http://192.168.1.176/control/color/' +('green' if iPhone.changed else 'red'))  # doesnt work here
@@ -321,29 +321,6 @@ def iPhone_connection(status):
     Speak('iPhone ' + ('connected' if status else 'connection lost'))
     logger.info('iPhone '+ ('connected' if status else 'connection lost'))
 
-
-class TIMER():
-    "delays per object"
-    def __init__(self, delay=60,sleep_hours=[]):
-        self.delay = delay - 1
-        self.last_scan = datetime.datetime.now() - datetime.timedelta(minutes=10)
-        self.sleep_hours = sleep_hours
-
-    def CheckDelay(self, delay=None):
-        if datetime.datetime.now() - self.last_scan >= datetime.timedelta(seconds = self.delay if delay is None else delay):
-            self.last_scan = datetime.datetime.now()
-            return True
-        else:
-            return False
-
-    def Awake(self):
-        "True if not in sleep hours array"
-        return datetime.datetime.now().hour not in self.sleep_hours
-
-def CheckTime( h,m):
-    now = datetime.datetime.now()
-    #TODO: once a minute
-    return now.hour == h and now.minute == m
 
 #%%
 if __name__ == '__main__':

@@ -49,6 +49,8 @@ class MotionSensor(Accessory):
         logger.info('motion')
         self.Blink()
         self.onMotion()
+        sleep(5)
+        self.char_detected.set_value(False)
 
     def stop(self):
         super().stop()
@@ -68,7 +70,7 @@ class MotionSensor(Accessory):
         # morning
         if  self.timer.morning.Awake() and self.timer.morning.CheckDelay():
             logger.info('morning procedure')
-            os.system('curl localhost:8083/cmnd?RUN=MORNING')
+            os.system('curl http://192.168.1.176/control/coffee/on')
             os.system('curl localhost:8083/cmnd?RUN=TIME\&args=HM')
             os.system('curl localhost:8083/cmnd?RUN=TEMP\&args=IN')
             os.system('curl localhost:8083/cmnd?RUN=WEATHER')

@@ -78,6 +78,7 @@ class MotionSensor(Accessory):
             # morning
             if  self.timer.morning.Awake() and self.timer.morning.CheckDelay():
                 logger.info('morning procedure')
+                os.system('curl localhost:8083/cmnd?RUN=MORNING')
                 os.system('curl http://192.168.1.176/control/coffee/on')
                 os.system('curl localhost:8083/cmnd?RUN=TIME\&args=HM')
                 os.system('curl localhost:8083/cmnd?RUN=TEMP\&args=IN')
@@ -87,5 +88,9 @@ class MotionSensor(Accessory):
             # motion but i am not around
             if self.timer.report.CheckDelay():
                 Speak('motion detected and reported')
-                logger.info('sending email ... ' + sendMail([p.email.address], [p.email.address, p.email.login, p.email.password],\
-                                                            'motion detected at ' + str(datetime.datetime.now()).slpit('.')[0] ,[]))
+                logger.info('motion detected and reported')
+                logger.info('sending email ... ' + sendMail([p.email.address],
+                                                            [p.email.address, p.email.login, p.email.password],
+                                                            'motion detected',
+                                                             str(datetime.datetime.now()).slpit('.')[0],
+                                                            []))

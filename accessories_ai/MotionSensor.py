@@ -54,7 +54,6 @@ class MotionSensor(Accessory):
         if self.timer.last.CheckDelay():
             self.char_detected.set_value(True)
             logger.info('motion')
-            self.Blink()
             self.onMotion()
             sleep(5)
             self.char_detected.set_value(False)
@@ -64,6 +63,7 @@ class MotionSensor(Accessory):
         GPIO.cleanup()
 
     def Blink(self, args = [1,1,0.1]):
+        "cycles, times, onTime / offTime, sleep 0.3 between cycles"
         for b in range(int(args[0])):
             for a in range(int(args[1])):
                 GPIO.output(p.pins.BLINK, GPIO.HIGH)
@@ -75,11 +75,12 @@ class MotionSensor(Accessory):
     def onMotion(self):
         "actions tools"
         if AcquireResult():
+            self.Blink()
             # morning
             if  self.timer.morning.Awake() and self.timer.morning.CheckDelay():
                 logger.info('morning procedure')
                 os.system('curl localhost:8083/cmnd?RUN=MORNING')
-                os.system('curl http://192.168.1.176/control/coffee/on')
+                # os.system('curl http://192.168.1.176/control/rf433/coffee/on')
                 os.system('curl localhost:8083/cmnd?RUN=TIME\&args=HM')
                 os.system('curl localhost:8083/cmnd?RUN=TEMP\&args=IN')
                 os.system('curl localhost:8083/cmnd?RUN=WEATHER')
@@ -94,3 +95,4 @@ class MotionSensor(Accessory):
                                                             'motion detected',
                                                              str(datetime.datetime.now()).split('.')[0],
                                                             []))
+                self.Blink([10, 3, 0.1])

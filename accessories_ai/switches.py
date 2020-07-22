@@ -110,17 +110,15 @@ class AllSwitches(Accessory):
             com = 'http://{}/cm?cmnd=Power'.format(self.metadata['IP'])
             for attempt in range(0, 2):
                 try:
-                    resp = requests.request('GET', com, timeout = 5).json()['POWER']
+                    resp = requests.request('GET', com, timeout = 2).json()['POWER']
+                    if self.char_on.value != (1 if resp == 'ON' else 0):  #changed
+                        logger.info(self.id + ' changed to ' +str(resp))
+                        self.last_change = datetime.datetime.now()
+                    self.char_on.value = 1 if resp == 'ON' else 0
+                    self.char_on.notify()
                     break
                 except Exception as e:
-                    logger.error('cant get meaningful response from SONOFF {} - attempt {}: {}'.format(self.metadata['IP'], attempt, str(e)))
-                    logger.debug(self.id + ' ' +str(resp))
-            if self.char_on.value != (1 if resp == 'ON' else 0):  #changed
-                logger.info(self.id + ' changed to ' +str(resp))
-                self.last_change = datetime.datetime.now()
-            self.char_on.value = 1 if resp == 'ON' else 0
-            self.char_on.notify()
-
+                    logger.error('cant get meaningful response from SONOFF {} - attempt {}: \n{}'.format(self.metadata['IP'], attempt, str(e)))
             #check for auto off
             if 'turn_off_after' in self.metadata.keys():
                 if self.char_on.value == 1 and \

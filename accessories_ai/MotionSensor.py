@@ -92,5 +92,5 @@ class MotionSensor(Accessory):
                 logger.info('sending email ... ' + sendMail([p.email.address],
                                                             [p.email.address, p.email.login, p.email.password],
                                                             'motion detected',
-                                                             str(datetime.datetime.now()).slpit('.')[0],
+                                                             str(datetime.datetime.now()).split('.')[0],
                                                             []))

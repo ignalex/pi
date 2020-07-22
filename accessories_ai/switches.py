@@ -117,6 +117,8 @@ class AllSwitches(Accessory):
                     self.char_on.value = 1 if resp == 'ON' else 0
                     self.char_on.notify()
                     break
+                except requests.exceptions.Timeout:
+                    logger.error('SONOFF {} - attempt {} - {}'.format(self.metadata['IP'], attempt, 'timeout'))
                 except Exception as e:
                     logger.error('cant get meaningful response from SONOFF {} - attempt {}: \n{}'.format(self.metadata['IP'], attempt, str(e)))
             #check for auto off

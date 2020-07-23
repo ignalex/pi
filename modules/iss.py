@@ -86,9 +86,12 @@ def Start():
     last_time_stamp = None
     iss = ISS()
     while True:
-        iss.Scan()
-        if iss.timestamp != last_time_stamp: iss.Log()
-        last_time_stamp =  iss.timestamp
+        try:
+            iss.Scan()
+            if iss.timestamp != last_time_stamp: iss.Log()
+            last_time_stamp =  iss.timestamp
+        except:
+            logger.error('iss scan error')
         time.sleep(delay)
 
 if __name__ == '__main__':

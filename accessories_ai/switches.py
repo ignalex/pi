@@ -119,7 +119,7 @@ class AllSwitches(Accessory):
                     self.char_on.notify()
                     break
                 except Exception as e:
-                    mes.append(str(attempt) +  '-' + str(e.__class__.__name__))
+                    mes.append(str(attempt) + ' - ' + str(e.__class__.__name__))
             if mes != []: logger.error('SONOFF {} {}'.format(self.metadata['IP'], '; '.join(mes)))
             #check for auto off
             if 'turn_off_after' in self.metadata.keys():
@@ -173,6 +173,8 @@ class EspStatusCollector(): #TODO: collector for SONOFF
         "checking status per IP and setting json element of status all"
         logger.debug('requesting status on {}'.format(ip))
         com = 'http://192.168.1.{}/control/rf_states'.format(ip)
+        mes = []
+
         for attempt in range(0, self.config['attempts']):
             try:
                 logger.debug('{} {}'.format(ip, attempt) )
@@ -188,7 +190,9 @@ class EspStatusCollector(): #TODO: collector for SONOFF
                 else:
                     sleep(0.5)
             except Exception as e:
-                logger.error('cant get meaningful response from ESP {} - attempt {}: {}'.format(ip, attempt, str(e)))
+                mes.append(str(attempt) +  ' - ' + str(e.__class__.__name__))
+        if mes != []: logger.error('ESP {} {}'.format(ip, '; '.join(mes)))
+
         self.online[ip] = False
         return False # after N attempts can't get reply
 

@@ -230,7 +230,7 @@ if __name__ == '__main__':
     if not w.timeout: w.Report()
 
     if '-DB' in args:
-        logger.info(str(w.readings))
+        logger.info(str({k:v for k,v in w.readings.items() if k != 'datetime'}))
 #        w.readings['datetime'] = datetime.datetime.now()
         status = to_db(w.readings)
         print('to DB ' + str(status))

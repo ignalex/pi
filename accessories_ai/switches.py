@@ -118,12 +118,9 @@ class AllSwitches(Accessory):
                     self.char_on.value = 1 if resp == 'ON' else 0
                     self.char_on.notify()
                     break
-                except requests.exceptions.Timeout:
-                    mes.append(str(attempt) + ' timeout')
-                    sleep(0.1)
                 except Exception as e:
-                    mes.append(str(attempt) +  ' ' + str(e))
-                    logger.error('SONOFF {} {}'.format(self.metadata['IP'], '; '.join[mes]))
+                    mes.append(str(attempt) +  '-' + str(e.__class__.__name__))
+            if mes != []: logger.error('SONOFF {} {}'.format(self.metadata['IP'], '; '.join(mes)))
             #check for auto off
             if 'turn_off_after' in self.metadata.keys():
                 if self.char_on.value == 1 and \

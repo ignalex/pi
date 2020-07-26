@@ -2,10 +2,15 @@
 
 import io
 import picamera
-import logging
 import socketserver
 from threading import Condition
 from http import server
+
+import sys
+sys.path.append('/home/pi/git/pi') # for running from command line.
+from modules.common import LOGGER
+logger = LOGGER('camera_stream', 'INFO', True)
+
 
 PAGE="""\
 <html>
@@ -43,14 +48,14 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
 #            self.send_header('Location', '/index.html')
 #            self.end_headers()
 #        elif self.path == '/index.html':
-        if self.path == '/asdfasdfasdf589589589.html':
+        if self.path.endswith('html'):
             content = PAGE.encode('utf-8')
             self.send_response(200)
             self.send_header('Content-Type', 'text/html')
             self.send_header('Content-Length', len(content))
             self.end_headers()
             self.wfile.write(content)
-        elif self.path == '/asdfasdfasdf589589589_stream.mjpg':
+        elif self.path.endswith('mjpg'):
             self.send_response(200)
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')
@@ -69,7 +74,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     self.wfile.write(frame)
                     self.wfile.write(b'\r\n')
             except Exception as e:
-                logging.warning(
+                logger.warning(
                     'Removed streaming client %s: %s',
                     self.client_address, str(e))
         else:
@@ -84,8 +89,10 @@ with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
     output = StreamingOutput()
     camera.start_recording(output, format='mjpeg')
     try:
+        logger.info('star streaming')
         address = ('', 8000)
         server = StreamingServer(address, StreamingHandler)
         server.serve_forever()
     finally:
+        logger.info('stop streaming')
         camera.stop_recording()

@@ -5,7 +5,7 @@ import picamera
 import socketserver
 from threading import Condition
 from http import server
-
+from time import sleep
 import sys
 sys.path.append('/home/pi/git/pi') # for running from command line.
 from modules.common import LOGGER
@@ -62,7 +62,6 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Pragma', 'no-cache')
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
-            camera.start_recording(output, format='mjpeg')
             logger.ino('start streaming')
             try:
                 while True:
@@ -80,10 +79,10 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                 logger.warning(
                     'Removed streaming client %s: %s',
                     self.client_address, str(e))
-                camera.stop_recording(output, format='mjpeg')
         else:
             self.send_error(404)
             self.end_headers()
+        sleep(0.1)
 
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
@@ -91,7 +90,7 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
     output = StreamingOutput()
-    # camera.start_recording(output, format='mjpeg')
+    camera.start_recording(output, format='mjpeg')
     try:
         logger.info('start camera ')
         address = ('', 8000)

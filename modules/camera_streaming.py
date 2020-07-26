@@ -62,6 +62,8 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Pragma', 'no-cache')
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
+            camera.start_recording(output, format='mjpeg')
+            logger.ino('start streaming')
             try:
                 while True:
                     with output.condition:
@@ -74,9 +76,11 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     self.wfile.write(frame)
                     self.wfile.write(b'\r\n')
             except Exception as e:
+                logger.ino('stop streaming')
                 logger.warning(
                     'Removed streaming client %s: %s',
                     self.client_address, str(e))
+                camera.stop_recording(output, format='mjpeg')
         else:
             self.send_error(404)
             self.end_headers()
@@ -87,12 +91,12 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
     output = StreamingOutput()
-    camera.start_recording(output, format='mjpeg')
+    # camera.start_recording(output, format='mjpeg')
     try:
-        logger.info('star streaming')
+        logger.info('start camera ')
         address = ('', 8000)
         server = StreamingServer(address, StreamingHandler)
         server.serve_forever()
     finally:
-        logger.info('stop streaming')
+        logger.info('stop camera')
         camera.stop_recording()

@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jul 26 10:04:56 2020
-
-@author: alexander
-"""
-
 """An example of how to setup and start an Accessory.
 
 This is:
@@ -13,7 +5,8 @@ This is:
 2. Add it to an AccessoryDriver, which will advertise it on the local network,
     setup a server to answer client queries, etc.
 """
-
+import signal
+import socket
 import os
 os.chdir('/home/pi/git/pi/accessories_ai')
 
@@ -21,13 +14,14 @@ import sys
 sys.path.append('/home/pi/git/pi') # for running from command line.
 from modules.common import LOGGER
 
-from accessories_ai.start_stream_cmd import FFMPEG_CMD
-
 logger = LOGGER('camera', 'INFO', True)
 
-import signal
+DEV_VIDEO = '/dev/video0'
+IP_ADDRESS = [l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8',53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0]
+THREADS = 4
+
 from pyhap.accessory_driver import AccessoryDriver
-from pyhap import camera, util
+from pyhap import camera
 
 
 # Specify the audio and video configuration that your device can support
@@ -71,13 +65,19 @@ options = {
         ],
     },
     "srtp": True,
+    "address": IP_ADDRESS,
 
-    # hard code the address if auto-detection does not work as desired: e.g. "192.168.1.226"
-    "address": util.get_local_address(),
-    "start_stream_cmd"   : FFMPEG_CMD
+    "start_stream_cmd" :( 'ffmpeg -f video4linux2 -input_format h264 -i ' + DEV_VIDEO + ' -threads ' + str(THREADS) + ' '
+    '-vcodec libx264 -an -pix_fmt yuv420p -r {fps} -f rawvideo -tune zerolatency '
+    '-vf scale={width}:{height} -b:v {v_max_bitrate}k -bufsize {v_max_bitrate}k '
+    '-payload_type 99 -ssrc {v_ssrc} -f rtp '
+    '-srtp_out_suite AES_CM_128_HMAC_SHA1_80 -srtp_out_params {v_srtp_key} '
+    'srtp://{address}:{v_port}?rtcpport={v_port}&'
+    'localrtcpport={v_port}&pkt_size=1378'
+)
 }
 
-
+logger.debug('options: '+ str(options))
 # Start the accessory on port 51826
 driver = AccessoryDriver(port=51826)
 acc = camera.Camera(options, driver, "Camera")

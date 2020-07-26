@@ -13,6 +13,7 @@ Created on Mon Dec 07 06:48:31 2015
 #DONE: class initiate only once
 #TODO: simplify table structure > staging > geom
 #TODO: ask where > answer continent / country
+#TODO: approaching from XXX going to XXX > postgis
 #TODO: projection for when passing
 
 """

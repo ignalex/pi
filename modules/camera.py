@@ -56,14 +56,14 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         #no auth for alert
         if self.path == '/alert':
             self.send_response(200)
-            f = os.path.join(PATH,str(datetime.datetime.now()).split('.')[0].replace(' ','_').replace('-','').replace(':','')+'.mjpg')
+            f = os.path.join(PATH,str(datetime.datetime.now()).split('.')[0].replace(' ','_').replace('-','').replace(':','')+'.h264')
             logger.info('saving video to file + %s', f)
             os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
-            camera.start_recording(f, format='mjpeg')
+            camera.start_recording(f)
             camera.wait_recording(RECORD)
             camera.stop_recording()
             logger.info('recording stopped')
-            os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
+            #os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
             return
 
         if not self.checkAuthentication():

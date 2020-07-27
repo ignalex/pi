@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import io
+import io, os, sys
 import picamera
 import socketserver
 from threading import Condition
 from http import server
-import sys
 sys.path.append('/home/pi/git/pi') # for running from command line.
 from modules.common import LOGGER, CONFIGURATION
 import base64
@@ -77,6 +76,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             try:
                 camera.start_recording(output, format='mjpeg')
                 logger.info('start streaming : %s', self.client_address )
+                os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
                 while True:
                     with output.condition:
                         output.condition.wait()
@@ -90,6 +90,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             except Exception as e:
                 camera.stop_recording()
                 logger.info('stop streaming')
+                os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
                 logger.warning(
                     'Removed streaming client %s: %s',
                     self.client_address, str(e))

@@ -14,6 +14,7 @@ from modules.common import  CONFIGURATION, TIMER, CheckTime, OBJECT
 
 import datetime
 import logging
+import requests
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG, format="[%(module)s] %(message)s")
 p = CONFIGURATION() #pins
@@ -90,6 +91,10 @@ class MotionSensor(Accessory):
             if self.timer.report.CheckDelay():
                 Speak('motion detected and reported')
                 logger.info('motion detected and reported')
+                try:
+                    requests.get('http://shrimp.local:8000/alert', timeout=1, proxies={'http':None})
+                except: pass
+                # os.system("curl shrimp.local:8000/alert")
                 logger.info('sending email ... ' + sendMail([p.email.address],
                                                             [p.email.address, p.email.login, p.email.password],
                                                             'motion detected',

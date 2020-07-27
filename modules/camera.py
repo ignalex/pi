@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import io, os, sys
+import io, os, sys, datetime
 import picamera
 import socketserver
 from threading import Condition
@@ -53,6 +53,19 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         return True
 
     def do_GET(self):
+        #no auth for alert
+        if self.path == '/alert':
+            self.send_response(200)
+            f = os.path.join(PATH,str(datetime.datetime.now()).split('.')[0].replace(' ','_').replace('-','').replace(':','')+'.mjpg')
+            logger.info('saving video to file + %s', f)
+            os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
+            camera.start_recording(f, format='mjpeg')
+            camera.wait_recording(RECORD)
+            camera.stop_recording()
+            logger.info('recording stopped')
+            os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
+            return
+
         if not self.checkAuthentication():
             return
 
@@ -109,6 +122,8 @@ if __name__ == '__main__':
     p = CONFIGURATION().camera #LOGIN:PASS
     X,Y,R= p.X, p.Y, p.R
     PAGE = PAGE.format(X,Y)
+    PATH=p.PATH
+    RECORD=p.RECORD
 
     with picamera.PiCamera(resolution='{}x{}'.format(X,Y), framerate=R) as camera:
         output = StreamingOutput()

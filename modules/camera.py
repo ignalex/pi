@@ -13,7 +13,7 @@ import base64
 PAGE="""\
 <html>
 <head>
-<title>shrip camera</title>
+<title>shrimp camera</title>
 </head>
 <body>
 <img src="stream.mjpg" width="{}" height="{}" />
@@ -107,10 +107,10 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 if __name__ == '__main__':
     logger = LOGGER('camera_stream', 'INFO', True)
     p = CONFIGURATION().camera #LOGIN:PASS
-    X,Y = p.X, p.Y
+    X,Y,R= p.X, p.Y, p.R
     PAGE = PAGE.format(X,Y)
 
-    with picamera.PiCamera(resolution='{}x{}'.format(X,Y), framerate=24) as camera:
+    with picamera.PiCamera(resolution='{}x{}'.format(X,Y), framerate=R) as camera:
         output = StreamingOutput()
         # camera.start_recording(output, format='mjpeg')
         try:

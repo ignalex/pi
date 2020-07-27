@@ -110,7 +110,7 @@ def GENERAL(arg):
 
 def App():
     "run app in a thread"
-    app.run(debug=False, use_debugger = False, use_reloader = False, port = 8083, host = '127.0.0.1')
+    app.run(debug=False, use_debugger = False, use_reloader = False, port = 8083, host = '0.0.0.0')
 
 def ALLEVENTSTODAY(args):
     "speak all events from the iCloud calendar > called from inside"

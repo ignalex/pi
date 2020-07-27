@@ -107,7 +107,7 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 if __name__ == '__main__':
     logger = LOGGER('camera_stream', 'INFO', True)
     p = CONFIGURATION().camera #LOGIN:PASS
-    X,Y = p.X, p,Y
+    X,Y = p.X, p.Y
     PAGE = PAGE.format(X,Y)
 
     with picamera.PiCamera(resolution='{}x{}'.format(X,Y), framerate=24) as camera:

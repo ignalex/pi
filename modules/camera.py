@@ -16,10 +16,11 @@ PAGE="""\
 <title>shrip camera</title>
 </head>
 <body>
-<img src="stream.mjpg" width="640" height="480" />
+<img src="stream.mjpg" width="{}" height="{}" />
 </body>
 </html>
 """
+
 
 class StreamingOutput(object):
     def __init__(self):
@@ -106,8 +107,10 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 if __name__ == '__main__':
     logger = LOGGER('camera_stream', 'INFO', True)
     p = CONFIGURATION().camera #LOGIN:PASS
+    X,Y = p.X, p,Y
+    PAGE = PAGE.format(X,Y)
 
-    with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
+    with picamera.PiCamera(resolution='{}x{}'.format(X,Y), framerate=24) as camera:
         output = StreamingOutput()
         # camera.start_recording(output, format='mjpeg')
         try:

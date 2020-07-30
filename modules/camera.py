@@ -8,6 +8,7 @@ from http import server
 sys.path.append('/home/pi/git/pi') # for running from command line.
 from modules.common import LOGGER, CONFIGURATION
 import base64
+from modules.send_email import sendMail
 
 
 PAGE="""\
@@ -56,13 +57,19 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         #no auth for alert
         if self.path == '/alert':
             self.send_response(200)
-            f = os.path.join(PATH,str(datetime.datetime.now()).split('.')[0].replace(' ','_').replace('-','').replace(':','')+'.h264')
-            logger.info('saving video to file + %s', f)
+            f = os.path.join(p.camera.PATH,str(datetime.datetime.now()).split('.')[0].replace(' ','_').replace('-','').replace(':',''))
+            logger.info('saving picture and vides to file + %s', f)
+            camera.capture(f+'.jpeg')
             os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
-            camera.start_recording(f)
-            camera.wait_recording(RECORD)
+            camera.start_recording(f+'.h264')
+            camera.wait_recording(p.camera.RECORD)
             camera.stop_recording()
             logger.info('recording stopped')
+            logger.info('sending email ... ' + sendMail([p.email.address],
+                                                        [p.email.address, p.email.login, p.email.password],
+                                                        'motion detected',
+                                                         str(datetime.datetime.now()).split('.')[0],
+                                                        [f+'.jpeg']))
             #os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
             return
 
@@ -119,13 +126,10 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 if __name__ == '__main__':
     logger = LOGGER('camera_stream', 'INFO', True)
-    p = CONFIGURATION().camera #LOGIN:PASS
-    X,Y,R= p.X, p.Y, p.R
-    PAGE = PAGE.format(X,Y)
-    PATH=p.PATH
-    RECORD=p.RECORD
+    p = CONFIGURATION() #LOGIN:PASS
+    PAGE = PAGE.format(p.camera.X, p.camera.Y)
 
-    with picamera.PiCamera(resolution='{}x{}'.format(X,Y), framerate=R) as camera:
+    with picamera.PiCamera(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R) as camera:
         output = StreamingOutput()
         # camera.start_recording(output, format='mjpeg')
         try:

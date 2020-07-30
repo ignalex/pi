@@ -12,7 +12,7 @@ from time import  sleep
 sys.path.append('/home/pi/git/pi/modules') #!!!: out
 from modules.common import  CONFIGURATION, TIMER, CheckTime, OBJECT
 
-import datetime
+# import datetime
 import logging
 import requests
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ p = CONFIGURATION() #pins
 
 from modules.PingIPhone import AcquireResult
 from modules.talk import  Speak
-from send_email import sendMail
+# from send_email import sendMail
 
 import RPi.GPIO as GPIO
 
@@ -42,7 +42,7 @@ class MotionSensor(Accessory):
         self.timer = OBJECT({'morning':      TIMER(60*60*6, [0,1,2,3,4,10,11,12,13,14,15,16,17,18,19,20,21,22,23], 60*7),
                              'CheckTime' :   CheckTime,
                              'last' :        TIMER(60),
-                             'report' :      TIMER(60*5)})
+                             'report' :      TIMER(60*2)})
 
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
@@ -92,12 +92,13 @@ class MotionSensor(Accessory):
                 Speak('motion detected and reported')
                 logger.info('motion detected and reported')
                 try:
-                    requests.get('http://shrimp.local:8000/alert', timeout=1, proxies={'http':None})
+                    requests.get('http://shrimp.local:8000/alert', timeout=3, proxies={'http':None})
                 except: pass
                 # os.system("curl shrimp.local:8000/alert")
-                logger.info('sending email ... ' + sendMail([p.email.address],
-                                                            [p.email.address, p.email.login, p.email.password],
-                                                            'motion detected',
-                                                             str(datetime.datetime.now()).split('.')[0],
-                                                            []))
+                # moved to  camera module
+                # logger.info('sending email ... ' + sendMail([p.email.address],
+                #                                             [p.email.address, p.email.login, p.email.password],
+                #                                             'motion detected',
+                #                                              str(datetime.datetime.now()).split('.')[0],
+                #                                             []))
                 self.Blink([10, 3, 0.1])

@@ -17,10 +17,14 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG, format="[%(module)s] %(message)s")
 
+from common import CONFIGURATION
+p = CONFIGURATION()
+
 try:
     from talk import Speak
 except:
     pass
+
 
 from pyhap.accessory import Accessory
 from pyhap.const import CATEGORY_LIGHTBULB, CATEGORY_SWITCH, CATEGORY_PROGRAMMABLE_SWITCH
@@ -42,8 +46,8 @@ class AllSwitches(Accessory):
                         '13':           ['Switch', 'set_switch_esp'],
                         'coffee':       ['Switch', 'set_switch_esp'],
                         'i_am_home':    ['Switch', 'set_switch_esp'],
-                        'ambient light':['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.18'}],
-                        'toilet light': ['Lightbulb', 'set_switch_sonoff', {'IP': '192.168.1.9', 'turn_off_after':{'sec': 180, 'more' : [5,6,18,19,20,21,22]}}],
+                        'ambient light':['Lightbulb', 'set_switch_sonoff', {'IP': p.devices.ambient_light1}],
+                        'toilet light': ['Lightbulb', 'set_switch_sonoff', {'IP': p.devices.toilet_light, 'turn_off_after':{'sec': 180, 'more' : [5,6,18,19,20,21,22]}}],
                         'beep' :        ['Switch', 'beep'],
                         'watering' :    ['Switch', 'watering']
                         }[self.id]
@@ -62,7 +66,7 @@ class AllSwitches(Accessory):
         self.__dict__.update(state)
 
     def set_switch_esp(self, value):
-        com = 'http://192.168.1.176/control/rf433/{}/{}'.format(self.id, value)
+        com = 'http://{}/control/rf433/{}/{}'.format(p.devices.esp, self.id, value)
         try:
             resp = requests.request('GET', com, timeout = 5).json()['data']
             logger.info(self.id + ' ' +str(resp))
@@ -77,16 +81,16 @@ class AllSwitches(Accessory):
         except Exception as e:
             logger.error(com + ' : ' + str(e.__class__.__name__))
 
-    def beep(self, value):
-        com = 'http://192.168.1.176/control/beep/{}' #testing
-        logger.info('BEEP: value {}'.format(value))
-        if not value: return
+    # def beep(self, value):
+    #     com = 'http://192.168.1.176/control/beep/{}' #testing
+    #     logger.info('BEEP: value {}'.format(value))
+    #     if not value: return
 
-        for a in range(0,value):
-            resp = requests.request('GET', com.format(1), timeout = 5).json()['data']
-            sleep(0.2)
-            resp = requests.request('GET', com.format(0), timeout = 5).json()['data']
-            logger.info(self.id + ' ' +str(resp))
+    #     for a in range(0,value):
+    #         resp = requests.request('GET', com.format(1), timeout = 5).json()['data']
+    #         sleep(0.2)
+    #         resp = requests.request('GET', com.format(0), timeout = 5).json()['data']
+    #         logger.info(self.id + ' ' +str(resp))
 
         self.char_on.value = 0
         self.char_on.notify()
@@ -146,7 +150,7 @@ class AllSwitches(Accessory):
 class EspStatusCollector(): #TODO: collector for SONOFF
     " status collector? >>> one pre-stored element"
     " get into threading"
-    def __init__(self, ips = [175, 176], sleep = 10):
+    def __init__(self, ips = ['192.168.1.176'], sleep = 10):
         #175 North (off), 176 East , sleep was 60
         self.ips =          ips
         self.DO =           True
@@ -178,13 +182,13 @@ class EspStatusCollector(): #TODO: collector for SONOFF
             except Exception as e:
                 logger.error('status collector : ' +  str(e.__class__.__name__))
 
-    def Check(self, ip=176):
+    def Check(self, ip='192.168.1.176'):
         "checking status per IP and setting json element of status all"
         logger.debug('requesting status on {}'.format(ip))
-        com = 'http://192.168.1.{}/control/rf_states'.format(ip)
+        com = 'http://{}/control/rf_states'.format(ip)
         mes = []
-
         for attempt in range(0, self.config['attempts']):
+            resp = requests.request('GET', com, timeout = self.config['timeout'])
             try:
                 logger.debug('{} {}'.format(ip, attempt) )
                 resp = requests.request('GET', com, timeout = self.config['timeout'])

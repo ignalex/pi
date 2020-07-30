@@ -22,13 +22,14 @@ from accessories_ai.computers import SYSTEM
 
 from accessories_ai.MotionSensor import  MotionSensor
 
-from common import LOGGER
+from common import LOGGER, CONFIGURATION
+p = CONFIGURATION()
 logger = LOGGER('HAP_server', 'INFO')
 
 from talk import Speak
 Speak('starting HAP server')
 
-st = EspStatusCollector(ips=[176], sleep=10 ) # starting threaded status collector, must have name 'st'
+st = EspStatusCollector(ips=[p.devices.esp], sleep=10 ) # starting threaded status collector, must have name 'st'
 
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""
@@ -43,7 +44,7 @@ def get_bridge(driver):
     monitors = AllSwitches(driver, '13')
     i_am_home = AllSwitches(driver, 'i_am_home')
     #lightSenor1 = LightSensor(driver, 'light sensor 1', ip=175)
-    lightSenor2 = LightSensor(driver, 'light sensor 2', ip=176)
+    lightSenor2 = LightSensor(driver, 'light sensor 2', ip=p.devices.esp)
     # window = WindowCovering(driver, 'window', ip=175, calibrate=True, speak=True, minStep=10)
     # beep = AllSwitches(driver, 'beep')
 #    program1 = ProgramableSwitch(driver,'program 1')

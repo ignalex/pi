@@ -42,7 +42,7 @@ class MotionSensor(Accessory):
         self.timer = OBJECT({'morning':      TIMER(60*60*6, [0,1,2,3,4,10,11,12,13,14,15,16,17,18,19,20,21,22,23], 60*7),
                              'CheckTime' :   CheckTime,
                              'last' :        TIMER(60),
-                             'report' :      TIMER(60*10)})
+                             'report' :      TIMER(60*5)})
 
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)

@@ -337,10 +337,16 @@ def iPhonePING(TW, items, iPhone, twilight=True, iPhoneStatus=True):
 
 def iPhone_connection(status):
     "True / False"
-    sleep(0.1); os.system('curl http://192.168.1.176/control/rf433/i_am_home/' + ('on' if status else 'off'))
-    sleep(0.1); os.system('curl http://192.168.1.176/control/color/' + ('green' if status else 'red'))
-    Speak('iPhone ' + ('connected' if status else 'connection lost'))
-    logger.info('iPhone '+ ('connected' if status else 'connection lost'))
+    for a in range(0,3):
+        try:
+            sleep(0.1); requests.get('http://192.168.1.176/control/rf433/i_am_home/' + ('on' if status else 'off'))
+            sleep(0.1); requests.get('http://192.168.1.176/control/color/' + ('green' if status else 'red'))
+            Speak('iPhone ' + ('connected' if status else 'connection lost'))
+            logger.info('iPhone '+ ('connected' if status else 'connection lost'))
+            return
+        except:
+            pass
+
 
 
 #%%

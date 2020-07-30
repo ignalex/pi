@@ -63,13 +63,19 @@ class AllSwitches(Accessory):
 
     def set_switch_esp(self, value):
         com = 'http://192.168.1.176/control/rf433/{}/{}'.format(self.id, value)
-        resp = requests.request('GET', com, timeout = 5).json()['data']
-        logger.info(self.id + ' ' +str(resp))
+        try:
+            resp = requests.request('GET', com, timeout = 5).json()['data']
+            logger.info(self.id + ' ' +str(resp))
+        except Exception as e:
+            logger.error(com + ' : ' + str(e.__class__.__name__))
 
     def set_switch_sonoff(self, value):
         com = 'http://{}/cm?cmnd=Power%20{}'.format(self.metadata['IP'], value)
-        resp = requests.request('GET', com, timeout = 5).content
-        logger.info(self.id + ' ' +str(resp))
+        try:
+            resp = requests.request('GET', com, timeout = 5).content
+            logger.info(self.id + ' ' +str(resp))
+        except Exception as e:
+            logger.error(com + ' : ' + str(e.__class__.__name__))
 
     def beep(self, value):
         com = 'http://192.168.1.176/control/beep/{}' #testing
@@ -111,7 +117,7 @@ class AllSwitches(Accessory):
             mes = []
             for attempt in range(0, 2):
                 try:
-                    resp = requests.request('GET', com, timeout = 2).json()['POWER']
+                    resp = requests.request('GET', com, timeout = 3).json()['POWER']
                     if self.char_on.value != (1 if resp == 'ON' else 0):  #changed
                         logger.info(self.id + ' changed to ' +str(resp))
                         self.last_change = datetime.datetime.now()
@@ -161,13 +167,16 @@ class EspStatusCollector(): #TODO: collector for SONOFF
     def Update(self):
         "for all IPs "
         while True:
-            last = datetime.datetime.now()
-            for ip in self.ips: self.Check(ip)
-            while datetime.datetime.now() < last + datetime.timedelta(seconds = self.sleep):
-                sleep(1)
-                if not self.DO:
-                    logger.info('Status collector finished')
-                    return
+            try:
+                last = datetime.datetime.now()
+                for ip in self.ips: self.Check(ip)
+                while datetime.datetime.now() < last + datetime.timedelta(seconds = self.sleep):
+                    sleep(1)
+                    if not self.DO:
+                        logger.info('Status collector finished')
+                        return
+            except Exception as e:
+                logger.error('status collector : ' +  str(e.__class__.__name__))
 
     def Check(self, ip=176):
         "checking status per IP and setting json element of status all"

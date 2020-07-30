@@ -44,7 +44,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
 
     def checkAuthentication(self):
         auth = self.headers.get('Authorization')
-        if auth != "Basic %s" % base64.b64encode((p.LOGIN + ':'+ p.PASS).encode()).decode():
+        if auth != "Basic %s" % base64.b64encode((p.camera.LOGIN + ':'+ p.camera.PASS).encode()).decode():
             self.send_response(401)
             self.send_header("WWW-Authenticate", 'Basic realm="webiopi"')
             self.end_headers();
@@ -65,11 +65,14 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             camera.wait_recording(p.camera.RECORD)
             camera.stop_recording()
             logger.info('recording stopped')
+            f2 = os.path.join(p.camera.PATH,str(datetime.datetime.now()).split('.')[0].replace(' ','_').replace('-','').replace(':',''))
+            camera.capture(f2+'.jpeg')
+
             logger.info('sending email ... ' + sendMail([p.email.address],
                                                         [p.email.address, p.email.login, p.email.password],
                                                         'motion detected',
                                                          str(datetime.datetime.now()).split('.')[0],
-                                                        [f+'.jpeg']))
+                                                        [f+'.jpeg', f2+'.jpeg']))
             #os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
             return
 

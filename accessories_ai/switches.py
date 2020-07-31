@@ -188,7 +188,6 @@ class EspStatusCollector(): #TODO: collector for SONOFF
         com = 'http://{}/control/rf_states'.format(ip)
         mes = []
         for attempt in range(0, self.config['attempts']):
-            resp = requests.request('GET', com, timeout = self.config['timeout'])
             try:
                 logger.debug('{} {}'.format(ip, attempt) )
                 resp = requests.request('GET', com, timeout = self.config['timeout'])

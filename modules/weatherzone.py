@@ -142,7 +142,7 @@ class WEATHER(object):
 
 
     def LightSensor(self, sensors = {#'light_1' : {'link': 'http://192.168.1.175/control/sensor', 'calibr' : 1},
-                                     'light_2' : {'link': 'http://192.168.1.176/control/sensor/sound', 'calibr' : 1.2}}):
+                                     'light_2' : {'link': 'http://192.168.1.176/control/sensor', 'calibr' : 1.2}}):
         for light, params in sensors.items():
             try:
                 if datetime.datetime.now().hour < 5 or datetime.datetime.now().hour > 20:

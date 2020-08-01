@@ -89,16 +89,9 @@ class MotionSensor(Accessory):
         else:
             # motion but i am not around
             if self.timer.report.CheckDelay():
-                Speak('motion detected and reported')
                 logger.info('motion detected and reported')
                 try:
-                    requests.get('http://shrimp.local:8000/alert', timeout=3, proxies={'http':None})
+                    requests.get('http://shrimp.local:8000/alert', timeout=1, proxies={'http':None})
                 except: pass
-                # os.system("curl shrimp.local:8000/alert")
-                # moved to  camera module
-                # logger.info('sending email ... ' + sendMail([p.email.address],
-                #                                             [p.email.address, p.email.login, p.email.password],
-                #                                             'motion detected',
-                #                                              str(datetime.datetime.now()).split('.')[0],
-                #                                             []))
+                Speak('motion detected and reported')
                 self.Blink([10, 3, 0.1])

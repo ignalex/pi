@@ -214,5 +214,7 @@ class TIMER():
 
 def CheckTime( h,m):
     now = datetime.datetime.now()
-    #TODO: once a minute
     return now.hour == h and now.minute == m
+
+def timestamp():
+    return str(datetime.datetime.now()).split('.')[0].replace(' ','_').replace('-','').replace(':','')

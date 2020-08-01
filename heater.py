@@ -108,7 +108,10 @@ class HEATER(object):
     def esp(self,com):
         "using ESP contorol"
         #ESP([str(self.conf.ip),'rf433',self.conf.command,str(com)]) > broken for py3
-        requests.request('GET', 'http://192.168.1.176/control/rf433/heater/'+str(com), timeout = 4)
+        try:
+            requests.request('GET', 'http://192.168.1.176/control/rf433/heater/'+str(com), timeout = 4)
+        except:
+            pass #TODO: ~
 
     def rf433(self,com):
         "using rf433  control"

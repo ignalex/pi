@@ -139,19 +139,19 @@ class CM(picamera.PiCamera):
     def Capture(self, path):
         f = os.path.join(path, timestamp())+'.jpeg'
         logger.info('saving picture %s', f)
-        self.camera.capture(f)
+        self.capture(f)
         return  f
     def Record(self, path, time=10): #p.camera.RECORD
         f = os.path.join(path, timestamp())+'.h264'
         logger.info('saving video %s', f)
-        self.camera.start_recording(f)
-        self.camera.wait_recording(time)
-        self.camera.stop_recording()
+        self.start_recording(f)
+        self.wait_recording(time)
+        self.stop_recording()
         logger.info('recording stopped')
         return f
     def Stream(self):
         self.output = StreamingOutput()
-        self.camera.start_recording(self.output, format='mjpeg')
+        self.start_recording(self.output, format='mjpeg')
 
 if __name__ == '__main__':
     logger = LOGGER('camera_stream', 'INFO', True)

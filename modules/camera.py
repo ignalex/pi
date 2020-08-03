@@ -151,7 +151,7 @@ class CM(picamera.PiCamera):
         self.start_recording(self.output, format='mjpeg')
 
 if __name__ == '__main__':
-    logger = LOGGER('camera_stream', 'INFO', True)
+    logger = LOGGER('camera', 'INFO', True)
     p = CONFIGURATION() #LOGIN:PASS
     PAGE = PAGE.format(p.camera.X, p.camera.Y)
 

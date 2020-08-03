@@ -23,7 +23,7 @@ from modules.common import LOGGER
 
 from accessories_ai.start_stream_cmd import FFMPEG_CMD
 
-logger = LOGGER('camera', 'INFO', True)
+logger = LOGGER('hap_camera', 'INFO', True)
 
 import signal
 from pyhap.accessory_driver import AccessoryDriver

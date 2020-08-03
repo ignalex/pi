@@ -9,7 +9,7 @@ sys.path.append('/home/pi/git/pi') # for running from command line.
 from modules.common import LOGGER, CONFIGURATION, timestamp
 import base64
 from modules.send_email import sendMail
-
+from time import sleep
 
 PAGE="""\
 <html>
@@ -57,23 +57,18 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         #no auth for alert
         if self.path == '/alert':
             self.send_response(200)
-            f = os.path.join(p.camera.PATH, timestamp())
-            logger.info('saving picture and vides to file + %s', f)
-            camera.capture(f+'.jpeg')
-            # os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
-            camera.start_recording(f+'.h264')
-            camera.wait_recording(p.camera.RECORD)
-            camera.stop_recording()
-            logger.info('recording stopped')
-            f2 = os.path.join(p.camera.PATH, timestamp())
-            camera.capture(f2+'.jpeg')
+            with CM(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R, path=p.camera.PATH) as camera:
+                f1 = camera.Capture()
+                v1 = camera.Record(p.camera.RECORD)
+                f2 = camera.Capture()
 
             logger.info('sending email ... ' + sendMail([p.email.address],
                                                         [p.email.address, p.email.login, p.email.password],
                                                         'motion detected',
-                                                         str(datetime.datetime.now()).split('.')[0],
-                                                        [f+'.jpeg', f2+'.jpeg']))
-            #os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
+                                                         str(datetime.datetime.now()).split('.')[0]+ '\n' +
+                                                         'video file: '+ v1,
+                                                        [f1, f2]))
+            del camera
             return
 
         if not self.checkAuthentication():
@@ -98,49 +93,73 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
             try:
-                camera.start_recording(output, format='mjpeg')
-                logger.info('start streaming : %s', self.client_address )
-                os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
-                while True:
-                    with output.condition:
-                        output.condition.wait()
-                        frame = output.frame
-                    self.wfile.write(b'--FRAME\r\n')
-                    self.send_header('Content-Type', 'image/jpeg')
-                    self.send_header('Content-Length', len(frame))
-                    self.end_headers()
-                    self.wfile.write(frame)
-                    self.wfile.write(b'\r\n')
+                with CM(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R, path=p.camera.PATH) as camera:
+                    camera.Stream()
+                    logger.info('start streaming : %s', self.client_address )
+                    os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
+                    while True:
+                        with camera.output.condition:
+                            camera.output.condition.wait()
+                            frame = camera.output.frame
+                        self.wfile.write(b'--FRAME\r\n')
+                        self.send_header('Content-Type', 'image/jpeg')
+                        self.send_header('Content-Length', len(frame))
+                        self.end_headers()
+                        self.wfile.write(frame)
+                        self.wfile.write(b'\r\n')
             except Exception as e:
-                camera.stop_recording()
+                #logger.error(str(e))
                 logger.info('stop streaming')
                 os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
                 logger.warning(
                     'Removed streaming client %s: %s',
                     self.client_address, str(e))
+            finally:
+                try:
+                    # camera.stop_recording()
+                    del camera
+                except Exception as e:
+                    logger.error('camera element already removed - OK - %s',  str(e))
 
         else:
             self.send_error(404)
             self.end_headers()
+
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
+class CM(picamera.PiCamera):
+    def __init__(self, *args,  **kwargs):
+        super().__init__(*args, **{k:v for k,v in kwargs.items() if k not in ['path']})
+        self.path = kwargs['path']
+    def Capture(self):
+        f = os.path.join(self.path, timestamp())+'.jpeg'
+        logger.info('saving picture %s', f)
+        self.capture(f)
+        return  f
+    def Record(self, time=10): #p.camera.RECORD
+        f = os.path.join(self.path, timestamp())+'.h264'
+        logger.info('saving video %s', f)
+        self.start_recording(f)
+        self.wait_recording(time)
+        self.stop_recording()
+        logger.info('recording stopped')
+        return f
+    def Stream(self):
+        self.output = StreamingOutput()
+        self.start_recording(self.output, format='mjpeg')
 
 if __name__ == '__main__':
     logger = LOGGER('camera_stream', 'INFO', True)
     p = CONFIGURATION() #LOGIN:PASS
     PAGE = PAGE.format(p.camera.X, p.camera.Y)
 
-    #TODO: init camera in call
-    with picamera.PiCamera(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R) as camera:
-        output = StreamingOutput()
-        # camera.start_recording(output, format='mjpeg')
-        try:
-            logger.info('start camera ')
-            address = ('', 8000)
-            server = StreamingServer(address, StreamingHandler)
-            server.serve_forever()
-        finally:
-            logger.info('stop camera')
-            camera.stop_recording()
+    try:
+        logger.info('start camera ')
+        address = ('', 8000)
+        server = StreamingServer(address, StreamingHandler)
+        server.serve_forever()
+    finally:
+        logger.info('stop camera')
+        #camera.stop_recording()

@@ -57,10 +57,10 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         #no auth for alert
         if self.path == '/alert':
             self.send_response(200)
-            with CM(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R) as camera:
-                f1 = camera.Capture(p.camera.PATH)
-                v1 = camera.Record(p.camera.PATH, p.camera.RECORD)
-                f2 = camera.Capture(p.camera.PATH)
+            with CM(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R, path=p.camera.PATH) as camera:
+                f1 = camera.Capture()
+                v1 = camera.Record(p.camera.RECORD)
+                f2 = camera.Capture()
 
             logger.info('sending email ... ' + sendMail([p.email.address],
                                                         [p.email.address, p.email.login, p.email.password],
@@ -131,15 +131,15 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 class CM(picamera.PiCamera):
     def __init__(self, *args,  **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def Capture(self, path):
-        f = os.path.join(path, timestamp())+'.jpeg'
+        super().__init__(*args, **{k:v for k,v in kwargs.items() if k not in ['path']})
+        self.path = kwargs['path']
+    def Capture(self):
+        f = os.path.join(self.path, timestamp())+'.jpeg'
         logger.info('saving picture %s', f)
         self.capture(f)
         return  f
-    def Record(self, path, time=10): #p.camera.RECORD
-        f = os.path.join(path, timestamp())+'.h264'
+    def Record(self, time=10): #p.camera.RECORD
+        f = os.path.join(self.path, timestamp())+'.h264'
         logger.info('saving video %s', f)
         self.start_recording(f)
         self.wait_recording(time)

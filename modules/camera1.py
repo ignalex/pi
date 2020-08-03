@@ -9,7 +9,7 @@ sys.path.append('/home/pi/git/pi') # for running from command line.
 from modules.common import LOGGER, CONFIGURATION, timestamp
 import base64
 from modules.send_email import sendMail
-
+from time import sleep
 
 PAGE="""\
 <html>
@@ -58,20 +58,10 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         if self.path == '/alert':
             self.send_response(200)
             with CM(p.camera.X, p.camera.Y, p.camera.R, p.camera.PATH) as camera:
+                sleep(1) #
                 f1 = camera.Capture()
                 v1 = camera.Record(p.camera.RECORD)
                 f2 = camera.Capture()
-
-                # f = os.path.join(p.camera.PATH, timestamp())
-                # logger.info('saving picture and vides to file + %s', f)
-                # camera.capture(f+'.jpeg')
-                # # os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
-                # camera.start_recording(f+'.h264')
-                # camera.wait_recording(p.camera.RECORD)
-                # camera.stop_recording()
-                # logger.info('recording stopped')
-                # f2 = os.path.join(p.camera.PATH, timestamp())
-                # camera.capture(f2+'.jpeg')
 
             logger.info('sending email ... ' + sendMail([p.email.address],
                                                         [p.email.address, p.email.login, p.email.password],
@@ -79,7 +69,6 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                                                          str(datetime.datetime.now()).split('.')[0]+ '\n' +
                                                          'video file: '+ v1,
                                                         [f1, f2]))
-            #os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
             return
 
         if not self.checkAuthentication():
@@ -105,6 +94,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.end_headers()
             try:
                 with CM(p.camera.X, p.camera.Y, p.camera.R, p.camera.PATH) as camera:
+                    sleep(1)
                     camera.Stream()
                     logger.info('start streaming : %s', self.client_address )
                     os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
@@ -119,12 +109,16 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                         self.wfile.write(frame)
                         self.wfile.write(b'\r\n')
             except Exception as e:
-                camera.camera.stop_recording()
+                try: camera.camera.stop_recording()
+                except: pass
                 logger.info('stop streaming')
                 os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
                 logger.warning(
                     'Removed streaming client %s: %s',
                     self.client_address, str(e))
+            finally:
+                try: camera.camera.stop_recording()
+                except: pass
 
         else:
             self.send_error(404)
@@ -137,7 +131,6 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 class CM(object):
     def __init__(self, x, y, r, path): #p.camera.X, p.camera.Y, p.camera.R, p.camera.PATH
         self.camera = picamera.PiCamera(resolution='{}x{}'.format(x, y), framerate=r)
-        self.output = StreamingOutput()
         self.path = path
     def Capture(self):
         f = os.path.join(self.path, timestamp())+'.jpeg'
@@ -153,6 +146,7 @@ class CM(object):
         logger.info('recording stopped')
         return f
     def Stream(self):
+        self.output = StreamingOutput()
         self.camera.start_recording(self.output, format='mjpeg')
 
 if __name__ == '__main__':
@@ -160,10 +154,6 @@ if __name__ == '__main__':
     p = CONFIGURATION() #LOGIN:PASS
     PAGE = PAGE.format(p.camera.X, p.camera.Y)
 
-    #TODO: init camera in call
-    # with picamera.PiCamera(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R) as camera:
-        # output = StreamingOutput()
-        # camera.start_recording(output, format='mjpeg')
     try:
         logger.info('start camera ')
         address = ('', 8000)

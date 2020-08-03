@@ -68,6 +68,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                                                          str(datetime.datetime.now()).split('.')[0]+ '\n' +
                                                          'video file: '+ v1,
                                                         [f1, f2]))
+            del camera
             return
 
         if not self.checkAuthentication():
@@ -92,7 +93,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
             self.end_headers()
             try:
-                with CM(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R) as camera:
+                with CM(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R, path=p.camera.PATH) as camera:
                     camera.Stream()
                     logger.info('start streaming : %s', self.client_address )
                     os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
@@ -131,10 +132,7 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 class CM(picamera.PiCamera):
     def __init__(self, *args,  **kwargs):
         super().__init__(*args, **kwargs)
-       # sleep(1)
-    # def __init__(self, x, y, r, path): #p.camera.X, p.camera.Y, p.camera.R, p.camera.PATH
-    #     self.camera = picamera.PiCamera(resolution='{}x{}'.format(x, y), framerate=r)
-    #     self.path = path
+
     def Capture(self, path):
         f = os.path.join(path, timestamp())+'.jpeg'
         logger.info('saving picture %s', f)

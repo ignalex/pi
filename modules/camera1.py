@@ -115,7 +115,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     self.client_address, str(e))
             finally:
                 try:
-                    camera.stop_recording()
+                    # camera.stop_recording()
                     del camera
                 except Exception as e:
                     logger.error('camera element already removed - OK - %s',  str(e))
@@ -131,7 +131,7 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 class CM(picamera.PiCamera):
     def __init__(self, *args,  **kwargs):
         super().__init__(*args, **kwargs)
-        sleep(1)
+       # sleep(1)
     # def __init__(self, x, y, r, path): #p.camera.X, p.camera.Y, p.camera.R, p.camera.PATH
     #     self.camera = picamera.PiCamera(resolution='{}x{}'.format(x, y), framerate=r)
     #     self.path = path

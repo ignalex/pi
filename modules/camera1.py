@@ -118,7 +118,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     camera.stop_recording()
                     del camera
                 except Exception as e:
-                    logger.error(f'camera element already removed - OK - {e}')
+                    logger.error('camera element already removed - OK - %s',  str(e))
 
         else:
             self.send_error(404)

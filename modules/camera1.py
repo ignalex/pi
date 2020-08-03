@@ -107,8 +107,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                         self.wfile.write(frame)
                         self.wfile.write(b'\r\n')
             except Exception as e:
-                logger.error(str(e))
-
+                #logger.error(str(e))
                 logger.info('stop streaming')
                 os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_OFF")
                 logger.warning(
@@ -116,10 +115,10 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     self.client_address, str(e))
             finally:
                 try:
-                    camera.camera.stop_recording()
+                    camera.stop_recording()
                     del camera
-                except:
-                    logger.error('camera element already removed - OK ')
+                except Exception as e:
+                    logger.error(f'camera element already removed - OK - {e}')
 
         else:
             self.send_error(404)

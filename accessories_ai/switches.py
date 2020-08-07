@@ -158,7 +158,7 @@ class EspStatusCollector(): #TODO: collector for SONOFF
         self.status =       {} # falettening structure : keys must be unique
         self.online =       {i : {} for i in ips}
         self.last_update =  {i : None for i in ips}
-        self.config =       dict(attempts=1, timeout=2)
+        self.config =       dict(attempts=1, timeout=1)
         self.Start()
 
     def Start(self):

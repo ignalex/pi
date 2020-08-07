@@ -181,6 +181,7 @@ class EspStatusCollector(): #TODO: collector for SONOFF
                         return
             except Exception as e:
                 logger.error('status collector : ' +  str(e.__class__.__name__))
+                sleep(2)
 
     def Check(self, ip='192.168.1.176'):
         "checking status per IP and setting json element of status all"

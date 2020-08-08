@@ -55,20 +55,20 @@ class LightSensor(Accessory):
         self.char_lux.set_value(self.getreadings())
 
     def getreadings(self):
-        # com = 'http://{}/control/sensor'.format(self.ip)
-        # try:
-        #     light = int(requests.request('GET', com, timeout = 5).json()['data']['sensor'])
-        # except:
-        #     light = 0 # if none > returns error 'non numeric'
-        # logger.info('light on {} = {}'.format(self.ip.split('.')[-1], str(light)))
-        # return light
+        com = 'http://{}/control/sensor'.format(self.ip)
+        try:
+            light = int(requests.request('GET', com, timeout = 5).json()['data']['sensor'])
+        except:
+            light = 0 # if none > returns error 'non numeric'
+        logger.info('light on {} = {}'.format(self.ip.split('.')[-1], str(light)))
+        return light
 
-        if self.id not in m.st.status.keys():
-            logger.debug('status for {} is not set'.format(self.id))
-            return 0
-        else :
-            logger.info('light on {} = {}'.format(self.ip.split('.')[-1], str(m.st.status[self.id])))
-            return int(m.st.status[self.id])
+        # if self.id not in m.st.status.keys():
+        #     logger.debug('status for {} is not set'.format(self.id))
+        #     return 0
+        # else :
+        #     logger.info('light on {} = {}'.format(self.ip.split('.')[-1], str(m.st.status[self.id])))
+        #     return int(m.st.status[self.id])
 
 # class InternetSpeed(Accessory):
 #     category = CATEGORY_SENSOR

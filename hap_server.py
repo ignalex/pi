@@ -43,6 +43,7 @@ def get_bridge(driver):
     coffee = AllSwitches(driver, 'coffee')
     monitors = AllSwitches(driver, '13')
     i_am_home = AllSwitches(driver, 'i_am_home')
+    lightSenor1 = LightSensor(driver, 'light sensor 1', ip=p.devices.esp_ant)
     lightSenor2 = LightSensor(driver, 'light sensor 2', ip=p.devices.esp)
     # window = WindowCovering(driver, 'window', ip=175, calibrate=True, speak=True, minStep=10)
     # beep = AllSwitches(driver, 'beep')
@@ -51,7 +52,6 @@ def get_bridge(driver):
     hippo = SYSTEM(driver, 'hippo')
     rhino = SYSTEM(driver, 'rhino')
     motion = MotionSensor(driver, 'motion sensor')
-    lightSenor1 = LightSensor(driver, 'light sensor 1', ip=p.devices.esp_ant)
 
    # internet_speed = InternetSpeed(driver,'internet speed', task='download')
 
@@ -61,6 +61,7 @@ def get_bridge(driver):
     bridge.add_accessory(coffee)
     bridge.add_accessory(monitors)
     bridge.add_accessory(i_am_home)
+    bridge.add_accessory(lightSenor1)
     bridge.add_accessory(lightSenor2)
     # bridge.add_accessory(window)
     # bridge.add_accessory(beep)
@@ -70,7 +71,6 @@ def get_bridge(driver):
     bridge.add_accessory(hippo)
     bridge.add_accessory(rhino)
     bridge.add_accessory(motion)
-    bridge.add_accessory(lightSenor1)
 
 
     return bridge

@@ -172,7 +172,7 @@ def weather():
           light_2 double precision
           """
     start = datetime.datetime.now()
-    days = [i if i is not None else 7 for i in [request.args.get('days')]][0]
+    days = [i if i is not None else 3 for i in [request.args.get('days')]][0]
     resample = [i if i is not None else False for i in [request.args.get('resample')]][0]
     con = PANDAS2POSTGRES(p.local_pi_db.__dict__)
 

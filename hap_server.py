@@ -61,7 +61,6 @@ def get_bridge(driver):
     bridge.add_accessory(coffee)
     bridge.add_accessory(monitors)
     bridge.add_accessory(i_am_home)
-    #bridge.add_accessory(lightSenor1)
     bridge.add_accessory(lightSenor2)
     # bridge.add_accessory(window)
     # bridge.add_accessory(beep)
@@ -71,6 +70,7 @@ def get_bridge(driver):
     bridge.add_accessory(hippo)
     bridge.add_accessory(rhino)
     bridge.add_accessory(motion)
+    bridge.add_accessory(lightSenor1)
 
 
     return bridge

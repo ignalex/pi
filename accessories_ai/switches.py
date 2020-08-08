@@ -17,7 +17,7 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG, format="[%(module)s] %(message)s")
 
-from common import CONFIGURATION
+from common import CONFIGURATION, MainException
 p = CONFIGURATION()
 
 try:
@@ -181,6 +181,7 @@ class EspStatusCollector(): #TODO: collector for SONOFF
                         return
             except Exception as e:
                 logger.error('status collector : ' +  str(e.__class__.__name__))
+                MainException()
                 sleep(2)
 
     def Check(self, ip='192.168.1.176'):

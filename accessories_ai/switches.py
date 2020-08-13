@@ -205,7 +205,7 @@ class EspStatusCollector(): #TODO: collector for SONOFF
                     sleep(0.5)
             except Exception as e:
                 mes.append(str(attempt) +  ' - ' + str(e.__class__.__name__))
-        if mes != []: logger.error('{} {} {}'.format(self.switch_type, self.id, '; '.join(mes)))
+        if mes != []: logger.error('{} {}'.format(ip, '; '.join(mes)))
 
         self.online[ip] = False
         return False # after N attempts can't get reply

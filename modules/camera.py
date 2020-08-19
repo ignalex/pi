@@ -21,7 +21,7 @@ PAGE="""\
 </body>
 </html>
 """
-
+WAIT = 1
 
 class StreamingOutput(object):
     def __init__(self):
@@ -58,6 +58,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         if self.path == '/alert':
             self.send_response(200)
             with CM(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R, path=p.camera.PATH) as camera:
+                sleep(WAIT)
                 f1 = camera.Capture()
                 v1 = camera.Record(p.camera.RECORD)
                 f2 = camera.Capture()

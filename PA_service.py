@@ -170,14 +170,15 @@ def PA_service():
     Speak('starting P.A. service')
 
     #esp = ESP()
-    p.iCloudApi = iCloudConnect() # keeping connected API for later
-
-    EV = Events(iCloudCal(p.iCloudApi, datetime.datetime.today()))
-    logger.info('following events found for today: ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
-    logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
-
-    # get_Photos(p.iCloudApi)
-
+    if p.icloud.do: 
+        p.iCloudApi = iCloudConnect() # keeping connected API for later
+    
+        EV = Events(iCloudCal(p.iCloudApi, datetime.datetime.today()))
+        logger.info('following events found for today: ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
+        logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
+    else: 
+        logger.info('no iCloud integration') 
+        
     p.last_scan = datetime.datetime.now()
     p.last_reminder = datetime.datetime.now()
 
@@ -208,22 +209,24 @@ def PA_service():
                 os.system('curl http://192.168.1.176/control/color/off')
 
         if timer.iCloud.CheckDelay():
-            #rescan calendar
-            try:
-                EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
-                logger.info('re-scanning events >> ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
-                logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
-            except:
-                logger.error('error in iCloud - re-connecting...,')
+            
+            if p.icloud.do:
+                #rescan calendar
                 try:
-                    p.iCloudApi = iCloudConnect()
-                    logger.info(' - DONE. Checking EV...,')
                     EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
-                    logger.info(' - DONE')
+                    logger.info('re-scanning events >> ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
+                    logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
                 except:
-                    logger.error(' all bad :( skipping till next update')
-                    sleep (60)
-                    continue
+                    logger.error('error in iCloud - re-connecting...,')
+                    try:
+                        p.iCloudApi = iCloudConnect()
+                        logger.info(' - DONE. Checking EV...,')
+                        EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
+                        logger.info(' - DONE')
+                    except:
+                        logger.error(' all bad :( skipping till next update')
+                        sleep (60)
+                        continue
 
             #rescan photos
             if p.icloud_photo.do:
@@ -241,15 +244,15 @@ def PA_service():
                     except:
                         Speak("no luck. check yourself, Alex")
 
-
-        if timer.reminders.Awake():
-            if timer.reminders.CheckDelay() : # don't repereat witin 1 min and dont speak at night
-                if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
-                    next_event = [v for k,v in EV.reminders.items() if k == datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)][0]
-                    min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
-                    reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
-                    logger.info(reminder)
-                    REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
+        if p.icloud.do: 
+            if timer.reminders.Awake():
+                if timer.reminders.CheckDelay() : # don't repereat witin 1 min and dont speak at night
+                    if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
+                        next_event = [v for k,v in EV.reminders.items() if k == datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)][0]
+                        min_left = int(([k for k, v in EV.starts.items() if v == next_event][0] - now).seconds/60) +1
+                        reminder = 'reminder_'+ next_event.replace(' ','-') +'_'+str(min_left)
+                        logger.info(reminder)
+                        REMINDER(reminder.replace('reminder_','').split('_')) # for backwards compatibility #!!! remove later
 
         if timer.iPhone.Awake():
             if timer.iPhone.CheckDelay(ping_pause_time):

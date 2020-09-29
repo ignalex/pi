@@ -145,8 +145,11 @@ def get_Photos(api, albums=p.icloud_photo.albums, version=p.icloud_photo.version
     "get photos from iCloud"
     #DONE: run from pa_service for not creating API (authentication)
     #DONE: delete deleted photos
-
-    m.logger.debug('available albums: {}'.format(','.join(api.photos.albums.keys())))
+    
+    try: 
+        m.logger.debug('available albums: {}'.format(','.join(api.photos.albums.keys())))
+    except: 
+        pass # error within iCloud mod
 
     for alb in albums:
         m.logger.info('processing album : {}'.format(alb))

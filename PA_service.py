@@ -208,9 +208,9 @@ def PA_service():
                 logger.info('Sun times reset : {}'.format(str(TW.twilight_times)))
                 os.system('curl http://192.168.1.176/control/color/off')
 
-        if timer.iCloud.CheckDelay():
-            
-            if p.icloud.do:
+        # calendar
+        if p.icloud.do:
+            if timer.iCloud_cal.CheckDelay():            
                 #rescan calendar
                 try:
                     EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
@@ -228,8 +228,9 @@ def PA_service():
                         sleep (60)
                         continue
 
-            #rescan photos
-            if p.icloud_photo.do:
+        #rescan photos
+        if p.icloud_photo.do:
+            if timer.iCloud_photo.CheckDelay():
                 try:
                     logger.debug('rescanning Photo Library')
                     get_Photos(p.iCloudApi) # rest args default
@@ -359,7 +360,8 @@ if __name__ == '__main__':
     p = CONFIGURATION()
 
     timer = OBJECT({'iPhone':       TIMER(60, [0,1,2,3,4]),
-                    'iCloud':       TIMER(60*5),
+                    'iCloud_cal':   TIMER(60*5), #testing 10 (was 5)
+                    'iCloud_photo': TIMER(60*15), #testing 10 (was 5)
                     'reminders' :   TIMER(60, [23,0,1,2,3,4]),
                     'Sun' :         TIMER(60),
                     'speak' :       TIMER(60),

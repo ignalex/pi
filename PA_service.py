@@ -216,7 +216,15 @@ def PA_service():
                     EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
                     logger.info('re-scanning events >> ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
                     logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
-                except:
+                except Exception as e:
+                    logger.error(str(e))
+                    # ERROR - Service Unavailable (503)
+                    # ERROR - statusCode = Throttled, unknown error, http status code = 520
+                    if str(e).find(503) != -1 or str(e).find(520) != -1 : 
+                        logger.error('Throttling / service not available > holding for 1 h')
+                        timer.iCloud_cal.last_scan   = datetime.datetime.now() + datetime.timedelta(minutes=60)
+                        timer.iCloud_photo.last_scan = datetime.datetime.now() + datetime.timedelta(minutes=60)
+                        continue
                     logger.error('error in iCloud - re-connecting...,')
                     try:
                         p.iCloudApi = iCloudConnect()

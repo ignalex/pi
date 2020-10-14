@@ -220,7 +220,7 @@ def PA_service():
                     logger.error(str(e))
                     # ERROR - Service Unavailable (503)
                     # ERROR - statusCode = Throttled, unknown error, http status code = 520
-                    if str(e).find(503) != -1 or str(e).find(520) != -1 : 
+                    if str(e).find('503') != -1 or str(e).find('520') != -1 : 
                         logger.error('Throttling / service not available > holding for 1 h')
                         timer.iCloud_cal.last_scan   = datetime.datetime.now() + datetime.timedelta(minutes=60)
                         timer.iCloud_photo.last_scan = datetime.datetime.now() + datetime.timedelta(minutes=60)

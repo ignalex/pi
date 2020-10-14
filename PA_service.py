@@ -244,14 +244,14 @@ def PA_service():
                     get_Photos(p.iCloudApi) # rest args default
                 except Exception as e:
                     logger.error(str(e))
-                    Speak("There is error with syncronizing photographs.  I am trying to remounting the drive")
+                    if timer.reminders.Awake(): Speak("There is error with syncronizing photographs.  I am trying to remounting the drive")
                     MainException()
                     os.system("sudo mount -t cifs //shrimp.local/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,password=guest,vers=1.0,sec=ntlm")
                     try:
                         get_Photos(p.iCloudApi) # rest args default
-                        Speak("looks like remounting drive worked.")
+                        if timer.reminders.Awake(): Speak("looks like remounting drive worked.")
                     except:
-                        Speak("no luck. check yourself, Alex")
+                        if timer.reminders.Awake(): Speak("no luck. check yourself, Alex")
 
         if p.icloud.do: 
             if timer.reminders.Awake():
@@ -271,7 +271,7 @@ def PA_service():
         logger.debug(str(now))
 
 def pa_reAuth():
-    global p
+    global p, timer
     while True:
         try:
             PA_service()
@@ -284,7 +284,7 @@ def pa_reAuth():
                     sleep(30) # time between attempts
             else:
                 logger.info('waiting 1 min and retrying...')
-                Speak('error in P. A. service')
+                if timer.reminders.Awake(): Speak('error in P. A. service')
                 sleep (60)
 
 #%% iPhone

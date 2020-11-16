@@ -35,7 +35,7 @@ from modules.common import  LOGGER, CONFIGURATION, MainException, OBJECT, TIMER,
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from modules.talk import Speak, Phrase
 #from modules.sunrise import Sun #Astro
-from PA import REMINDER #(REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS)
+from PA import REMINDER, REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS
 from modules.PingIPhone import PING
 from modules.sunrise import Twilight
 from modules.weatherzone import WEATHER as WEATHER_class

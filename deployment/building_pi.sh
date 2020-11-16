@@ -86,6 +86,10 @@ sudo apt-get update && sudo apt-get install transmission-daemon
 # from https://www.raspberrypi.org/magpi/samba-file-server/
 sudo apt-get install samba samba-common-bin
 
+sudo nano /etc/samba/smb.conf
+sudo /etc/init.d/samba restart
+
+
 #SPI LED 7 segments
 https://www.raspberrypi-spy.co.uk/2016/03/7-segment-display-modules-and-the-raspberry-pi/
 sudo apt-get install libjpeg-dev

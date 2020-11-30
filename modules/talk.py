@@ -104,7 +104,7 @@ class Google_speak(object):
     def Get_GTTS(self):
         m.logger.debug('gTTS >> ' + self.mp3)
         try:
-            self.tts = gTTS(text=self.text, lang = self.lang, slow=False)
+            self.tts = gTTS(text=self.text, lang = self.lang, slow=False, lang_check=False)
             self.tts.save(self.mp3)
         except Exception as e:
             m.logger.error(' GTTS failed. error {}'.format(str(e)))

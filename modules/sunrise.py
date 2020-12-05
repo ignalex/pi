@@ -52,15 +52,15 @@ class Twilight():
         self.twilight_times = Sun(datetime.date.today())
         m.logger.info(str(self.twilight_times))
     def IsItTwilight(self,  twilight='morning'):
-        m.logger.info('SUNRISE : morning')
+        # m.logger.info('SUNRISE : morning')
         return datetime.datetime.now().hour == self.twilight_times[self.n[twilight]].hour and datetime.datetime.now().minute == self.twilight_times[self.n[twilight]].minute
     def IsItTotalDark(self):
         # time > total dark
-        m.logger.info('SUNRISE : total dark')
+        # m.logger.info('SUNRISE : total dark')
         return (self.twilight_times[self.n['total_dark']] - datetime.datetime.now()).days < 0
     def IsItDark(self):
         # time > total dark
-        m.logger.info('SUNRISE : evening')
+        # m.logger.info('SUNRISE : evening')
         return (self.twilight_times[self.n['evening']] - datetime.datetime.now()).days < 0
 
 

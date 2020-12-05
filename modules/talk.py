@@ -16,9 +16,15 @@ except:
 
 import subprocess, sys, random, os, datetime, string, re
 
-from gtts import gTTS
+#from gtts import gTTS
+import gtts 
 from googletrans import Translator
 
+# versions 
+try: 
+    m.logger.info('gtts version: ' + str(gtts.__version__))
+except: 
+    pass 
 
 def Substitutons(): # need also small for RU text > otherwise lines detected as UPPER and not dict element.s
     sub_dict = {'H' : str(datetime.datetime.now().hour), 'h' : str(datetime.datetime.now().hour),
@@ -104,7 +110,7 @@ class Google_speak(object):
     def Get_GTTS(self):
         m.logger.debug('gTTS >> ' + self.mp3)
         try:
-            self.tts = gTTS(text=self.text, lang = self.lang, slow=False, lang_check=False)
+            self.tts = gtts.gTTS(text=self.text, lang = self.lang, slow=False, lang_check=False)
             self.tts.save(self.mp3)
         except Exception as e:
             m.logger.error(' GTTS failed. error {}'.format(str(e)))
@@ -134,6 +140,12 @@ if __name__ == "__main__":
     logger = LOGGER('TALK', 'INFO')
     p = CONFIGURATION()
     logger.debug ('config read')
+
+    # versions 
+    try: 
+        m.logger.info('gtts version: ' + str(gtts.__version__))
+    except: 
+        pass 
 
     if len(sys.argv) > 1:
         text = ' '.join([ i for i in sys.argv[1:] if i!='-d'])

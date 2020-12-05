@@ -17,6 +17,8 @@ except:
     from modules.common import Dirs
 import datetime, os
 
+import __main__ as m
+
 # from astral import LocationInfo
 # from astral.sun import sun
 
@@ -34,14 +36,12 @@ def Sun(date, filename = 'sunrise2014.txt'):
     total_dark = datetime.datetime(today.year, today.month, today.day, int(twilight[2].split(':')[0]), int(twilight[2].split(':')[1]),0)
     sun_has_gone = datetime.datetime(today.year, today.month, today.day, int(twilight[0].split(':')[0]) + shift_hours[1], int(twilight[0].split(':')[1]),0)
 
-    dawn = datetime.datetime(today.year, today.month, today.day, int(string.split(' ')[4].split(':')[0]), int(string.split(' ')[4].split(':')[1]),0)
-
+    dawn = datetime.datetime(today.year, today.month, today.day, int(string.split(' ')[4].split(':')[0]), int(string.split(' ')[4].split(':')[1]),0)    
     return [sunrise,sunset,window_light,total_dark,sun_has_gone,dawn]
 
 def IsItNowTimeOfTheDay(the_type):
     sun = Sun(datetime.date.today())["sunrise,sunset,window_light,total_dark,sun_has_gone".split(',').index(the_type)]
     return  sun.hour == datetime.datetime.now().hour and sun.minute == datetime.datetime.now().minute
-
 
 
 class Twilight():
@@ -50,15 +50,18 @@ class Twilight():
         self.today()
     def today(self):
         self.twilight_times = Sun(datetime.date.today())
+        m.logger.info(str(self.twilight_times))
     def IsItTwilight(self,  twilight='morning'):
+        m.logger.info('SUNRISE : morning')
         return datetime.datetime.now().hour == self.twilight_times[self.n[twilight]].hour and datetime.datetime.now().minute == self.twilight_times[self.n[twilight]].minute
     def IsItTotalDark(self):
         # time > total dark
+        m.logger.info('SUNRISE : total dark')
         return (self.twilight_times[self.n['total_dark']] - datetime.datetime.now()).days < 0
     def IsItDark(self):
         # time > total dark
+        m.logger.info('SUNRISE : evening')
         return (self.twilight_times[self.n['evening']] - datetime.datetime.now()).days < 0
-
 
 
 # def Astro():

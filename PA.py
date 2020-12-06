@@ -132,10 +132,7 @@ def REMINDER(arg):
         m.logger.info('PA module : reminder  ' + str(arg))
         if int(arg[1]) % 60 == 0:
             h = str(int(arg[1]) / 60)
-            if h == 1:
-                end = ''
-            else:
-                end = 's'
+            end = '' if h == '1' else 's'
             return Phrase({'TYPE' : 'REMINDER_H', 'ACTION' : arg[0].replace('-',' '),'LEFT' : h, 'END' : end})
         else:
             return  Phrase({'TYPE' : 'REMINDER', 'ACTION' : arg[0].replace('-',' '),'LEFT' : arg[1]})

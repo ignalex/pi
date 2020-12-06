@@ -16,11 +16,11 @@ Created on Mon Aug 04 17:32:17 2014
 #NO: merge with internet_speed + rename to server? > that one is for non iCloud related
 #NO: make iCloud OPTIONAL for run > this one core is iCloud
 #DONE: sunrise / sunset
-#TODO: iPhone status > breaking
 #NO: from MS > task 'good morning' : coffee, lights, ...
 #DONE: LED colors? ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0')
 #DONE: light change at night
 #DONE: speaking on sunset / sunrise etc
+#TODO: logging as context 
 
 """
 
@@ -35,7 +35,7 @@ from modules.common import  LOGGER, CONFIGURATION, MainException, OBJECT, TIMER,
 from modules.iCloud import  (iCloudConnect, iCloudCal, re_authenticate, get_Photos)
 from modules.talk import Speak, Phrase
 #from modules.sunrise import Sun #Astro
-from PA import REMINDER, REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS
+from PA import REMINDER, TIME, TEMP, WEATHER, ESP,  SPENDINGS
 from modules.PingIPhone import PING
 from modules.sunrise import Twilight
 from modules.weatherzone import WEATHER as WEATHER_class
@@ -145,7 +145,7 @@ def TEMP(arg):
         sleep(1)
         return Phrase({'TYPE' : 'OUTSIDE', 'T' : str(w.temp_out),'HUM' : str(w.humidity) })
 
-#%%
+#%% EVENTS
 class Events(object):
     def __init__(self,Events):
         self.reminders = {}
@@ -362,7 +362,7 @@ def iPhone_connection(status):
 
 
 
-#%%
+#%% main
 if __name__ == '__main__':
     logger = LOGGER('pa_service', level = 'INFO')
     p = CONFIGURATION()

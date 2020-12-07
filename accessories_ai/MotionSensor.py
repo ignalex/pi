@@ -42,7 +42,7 @@ class MotionSensor(Accessory):
         self.timer = OBJECT({'morning':      TIMER(60*60*6, [0,1,2,3,4,10,11,12,13,14,15,16,17,18,19,20,21,22,23], 60*7),
                              'CheckTime' :   CheckTime,
                              'last' :        TIMER(60),
-                             'report' :      TIMER(60*2)})
+                             'report' :      TIMER(60*2, [6])})
 
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
@@ -75,7 +75,7 @@ class MotionSensor(Accessory):
 
     def onMotion(self):
         "actions tools"
-        if AcquireResult():
+        if AcquireResult(): # I am home
             self.Blink()
             # morning
             if  self.timer.morning.Awake() and self.timer.morning.CheckDelay():
@@ -88,10 +88,10 @@ class MotionSensor(Accessory):
                 os.system('curl localhost:8083/cmnd?RUN=ALLEVENTSTODAY')
         else:
             # motion but i am not around
-            if self.timer.report.CheckDelay():
+            if self.timer.report.CheckDelay() and self.timer.report.Awake():
                 logger.info('motion detected and reported')
                 try:
-                    requests.get('http://shrimp.local:8000/alert', timeout=1, proxies={'http':None})
+                    requests.get('http://192.168.1.12:8000/alert', timeout=1, proxies={'http':None})
                 except: pass
                 Speak('motion detected and reported')
                 self.Blink([10, 3, 0.1])

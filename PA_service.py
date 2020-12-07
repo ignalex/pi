@@ -154,16 +154,21 @@ class Events(object):
         self.names = []
         self.times = []
         self.AddReminders(Events)
+        self.Log()
     def AddReminders(self, Events):
         for name,details in Events.items():
-            self.events[name] = details
-            self.names.append(name)
             localStartDateTime = datetime.datetime(details['localStartDate'][1],details['localStartDate'][2],details['localStartDate'][3],details['localStartDate'][4],details['localStartDate'][5])
-            self.times.append(localStartDateTime)
-            self.starts[localStartDateTime] = name
-            for delta in [float(i)/60 for i in p.REMINDERS.split(',')]:
-                self.reminders[localStartDateTime - datetime.timedelta(hours = delta)] = name
-
+            if localStartDateTime.day == datetime.datetime.now().day: 
+                self.events[name] = details
+                self.names.append(name)
+                self.times.append(localStartDateTime)
+                self.starts[localStartDateTime if (localStartDateTime.hour != 0 and localStartDateTime.minute != 0) else 'all day'] = name
+                if (localStartDateTime.hour != 0 and localStartDateTime.minute != 0): 
+                    for delta in [float(i)/60 for i in p.REMINDERS.split(',')]:
+                        self.reminders[localStartDateTime - datetime.timedelta(hours = delta)] = name
+    def Log(self): 
+        self.log = 'EVENTS: ' + ', '.join([str(v) + ' at ' + str(k) for k,v in self.starts.items()])
+        
 def PA_service():
     global timer
     logger.info('PA service started')
@@ -197,7 +202,8 @@ def PA_service():
     os.system('curl http://192.168.1.176/control/color/yellow')
 
     ping_pause_time = 5 # starting
-
+    ev_last = ''
+    
     while True:
         now = datetime.datetime.now()
 
@@ -214,9 +220,11 @@ def PA_service():
                 #rescan calendar
                 try:
                     EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
-                    # logger.info('re-scanning events >> ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
-                    logger.info('EVENTS: ' + ', '.join([str(v) + ' at ' + str(k) for k,v in EV.starts.items()]))
-                    logger.debug('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
+                    if ev_last != EV.log: 
+                        logger.info(EV.log)
+                        logger.debug('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())])) 
+                        ev_last = EV.log
+
                 except Exception as e:
                     logger.error(str(e))
                     # ERROR - Service Unavailable (503)

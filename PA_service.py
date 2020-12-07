@@ -150,6 +150,7 @@ def TEMP(arg):
 #%% EVENTS
 class Events(object):
     def __init__(self,Events):
+        self.inputs = Events
         self.reminders = {}
         self.starts = {}
         self.events = {}
@@ -180,6 +181,7 @@ def PA_service():
     if p.icloud.do: 
         p.iCloudApi = iCloudConnect() # keeping connected API for later
         EV = Events(iCloudCal(p.iCloudApi, datetime.datetime.today()))
+        logger.info('iCAL scan '+ str(EV.inputs))
         logger.info('EVENTS: ' + EV.log) 
         logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
     else: 

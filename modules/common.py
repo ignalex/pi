@@ -212,7 +212,7 @@ class TIMER():
         "True if not in sleep hours array"
         return datetime.datetime.now().hour not in self.sleep_hours
 
-def CheckTime( h,m):
+def CheckTime(h,m):
     now = datetime.datetime.now()
     return now.hour == h and now.minute == m
 

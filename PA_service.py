@@ -116,14 +116,16 @@ def ALLEVENTSTODAY(args):
     "speak all events from the iCloud calendar > called from inside"
     def AllEvents():
         'returns the string of all todays events'
-        ev = iCloudCal(p.iCloudApi, datetime.datetime.today())
-        m.logger.debug('read from iCloud > \n' + str(ev))
-        return ', '.join([(k + ' at ' + ' '.join([str(i) if i != 0 else '' for i in v['localStartDate'][4:6]])) for (k,v) in ev.items() if v['localStartDate'][3] == datetime.date.today().day])
-
+        EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
+        m.logger.debug(EV.log)
+        return EV.log
+    
     events = AllEvents()
 
     if events not in [None,'']:
         return Speak('today planned in your calendar. ' + str(events)) # translating unicode to str > otherwise error
+    else: 
+        return Phrase({'TYPE' : 'NO_EVENTS'})
 
 def WEATHER(arg):
     w = WEATHER_class()
@@ -167,7 +169,7 @@ class Events(object):
                     for delta in [float(i)/60 for i in p.REMINDERS.split(',')]:
                         self.reminders[localStartDateTime - datetime.timedelta(hours = delta)] = name
     def Log(self): 
-        self.log = 'EVENTS: ' + ', '.join([str(v) + ' at ' + str(k) for k,v in self.starts.items()])
+        self.log =  ', '.join([str(v) + ' at ' + str(k) for k,v in self.starts.items()])
         
 def PA_service():
     global timer
@@ -177,9 +179,8 @@ def PA_service():
     #esp = ESP()
     if p.icloud.do: 
         p.iCloudApi = iCloudConnect() # keeping connected API for later
-    
         EV = Events(iCloudCal(p.iCloudApi, datetime.datetime.today()))
-        logger.info('following events found for today: ' + ', '.join(EV.names) + ' at ' + ', '.join([str(i).split(' ')[1] for i in EV.times]))
+        logger.info('EVENTS: ' + EV.log) 
         logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
     else: 
         logger.info('no iCloud integration') 
@@ -202,7 +203,7 @@ def PA_service():
     os.system('curl http://192.168.1.176/control/color/yellow')
 
     ping_pause_time = 5 # starting
-    ev_last = ''
+    # ev_last = ''
     
     while True:
         now = datetime.datetime.now()
@@ -220,10 +221,10 @@ def PA_service():
                 #rescan calendar
                 try:
                     EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
-                    if ev_last != EV.log: 
-                        logger.info(EV.log)
-                        logger.debug('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())])) 
-                        ev_last = EV.log
+                    #if ev_last != EV.log: 
+                    logger.info('EVENTS: ' + EV.log)
+                    logger.debug('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())])) 
+                    # ev_last = EV.log
 
                 except Exception as e:
                     logger.error(str(e))

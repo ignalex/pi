@@ -153,6 +153,7 @@ class Events(object):
         self.inputs = Events
         self.reminders = {}
         self.starts = {}
+        self.starts_ = {}
         self.events = {}
         self.names = []
         self.times = []

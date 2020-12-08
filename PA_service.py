@@ -170,8 +170,9 @@ class Events(object):
                     for delta in [float(i)/60 for i in p.REMINDERS.split(',')]:
                         self.reminders[localStartDateTime - datetime.timedelta(hours = delta)] = name
     def Log(self): 
-        self.log =  ', '.join([str(v) + ' at ' + str(k) for k,v in self.starts.items()])
-        
+        # self.log =  ', '.join([str(v) + ' at ' + str(k) for k,v in self.starts.items()])
+        self.log = ', '.join([(k + ' '.join([' at ' + str(i) if i != 0 else '' for i in v['localStartDate'][4:6]])) for (k,v) in self.events.items() if v['localStartDate'][3] == datetime.date.today().day])
+       
 def PA_service():
     global timer
     logger.info('PA service started')

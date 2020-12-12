@@ -168,7 +168,7 @@ class Events(object):
                 self.times.append(localStartDateTime)
                 self.starts[localStartDateTime if (localStartDateTime.hour != 0 and localStartDateTime.minute != 0) else 'all day'] = name
                 self.starts_['at ' + str(localStartDateTime.hour) + ' ' + (str(localStartDateTime.minute) if localStartDateTime.minute != 0 else '')  if not (localStartDateTime.hour == 0 and localStartDateTime.minute == 0) else 'all day'] = name
-                if (localStartDateTime.hour != 0 and localStartDateTime.minute != 0): 
+                if not (localStartDateTime.hour == 0 and localStartDateTime.minute == 0): 
                     for delta in [float(i)/60 for i in p.REMINDERS.split(',')]:
                         self.reminders[localStartDateTime - datetime.timedelta(hours = delta)] = name
     def Log(self): 

@@ -166,7 +166,7 @@ class Events(object):
                 self.events[name] = details
                 self.names.append(name)
                 self.times.append(localStartDateTime)
-                self.starts[localStartDateTime if (localStartDateTime.hour != 0 and localStartDateTime.minute != 0) else 'all day'] = name
+                self.starts[localStartDateTime if not (localStartDateTime.hour == 0 and localStartDateTime.minute == 0) else 'all day'] = name
                 self.starts_['at ' + str(localStartDateTime.hour) + ' ' + (str(localStartDateTime.minute) if localStartDateTime.minute != 0 else '')  if not (localStartDateTime.hour == 0 and localStartDateTime.minute == 0) else 'all day'] = name
                 if not (localStartDateTime.hour == 0 and localStartDateTime.minute == 0): 
                     for delta in [float(i)/60 for i in p.REMINDERS.split(',')]:

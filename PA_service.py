@@ -374,8 +374,6 @@ def iPhone_connection(status):
         except:
             pass
 
-
-
 #%% main
 if __name__ == '__main__':
     logger = LOGGER('pa_service', level = 'INFO')

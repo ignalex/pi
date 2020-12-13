@@ -131,7 +131,7 @@ def REMINDER(arg):
     if AcquireResult(): # reading last reading iPhone reading
         m.logger.info('PA module : reminder  ' + str(arg))
         if int(arg[1]) % 60 == 0:
-            h = str(int(arg[1]) / 60)
+            h = str(int(int(arg[1]) / 60))
             end = '' if h == '1' else 's'
             return Phrase({'TYPE' : 'REMINDER_H', 'ACTION' : arg[0].replace('-',' '),'LEFT' : h, 'END' : end})
         else:

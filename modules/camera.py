@@ -27,7 +27,7 @@ SCRIPT = """<br><br>
     <button type="submit"  onClick="httpGet('move+90')"> <<< </button> &nbsp &nbsp
     <button type="submit"  onClick="httpGet('move+45')"> << </button> &nbsp &nbsp
     <button type="submit"  onClick="httpGet('move+20')"> < </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move-20')"> >> </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-20')"> > </button> &nbsp &nbsp
     <button type="submit"  onClick="httpGet('move-45')"> >> </button> &nbsp &nbsp
     <button type="submit"  onClick="httpGet('move-90')"> >>> </button> &nbsp &nbsp
 
@@ -109,9 +109,14 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.wfile.write(content)
         elif self.path.startswith('/move'):
             "/move-100, /move+50"
+            self.send_response(200)
             params = self.path.replace('/move','')
             requests.get('http://192.168.1.175/control/motor/{}'.format(params))
-            self.send_response(200)
+            content = 'OK'.encode('utf-8')
+            self.send_header('Content-Type', 'text/html')
+            self.send_header('Content-Length', len(content))
+            self.end_headers()
+            self.wfile.write(content)
 
         elif self.path == '/stream.mjpg':
             self.send_response(200)

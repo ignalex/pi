@@ -27,7 +27,7 @@ SCRIPT = """<br>
 
     <button type="submit"  onClick="httpGet('move+20')"> << </button> &nbsp &nbsp
     <button type="submit"  onClick="httpGet('move-20')"> >> </button>
-
+<script>
 function httpGet(theUrl)
 {
     var xmlHttp = new XMLHttpRequest();

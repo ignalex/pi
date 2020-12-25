@@ -19,7 +19,11 @@ PAGE="""\
 </head>
 <body>
 <img src="stream.mjpg" width="{}" height="{}" />
-<br>
+{}
+</body>
+</html>
+"""
+SCRIPT = """<br>
 
     <button type="submit"  onClick="httpGet('move+20')"> << </button> &nbsp &nbsp
     <button type="submit"  onClick="httpGet('move-20')"> >> </button>
@@ -32,10 +36,8 @@ function httpGet(theUrl)
     window.location.reload();
     //return xmlHttp.responseText;
 };
-</script>
-</body>
-</html>
-"""
+</script>"""
+
 WAIT = 1
 
 class StreamingOutput(object):
@@ -173,7 +175,7 @@ class CM(picamera.PiCamera):
 if __name__ == '__main__':
     logger = LOGGER('camera', 'INFO', True)
     p = CONFIGURATION() #LOGIN:PASS
-    PAGE = PAGE.format(p.camera.X, p.camera.Y)
+    PAGE = PAGE.format(p.camera.X, p.camera.Y, SCRIPT)
 
     try:
         logger.info('start camera ')

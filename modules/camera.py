@@ -31,9 +31,9 @@ SCRIPT = """<br>
 function httpGet(theUrl)
 {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", '/move'+theUrl, false ); // false for synchronous request
+    xmlHttp.open( "GET", 'move'+theUrl, false ); // false for synchronous request
     xmlHttp.send( null );
-    window.location.reload();
+    //window.location.reload();
     //return xmlHttp.responseText;
 };
 </script>"""

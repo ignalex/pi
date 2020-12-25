@@ -23,10 +23,14 @@ PAGE="""\
 </body>
 </html>
 """
-SCRIPT = """<br>
+SCRIPT = """<br><br>
+    <button type="submit"  onClick="httpGet('move+90')"> <<< </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move+45')"> << </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move+20')"> < </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-20')"> >> </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-45')"> >> </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-90')"> >>> </button> &nbsp &nbsp
 
-    <button type="submit"  onClick="httpGet('move+20')"> << </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move-20')"> >> </button>
 <script>
 function httpGet(theUrl)
 {

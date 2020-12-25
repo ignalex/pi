@@ -10,6 +10,7 @@ from modules.common import LOGGER, CONFIGURATION, timestamp
 import base64
 from modules.send_email import sendMail
 from time import sleep
+import requests
 
 PAGE="""\
 <html>
@@ -18,6 +19,13 @@ PAGE="""\
 </head>
 <body>
 <img src="stream.mjpg" width="{}" height="{}" />
+<br>
+<a href="move+100"> <<< </a> &nbsp &nbsp
+<a href="move+50"> << </a>   &nbsp &nbsp
+<a href="move+20"> < </a>    &nbsp &nbsp &nbsp
+<a href="move-20"> > </a>    &nbsp &nbsp
+<a href="move-50"> >> </a>   &nbsp &nbsp
+<a href="move-100"> >>> </a>
 </body>
 </html>
 """
@@ -86,6 +94,10 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_header('Content-Length', len(content))
             self.end_headers()
             self.wfile.write(content)
+        elif self.path.startswith('/move'):
+            "/move-100, /move+50"
+            params = self.path.replace('/move','')
+            requests.get('http://192.168.1.175/control/motor/{}'.format(params))
         elif self.path == '/stream.mjpg':
             self.send_response(200)
             self.send_header('Age', 0)

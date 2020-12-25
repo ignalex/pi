@@ -153,6 +153,7 @@ sudo systemctl stop hostapd
 
 # DOCKER
 # URL https://pimylifeup.com/raspberry-pi-docker/
+# https://medium.com/@mattvonrohr/installing-docker-on-raspberry-pi-4-buster-afde6b0af42
 curl -sSL https://get.docker.com | sh
 sudo usermod -aG docker pi
 logout
@@ -162,4 +163,6 @@ docker run hello-world
 # JACKET
 docker pull linuxserver/jackett
 
-
+#docker postgis ??? DOESNT WORK
+docker run --name postgis-12-3.0 -e POSTGRES_PASSWORD=impervious -d postgis/postgis
+docker run -it --link postgis-12-3.0:postgres --rm postgres sh -c 'exec psql -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres'

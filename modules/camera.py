@@ -20,12 +20,19 @@ PAGE="""\
 <body>
 <img src="stream.mjpg" width="{}" height="{}" />
 <br>
-<a href="move+100"> <<< </a> &nbsp &nbsp
-<a href="move+50"> << </a>   &nbsp &nbsp
-<a href="move+20"> < </a>    &nbsp &nbsp &nbsp
-<a href="move-20"> > </a>    &nbsp &nbsp
-<a href="move-50"> >> </a>   &nbsp &nbsp
-<a href="move-100"> >>> </a>
+
+    <button type="submit"  onClick="httpGet('move+20')"> << </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-20')"> >> </button>
+
+function httpGet(theUrl)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", '/move'+theUrl, false ); // false for synchronous request
+    xmlHttp.send( null );
+    window.location.reload();
+    //return xmlHttp.responseText;
+};
+</script>
 </body>
 </html>
 """

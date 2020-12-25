@@ -31,10 +31,10 @@ SCRIPT = """<br>
 function httpGet(theUrl)
 {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", 'move'+theUrl, false ); // false for synchronous request
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
     xmlHttp.send( null );
     //window.location.reload();
-    //return xmlHttp.responseText;
+    return xmlHttp.responseText;
 };
 </script>"""
 
@@ -107,6 +107,8 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             "/move-100, /move+50"
             params = self.path.replace('/move','')
             requests.get('http://192.168.1.175/control/motor/{}'.format(params))
+            self.send_response(200)
+
         elif self.path == '/stream.mjpg':
             self.send_response(200)
             self.send_header('Age', 0)

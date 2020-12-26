@@ -25,13 +25,14 @@ PAGE="""\
 </html>
 """
 SCRIPT = """<br><br>
-    <button type="submit"  onClick="httpGet('move+90')" style="height:80px; width:80px" > <<< </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move+45')" style="height:80px; width:80px" > << </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move+22.5')" style="height:80px; width:80px" > < </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move-22.5')" style="height:80px; width:80px" > > </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move-45')" style="height:80px; width:80px" > >> </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move-90')" style="height:80px; width:80px" > >>> </button> &nbsp &nbsp
-
+    <button type="submit"  onClick="httpGet('move+90')" style="height:80px; width:80px" > <<<< </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move+45')" style="height:80px; width:80px" > <<< </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move+22.5')" style="height:80px; width:80px" > << </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move+11.25')" style="height:80px; width:80px" > < </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-11.25')" style="height:80px; width:80px" > > </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-22.5')" style="height:80px; width:80px" > >> </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-45')" style="height:80px; width:80px" > >>> </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-90')" style="height:80px; width:80px" > >>>> </button> &nbsp &nbsp
 <script>
 function httpGet(theUrl)
 {

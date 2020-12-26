@@ -112,6 +112,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_response(200)
             params = self.path.replace('/move','')
             requests.get('http://192.168.1.175/control/motor/{}'.format(params))
+            logger.info('moving {}'.format(params))
             content = 'OK'.encode('utf-8')
             self.send_header('Content-Type', 'text/html')
             self.send_header('Content-Length', len(content))
@@ -128,7 +129,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             try:
                 with CM(resolution='{}x{}'.format(p.camera.X, p.camera.Y), framerate=p.camera.R, path=p.camera.PATH) as camera:
                     camera.Stream()
-                    logger.info('start streaming : %s', self.client_address )
+                    logger.info('start streaming : %s, [%s, %s]', self.client_address, p.camera.X, p.camera.Y )
                     os.system("curl hornet.local:8083/cmnd?RUN=CAMERA_ON")
                     while True:
                         with camera.output.condition:

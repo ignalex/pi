@@ -12,24 +12,25 @@ from modules.send_email import sendMail
 from time import sleep
 import requests
 
+#!!!:  height="{}"  removed
 PAGE="""\
 <html>
 <head>
 <title>shrimp camera</title>
 </head>
 <body>
-<img src="stream.mjpg" width="{}" height="{}" />
+<img src="stream.mjpg" width="{}"/>
 {}
 </body>
 </html>
 """
 SCRIPT = """<br><br>
-    <button type="submit"  onClick="httpGet('move+90')"> <<< </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move+45')"> << </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move+20')"> < </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move-20')"> > </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move-45')"> >> </button> &nbsp &nbsp
-    <button type="submit"  onClick="httpGet('move-90')"> >>> </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move+90')" style="height:50px; width:50px" > <<< </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move+45')" style="height:50px; width:50px" > << </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move+20')" style="height:50px; width:50px" > < </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-20')" style="height:50px; width:50px" > > </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-45')" style="height:50px; width:50px" > >> </button> &nbsp &nbsp
+    <button type="submit"  onClick="httpGet('move-90')" style="height:50px; width:50px" > >>> </button> &nbsp &nbsp
 
 <script>
 function httpGet(theUrl)
@@ -187,7 +188,9 @@ class CM(picamera.PiCamera):
 if __name__ == '__main__':
     logger = LOGGER('camera', 'INFO', True)
     p = CONFIGURATION() #LOGIN:PASS
-    PAGE = PAGE.format(p.camera.X, p.camera.Y, SCRIPT)
+    "camera = LOGIN|ignalex,PASS|impervious,X|1296,Y|972,R|30,X_WEB|1120,PATH|/media/ssd/camera,RECORD|15"
+    PAGE = PAGE.format(p.camera.X_WEB,  SCRIPT)
+    #PAGE = PAGE.format(p.camera.X_WEB, p.camera.Y, SCRIPT)
 
     try:
         logger.info('start camera ')

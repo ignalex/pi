@@ -189,7 +189,7 @@ class CM(picamera.PiCamera):
 if __name__ == '__main__':
     logger = LOGGER('camera', 'INFO', True)
     p = CONFIGURATION() #LOGIN:PASS
-    "camera = LOGIN|ignalex,PASS|impervious,X|1296,Y|972,R|30,X_WEB|950,PATH|/media/ssd/camera,RECORD|15"
+    "camera = LOGIN|ignalex,PASS|impervious,X|1296,Y|972,R|30,X_WEB|960,PATH|/media/ssd/camera,RECORD|15"
     PAGE = PAGE.format(p.camera.X_WEB,  SCRIPT)
     #PAGE = PAGE.format(p.camera.X_WEB, p.camera.Y, SCRIPT)
 

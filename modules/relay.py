@@ -25,12 +25,12 @@ def cascade(rr = [],  delay_between = 0.1, total = 1, off_in_reverse_order = Tru
     for r in R:
         r.ON();
         print (r.name, ' ON')
-        sleep(delay_between if delay_between > 0 else 0)
-    sleep(total); print ('')
+        sleep(delay_between)
+    sleep(total if total > 0 else 0); print ('')
 
     if off_in_reverse_order: R.reverse() # turning off in reverse order
     for r in R:
         r.OFF()
         print (r.name, ' OFF',)
-        sleep(delay_between if delay_between > 0 else 0)
+        sleep(delay_between)
     print  ('')

@@ -20,7 +20,7 @@ Created on Mon Aug 04 17:32:17 2014
 #DONE: LED colors? ESP(['6', 'color',  ['green' if i else 'red' for i in [iPhone.changed]][0]],'0')
 #DONE: light change at night
 #DONE: speaking on sunset / sunrise etc
-#TODO: logging as context 
+#TODO: logging as context
 
 """
 
@@ -119,12 +119,12 @@ def ALLEVENTSTODAY(args):
         EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
         m.logger.debug(EV.log)
         return EV.log
-    
+
     events = AllEvents()
 
     if events not in [None,'']:
         return Speak('today planned in your calendar. ' + str(events)) # translating unicode to str > otherwise error
-    else: 
+    else:
         return Phrase({'TYPE' : 'NO_EVENTS'})
 
 def WEATHER(arg):
@@ -162,33 +162,33 @@ class Events(object):
     def AddReminders(self, Events):
         for name,details in Events.items():
             localStartDateTime = datetime.datetime(details['localStartDate'][1],details['localStartDate'][2],details['localStartDate'][3],details['localStartDate'][4],details['localStartDate'][5])
-            if localStartDateTime.day == datetime.datetime.now().day: 
+            if localStartDateTime.day == datetime.datetime.now().day:
                 self.events[name] = details
                 self.names.append(name)
                 self.times.append(localStartDateTime)
                 self.starts[localStartDateTime if not (localStartDateTime.hour == 0 and localStartDateTime.minute == 0) else 'all day'] = name
                 self.starts_['at ' + str(localStartDateTime.hour) + ' ' + (str(localStartDateTime.minute) if localStartDateTime.minute != 0 else '')  if not (localStartDateTime.hour == 0 and localStartDateTime.minute == 0) else 'all day'] = name
-                if not (localStartDateTime.hour == 0 and localStartDateTime.minute == 0): 
+                if not (localStartDateTime.hour == 0 and localStartDateTime.minute == 0):
                     for delta in [float(i)/60 for i in p.REMINDERS.split(',')]:
                         self.reminders[localStartDateTime - datetime.timedelta(hours = delta)] = name
-    def Log(self): 
+    def Log(self):
         self.log =  ', '.join([str(v) + ' ' + str(k) for k,v in self.starts_.items()])
-       
+
 def PA_service():
     global timer
     logger.info('PA service started')
     Speak('starting P.A. service')
 
     #esp = ESP()
-    if p.icloud.do: 
+    if p.icloud.do:
         p.iCloudApi = iCloudConnect() # keeping connected API for later
         EV = Events(iCloudCal(p.iCloudApi, datetime.datetime.today()))
         logger.info('iCAL scan '+ str(EV.inputs))
-        logger.info('EVENTS: ' + EV.log) 
+        logger.info('EVENTS: ' + EV.log)
         logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
-    else: 
-        logger.info('no iCloud integration') 
-        
+    else:
+        logger.info('no iCloud integration')
+
     p.last_scan = datetime.datetime.now()
     p.last_reminder = datetime.datetime.now()
 
@@ -208,7 +208,7 @@ def PA_service():
 
     ping_pause_time = 5 # starting
     # ev_last = ''
-    
+
     while True:
         now = datetime.datetime.now()
 
@@ -221,20 +221,21 @@ def PA_service():
 
         # calendar
         if p.icloud.do:
-            if timer.iCloud_cal.CheckDelay():            
+            if timer.iCloud_cal.CheckDelay():
                 #rescan calendar
                 try:
                     EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
-                    #if ev_last != EV.log: 
+                    #if ev_last != EV.log:
                     logger.info('EVENTS: ' + EV.log)
-                    logger.debug('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())])) 
+                    logger.debug('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
                     # ev_last = EV.log
 
                 except Exception as e:
                     logger.error(str(e))
                     # ERROR - Service Unavailable (503)
                     # ERROR - statusCode = Throttled, unknown error, http status code = 520
-                    if str(e).find('503') != -1 or str(e).find('520') != -1 : 
+                    if str(e).find('503') != -1 or str(e).find('520') != -1 or str(e).find('Please wait a few minutes then try again') != -1 :
+                        logger.error(str(e))
                         logger.error('Throttling / service not available > holding for 1 h')
                         timer.iCloud_cal.last_scan   = datetime.datetime.now() + datetime.timedelta(minutes=60)
                         timer.iCloud_photo.last_scan = datetime.datetime.now() + datetime.timedelta(minutes=60)
@@ -267,7 +268,7 @@ def PA_service():
                     except:
                         if timer.reminders.Awake(): Speak("no luck. check yourself, Alex")
 
-        if p.icloud.do: 
+        if p.icloud.do:
             if timer.reminders.Awake():
                 if timer.reminders.CheckDelay() : # don't repereat witin 1 min and dont speak at night
                     if datetime.datetime(now.year, now.month, now.day, now.hour, now.minute) in EV.reminders.keys(): # and DistanceToPoint(p.iCloudApi, 'HOME') <=200:
@@ -380,8 +381,8 @@ if __name__ == '__main__':
     p = CONFIGURATION()
 
     timer = OBJECT({'iPhone':       TIMER(60, [0,1,2,3,4]),
-                    'iCloud_cal':   TIMER(60*5), #testing 10 (was 5)
-                    'iCloud_photo': TIMER(60*15), #testing 10 (was 5)
+                    'iCloud_cal':   TIMER(60*5),
+                    'iCloud_photo': TIMER(60*20), # 20 - was 5
                     'reminders' :   TIMER(60, [23,0,1,2,3,4]),
                     'Sun' :         TIMER(60),
                     'speak' :       TIMER(60),

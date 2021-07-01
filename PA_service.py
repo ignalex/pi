@@ -261,7 +261,7 @@ def PA_service():
                     logger.error(str(e))
                     if timer.reminders.Awake(): Speak("There is error with syncronizing photographs.  I am trying to remounting the drive")
                     MainException()
-                    os.system("sudo mount -t cifs //shrimp.local/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,password=guest,vers=1.0,sec=ntlm")
+                    os.system("sudo mount -t cifs //shrimp.local/ssd_shrimp/ /mnt/shrimp_ssd/ -o vers=1.0,username=pi,password=impervious")
                     try:
                         get_Photos(p.iCloudApi) # rest args default
                         if timer.reminders.Awake(): Speak("looks like remounting drive worked.")

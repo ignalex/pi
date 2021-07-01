@@ -91,7 +91,7 @@ class MotionSensor(Accessory):
             if self.timer.report.CheckDelay() and self.timer.report.Awake():
                 logger.info('motion detected and reported')
                 try:
-                    requests.get('http://192.168.1.12:8000/alert', timeout=1, proxies={'http':None})
+                    requests.get('http://192.168.1.40:8000/alert', timeout=1, proxies={'http':None})
                 except: pass
                 Speak('motion detected and reported')
                 self.Blink([10, 3, 0.1])

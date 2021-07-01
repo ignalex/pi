@@ -103,8 +103,7 @@ sudo python3 setup.py install
 sudo apt-get install kodi
 
 # mounting samba
-sudo mount -t cifs //192.168.1.7/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,password=guest,vers=1.0,sec=ntlm
-sudo mount -t cifs //shrimp.local/ssd_shrimp/ /mnt/shrimp_ssd/ -o username=guest,password=guest,vers=1.0,sec=ntlm
+sudo mount -t cifs //shrimp.local/ssd_shrimp/ /mnt/shrimp_ssd/ -o vers=1.0,username=pi,password=impervious
 
 # MQTT
 sudo apt-get install mosquitto
@@ -138,9 +137,13 @@ UUID=18E9-142B /media/adata vfat defaults,auto,users,rw,nofail,umask=000,x-syste
 UUID=A777-7A74 /media/ssd vfat defaults,auto,users,rw,nofail,umask=000,x-systemd.device-timeout=30 0 0
 #IntelSSD - Gecko
 UUID=5E4A-343B /media/ssd exfat defaults,auto,umask=000,users,rw 0 0
-#SSD-shrimp (400Gb)
-UUID=A8E4-097E /media/ssd exfat defaults,auto,users,rw,nofail,umask=000,x-systemd.device-timeout=30 0 0
+#SSD-shrimp (ext4)
+# >> doesnt work UUID=655c6afe-78ad-4bca-b673-500c85ad7c36 /media/ssd ext4 defaults,auto,users,rw,nofail,umask=000,x-systemd.device-timeout=30 0 0
+# works (but careful with ports sda1)
+/dev/sda1      /media/ssd   ext4   defaults   0   0
 
+# if screwd fstab > https://www.clarkle.com/notes/emergecy-mode-bad-fstab/ 
+# !!! use NON apple keyboard 
 
 # hotspot / access point
 # https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md

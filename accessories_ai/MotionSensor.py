@@ -21,7 +21,7 @@ p = CONFIGURATION() #pins
 
 
 from modules.PingIPhone import AcquireResult
-from modules.talk import  Speak
+from modules.talk import  Speak, Phrase
 # from send_email import sendMail
 
 import RPi.GPIO as GPIO
@@ -42,7 +42,7 @@ class MotionSensor(Accessory):
         self.timer = OBJECT({'morning':      TIMER(60*60*6, [0,1,2,3,4,10,11,12,13,14,15,16,17,18,19,20,21,22,23], 60*7),
                              'CheckTime' :   CheckTime,
                              'last' :        TIMER(60),
-                             'report' :      TIMER(60*2, [6])})
+                             'report' :      TIMER(60*2, [7])}) # not at 7am-8am
 
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
@@ -93,5 +93,6 @@ class MotionSensor(Accessory):
                 try:
                     requests.get('http://192.168.1.40:8000/alert', timeout=1, proxies={'http':None})
                 except: pass
-                Speak('motion detected and reported')
+                # Speak('motion detected and reported')
+                Phrase({'TYPE' :'ALERT'})
                 self.Blink([10, 3, 0.1])

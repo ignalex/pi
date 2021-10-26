@@ -50,7 +50,7 @@ class MotionSensor(Accessory):
         GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #DONE: UP works
         GPIO.setup(p.pins.BLINK, GPIO.OUT, initial = GPIO.LOW)
 
-        GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=self._detected)
+        GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=self._detected, bouncetime=500)
 
     def _detected(self,_pin):
         if not self.timer.bounce.CheckDelay(): # 2nd event within bounce time

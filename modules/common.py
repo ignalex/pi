@@ -202,6 +202,8 @@ class TIMER():
         self.sleep_hours = sleep_hours
 
     def CheckDelay(self, delay=None):
+        "returns True when last event was LONGER than delay"
+
         if datetime.datetime.now() - self.last_scan >= datetime.timedelta(seconds = self.delay if delay is None else delay):
             self.last_scan = datetime.datetime.now()
             return True

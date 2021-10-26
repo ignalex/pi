@@ -42,7 +42,7 @@ class MotionSensor(Accessory):
         self.timer = OBJECT({'morning':      TIMER(60*60*6, [0,1,2,3,4,10,11,12,13,14,15,16,17,18,19,20,21,22,23], 60*7),
                              'CheckTime' :   CheckTime,
                              'last' :        TIMER(60),
-                             'bounce' :      TIMER(5),          # second time within N sec triggers event > use reverse (False)
+                             'bounce' :      TIMER(10),          # second time within N sec triggers event > use reverse (False)
                              'report' :      TIMER(60*2, [7])}) # not at 7am-8am
 
         GPIO.setmode(GPIO.BOARD)
@@ -50,7 +50,7 @@ class MotionSensor(Accessory):
         GPIO.setup(p.pins.MOVEMENT_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP) #DONE: UP works
         GPIO.setup(p.pins.BLINK, GPIO.OUT, initial = GPIO.LOW)
 
-        GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=self._detected, bouncetime=500)
+        GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=self._detected)# > doesnt work bounce, bouncetime=500)
 
     def _detected(self,_pin):
         if not self.timer.bounce.CheckDelay(): # 2nd event within bounce time

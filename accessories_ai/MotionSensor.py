@@ -53,16 +53,16 @@ class MotionSensor(Accessory):
         GPIO.add_event_detect(p.pins.MOVEMENT_SENSOR, GPIO.RISING, callback=self._detected)# > doesnt work bounce, bouncetime=500)
 
     def _detected(self,_pin):
-        if not self.timer.bounce.CheckDelay(): # 2nd event within bounce time
-            logger.info('bounce passed')
-            if self.timer.last.CheckDelay():
-                self.char_detected.set_value(True)
-                logger.info('motion')
-                self.onMotion()
-                sleep(5)
-                self.char_detected.set_value(False)
-        else: # bounce
-            logger.info('bounce skipped')
+        # if not self.timer.bounce.CheckDelay(): # 2nd event within bounce time
+        #     logger.info('bounce passed')
+        if self.timer.last.CheckDelay():
+            self.char_detected.set_value(True)
+            logger.info('motion')
+            self.onMotion()
+            sleep(5)
+            self.char_detected.set_value(False)
+        # else: # bounce
+        #     logger.info('bounce skipped')
 
     def stop(self):
         super().stop()

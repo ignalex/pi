@@ -81,6 +81,7 @@ https://github.com/tgogos/rpi_ffmpeg
 # transmission
 # from here https://linuxconfig.org/how-to-set-up-transmission-daemon-on-a-raspberry-pi-and-control-it-via-web-interface
 sudo apt-get update && sudo apt-get install transmission-daemon
+#ssd to be set to have transmission user owner.
 
 # samba share
 # from https://www.raspberrypi.org/magpi/samba-file-server/
@@ -88,6 +89,10 @@ sudo apt-get install samba samba-common-bin
 
 sudo nano /etc/samba/smb.conf
 sudo /etc/init.d/samba restart
+
+# uPnP (alternative samba)
+# from https://raspberrypi.stackexchange.com/questions/118451/howto-install-upnp-dlna-media-server
+sudo nano /etc/minidlna.conf
 
 
 #SPI LED 7 segments
@@ -142,8 +147,8 @@ UUID=5E4A-343B /media/ssd exfat defaults,auto,umask=000,users,rw 0 0
 # works (but careful with ports sda1)
 /dev/sda1      /media/ssd   ext4   defaults   0   0
 
-# if screwd fstab > https://www.clarkle.com/notes/emergecy-mode-bad-fstab/ 
-# !!! use NON apple keyboard 
+# if screwd fstab > https://www.clarkle.com/notes/emergecy-mode-bad-fstab/
+# !!! use NON apple keyboard
 
 # hotspot / access point
 # https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md

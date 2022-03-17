@@ -39,7 +39,7 @@ class MotionSensor(Accessory):
 
         serv_motion = self.add_preload_service('MotionSensor')
         self.char_detected = serv_motion.configure_char('MotionDetected')
-        self.timer = OBJECT({'morning':      TIMER(60*60*6, [0,1,2,3,4,10,11,12,13,14,15,16,17,18,19,20,21,22,23], 60*7),
+        self.timer = OBJECT({'morning':      TIMER(60*60*6, [0,1,2,3,4,5,10,11,12,13,14,15,16,17,18,19,20,21,22,23], 60*7),
                              'CheckTime' :   CheckTime,
                              'last' :        TIMER(60),
                              'bounce' :      TIMER(10),          # second time within N sec triggers event > use reverse (False)

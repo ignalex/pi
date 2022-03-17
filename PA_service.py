@@ -227,7 +227,7 @@ def PA_service():
                     EV = Events(iCloudCal(p.iCloudApi,datetime.datetime.today()))
                     #if ev_last != EV.log:
                     logger.info('EVENTS: ' + EV.log)
-                    logger.debug('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
+                    logger.info('reminders at ' + ', '.join([str(v).split(' ')[1].split('.')[0] for v in sorted(EV.reminders.keys())]))
                     # ev_last = EV.log
 
                 except Exception as e:

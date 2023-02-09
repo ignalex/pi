@@ -75,7 +75,7 @@ def get_bridge(driver):
 
     return bridge
 
-driver = AccessoryDriver(port=51826)
+driver = AccessoryDriver(port=51827) #51826 busy in shrimp
 driver.add_accessory(accessory=get_bridge(driver))
 signal.signal(signal.SIGTERM, driver.signal_handler)
 driver.start()

@@ -18,7 +18,7 @@ from pyhap.accessory_driver import AccessoryDriver
 #from accessories_ai.sensors import TemperatureSensor, LightSensor
 from accessories_ai.switches import AllSwitches, EspStatusCollector
 # from accessories_ai.windows import WindowCovering
-from accessories_ai.computers import SYSTEM
+#from accessories_ai.computers import SYSTEM
 
 #from accessories_ai.MotionSensor import  MotionSensor
 
@@ -49,7 +49,7 @@ def get_bridge(driver):
     # beep = AllSwitches(driver, 'beep')
 #    program1 = ProgramableSwitch(driver,'program 1')
     #watering = AllSwitches(driver, 'watering')
-    hippo = SYSTEM(driver, 'hippo')
+    #hippo = SYSTEM(driver, 'hippo')
     #rhino = SYSTEM(driver, 'rhino')
     #motion = MotionSensor(driver, 'motion sensor')
 
@@ -68,7 +68,7 @@ def get_bridge(driver):
     #bridge.add_accessory(watering)
     bridge.add_accessory(light_ambient)
     bridge.add_accessory(light_toilet)
-    bridge.add_accessory(hippo)
+    #bridge.add_accessory(hippo)
     #bridge.add_accessory(rhino)
     #bridge.add_accessory(motion)
 
